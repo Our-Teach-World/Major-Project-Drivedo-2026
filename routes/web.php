@@ -45,7 +45,10 @@ Route::middleware(['auth.teacher'])->prefix('teacher')->group(function () {
     Route::post('/upload', [TeacherController::class, 'upload'])->name('teacher.upload');
     Route::post('/update-name', [TeacherController::class, 'updateName'])->name('teacher.updateName');
     Route::post('/update-image', [TeacherController::class, 'updateImage'])->name('teacher.updateImage');
+    Route::post('/update-profile', [TeacherController::class, 'updateProfile'])->name('teacher.updateProfile');
     Route::get('/files', [TeacherController::class, 'getFiles'])->name('teacher.files');
+    Route::delete('/file/{id}', [TeacherController::class, 'deleteFile'])->name('teacher.deleteFile');
+    Route::get('/file/{id}/preview', [TeacherController::class, 'previewFile'])->name('teacher.previewFile');
 });
 
 // Student Routes

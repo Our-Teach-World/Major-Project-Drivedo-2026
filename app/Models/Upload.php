@@ -11,6 +11,7 @@ class Upload extends Model
 
     protected $fillable = [
         'user_id',
+        'semester',
         'filename',
         'filepath',
         'extracted_text',
@@ -18,6 +19,6 @@ class Upload extends Model
 
     public function user()
     {
-        return $this->belongsTo(Auth::class, 'user_id');
+        return $this->belongsTo(Student::class, 'user_id');
     }
 }

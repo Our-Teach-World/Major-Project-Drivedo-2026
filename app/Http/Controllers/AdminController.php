@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
-use App\Models\Auth as UserAuth;
+use App\Models\Student;
 use App\Services\UploadService;
 
 class AdminController extends Controller
@@ -29,21 +29,21 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $totalUsers = UserAuth::count();
-        $pendingUsers = UserAuth::where('status', 'pending')->count();
-        $approvedUsers = UserAuth::where('status', 'approved')->count();
-        $teachers = UserAuth::where('role', 'teacher')->count();
-        $students = UserAuth::where('role', 'student')->count();
+        $totalUsers = Student::count();
+        $pendingUsers = Student::where('status', 'pending')->count();
+        $approvedUsers = Student::where('status', 'approved')->count();
+        $teachers = Student::where('role', 'teacher')->count();
+        $students = Student::where('role', 'student')->count();
 
         return view('admin.dashboard', compact('totalUsers', 'pendingUsers', 'approvedUsers', 'teachers', 'students'));
     }
 
     public function users(Request $request)
     {
-        // AJAX Search (JSON) - controller no longer renders HTML
-        if ($request->ajax()) {
+        // AJAX search: detect via X-Requested-With header OR ?ajax=1 query param
+        if ($request->ajax() || $request->has('ajax')) {
             $search = $request->get('q', '');
-            $users = UserAuth::where(function ($query) use ($search) {
+            $users = Student::where(function ($query) use ($search) {
                 if ($search) {
                     $query->where('username', 'LIKE', "%$search%")
                         ->orWhere('role', 'LIKE', "%$search%")
@@ -54,31 +54,33 @@ class AdminController extends Controller
             return response()->json($users);
         }
 
-        $users = UserAuth::orderBy('id', 'DESC')->paginate(20);
+        $users = Student::orderBy('id', 'DESC')->paginate(20);
         return view('admin.users', compact('users'));
     }
 
     public function approveUser($id)
     {
-        $user = UserAuth::findOrFail($id);
+        $user = Student::findOrFail($id);
         $user->update(['status' => 'approved']);
-        
-        if (request()->ajax()) {
-            return response()->json(['success' => true]);
+
+        // Always return JSON for fetch()/AJAX calls
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'User approved successfully.']);
         }
-        
+
         return back()->with('success', 'User approved successfully.');
     }
 
     public function deleteUser($id)
     {
-        $user = UserAuth::findOrFail($id);
+        $user = Student::findOrFail($id);
         $user->delete();
-        
-        if (request()->ajax()) {
-            return response()->json(['success' => true]);
+
+        // Always return JSON for fetch()/AJAX calls
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'User deleted successfully.']);
         }
-        
+
         return back()->with('success', 'User deleted successfully.');
     }
 
@@ -88,9 +90,9 @@ class AdminController extends Controller
         $userIds = $request->get('user_ids', []);
 
         if ($action === 'approve') {
-            UserAuth::whereIn('id', $userIds)->update(['status' => 'approved']);
+            Student::whereIn('id', $userIds)->update(['status' => 'approved']);
         } elseif ($action === 'delete') {
-            UserAuth::whereIn('id', $userIds)->delete();
+            Student::whereIn('id', $userIds)->delete();
         }
 
         return response()->json(['success' => true]);
@@ -100,12 +102,12 @@ class AdminController extends Controller
     {
         if ($request->method() === 'POST') {
             $request->validate([
-                'username' => 'required|unique:auth,username|min:6',
+                'username' => 'required|unique:students,username|min:6',
                 'password' => 'required|min:4',
                 'role' => 'required|in:teacher,student',
             ]);
 
-            UserAuth::create([
+            Student::create([
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
@@ -120,11 +122,11 @@ class AdminController extends Controller
 
     public function editUser($id, Request $request)
     {
-        $user = UserAuth::findOrFail($id);
+        $user = Student::findOrFail($id);
 
         if ($request->method() === 'POST') {
             $request->validate([
-                'username' => 'required|min:6|unique:auth,username,' . $id,
+                'username' => 'required|min:6|unique:students,username,' . $id,
                 'status' => 'required|in:pending,approved',
                 'role' => 'required|in:teacher,student',
                 'password' => 'nullable|min:4',
@@ -156,7 +158,7 @@ class AdminController extends Controller
 
     public function export()
     {
-        $users = UserAuth::all();
+        $users = Student::all();
         $csv = "Id,Name,Role,Password,Reg Date,Status\n";
         
         foreach ($users as $user) {

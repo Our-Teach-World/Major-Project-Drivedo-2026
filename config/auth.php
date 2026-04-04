@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Auth as UserAuth;
+use App\Models\Student;
 
 return [
 
@@ -64,7 +64,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', UserAuth::class),
+            'model' => env('AUTH_MODEL', Student::class),
         ],
 
         // 'users' => [

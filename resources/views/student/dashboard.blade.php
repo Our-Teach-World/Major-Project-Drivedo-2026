@@ -80,6 +80,40 @@
             margin-bottom: 30px;
         }
 
+        .semester-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .sem-btn {
+            padding: 7px 18px;
+            border: 2px solid #000;
+            border-radius: 20px;
+            background: #fff;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .sem-btn:hover, .sem-btn.active {
+            background: #000;
+            color: #fff;
+        }
+
+        .sem-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
         .teacher-card {
             background-color: #ffffff;
             border: 2px solid #000000;
@@ -95,14 +129,37 @@
             box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
         }
 
-        .teacher-icon {
+        .teacher-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #000000;
+            margin: 0 auto 12px;
+            overflow: hidden;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 2rem;
-            margin-bottom: 10px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .teacher-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .teacher-name {
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
+        }
+
+        .teacher-username {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
         }
 
         .back-link {
@@ -432,6 +489,16 @@
         <!-- Teachers Section -->
         <div id="teacherSection" class="section active">
             <h1>📚 Select a Teacher</h1>
+
+            <!-- Semester Filter -->
+            <div class="semester-filter">
+                <strong>Filter by Semester:</strong>
+                <button class="sem-btn active" onclick="setSemester(null, this)">All</button>
+                @for ($i = 1; $i <= 6; $i++)
+                    <button class="sem-btn" onclick="setSemester({{ $i }}, this)">Sem {{ $i }}</button>
+                @endfor
+            </div>
+
             <input type="text" id="searchTeacher" placeholder="Search Teacher..." />
             <div class="teacher-list" id="teacherList">
                 <p style="text-align: center; grid-column: 1/-1;">Loading teachers...</p>
@@ -515,8 +582,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         let selectedTeacher = null;
-        let selectedFolder = null;
-        let allFiles = [];
+        let selectedFolder  = null;
+        let allFiles        = [];
+        let activeSemester  = null;  // null = show all
+
+        function setSemester(sem, btn) {
+            activeSemester = sem;
+            document.querySelectorAll('.sem-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadTeachers();
+        }
 
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -533,28 +608,47 @@
         }
 
         function loadTeachers() {
-            fetch('{{ route("student.teachers") }}')
+            const url = '{{ route("student.teachers") }}' + (activeSemester ? `?semester=${activeSemester}` : '');
+            fetch(url)
                 .then(r => r.json())
                 .then(teachers => {
                     const list = document.getElementById('teacherList');
-                    list.innerHTML = teachers.map(t => `
-                        <div class="teacher-card" onclick="selectTeacher('${t.username}')">
-                            <div class="teacher-icon">👨‍🏫</div>
-                            <div class="teacher-name">${t.username}</div>
-                        </div>
-                    `).join('');
+                    if (!teachers.length) {
+                        list.innerHTML = '<p style="text-align:center;grid-column:1/-1;color:#999;">No teachers available' + (activeSemester ? ` for Semester ${activeSemester}` : '') + '.</p>';
+                        return;
+                    }
+                    list.innerHTML = teachers.map(t => {
+                        const name       = t.display_name || t.username;
+                        const initial    = name.charAt(0).toUpperCase();
+                        const avatarHtml = t.profile_image
+                            ? `<img src="/${t.profile_image}" alt="${name}" onerror="this.style.display='none';this.parentNode.textContent='${initial}'">`
+                            : initial;
+                        return `
+                        <div class="teacher-card" onclick="selectTeacher('${t.username}', '${name}')">
+                            <div class="teacher-avatar">${avatarHtml}</div>
+                            <div class="teacher-name">${name}</div>
+                            ${t.display_name ? `<div class="teacher-username">@${t.username}</div>` : ''}
+                            ${t.branch ? `<div style="font-size:0.78rem;color:#666;margin-top:4px;">${t.branch}</div>` : ''}
+                        </div>`;
+                    }).join('');
+                })
+                .catch(() => {
+                    document.getElementById('teacherList').innerHTML =
+                        '<p style="text-align:center;grid-column:1/-1;color:#c62828;">Failed to load teachers.</p>';
                 });
         }
 
-        function selectTeacher(teacherName) {
-            selectedTeacher = teacherName;
-            document.getElementById('folderTitle').textContent = `${teacherName}'s Folders`;
+        function selectTeacher(teacherUsername, teacherDisplayName) {
+            selectedTeacher = teacherUsername;
+            const label = teacherDisplayName || teacherUsername;
+            document.getElementById('folderTitle').textContent = `${label}'s Folders`;
             loadFolders();
             showSection('folderSection');
         }
 
         function loadFolders() {
-            fetch(`{{ route("student.files") }}?action=folders&teacher=${selectedTeacher}`)
+            const semParam = activeSemester ? `&semester=${activeSemester}` : '';
+            fetch(`{{ route("student.files") }}?action=folders&teacher=${selectedTeacher}${semParam}`)
                 .then(r => r.json())
                 .then(folders => {
                     const grid = document.getElementById('folderGrid');
@@ -576,7 +670,8 @@
         }
 
         function loadFiles() {
-            fetch(`{{ route("student.files") }}?action=files&teacher=${selectedTeacher}&folder=${selectedFolder}`)
+            const semParam = activeSemester ? `&semester=${activeSemester}` : '';
+            fetch(`{{ route("student.files") }}?action=files&teacher=${selectedTeacher}&folder=${selectedFolder}${semParam}`)
                 .then(r => r.json())
                 .then(files => {
                     allFiles = files;
@@ -587,16 +682,18 @@
         function renderFiles(files) {
             const list = document.getElementById('fileList');
             if (files.length === 0) {
-                list.innerHTML = '<p class="empty-msg">No files in this folder.</p>';
+                list.innerHTML = '<p class="empty-msg">No files in this folder' + (activeSemester ? ` for Semester ${activeSemester}` : '') + '.</p>';
                 return;
             }
-            list.innerHTML = files.map(f => `
+            list.innerHTML = files.map(f => {
+                const semBadge = f.semester ? `<span class="sem-badge">Sem ${f.semester}</span>` : '';
+                return `
                 <div class="file-item">
                     <input type="checkbox" class="file-checkbox" value="${f.filename}" style="margin-right: 10px;">
-                    <div class="file-name">📄 ${f.filename}</div>
-                    <a href="/drive-in-laravel/uploads/{{ preg_replace('/[^a-zA-Z0-9_]/', '', Auth::user()->username) }}/download" class="download-btn">Download</a>
-                </div>
-            `).join('');
+                    <div class="file-name">📄 ${f.filename}${semBadge}</div>
+                    <a href="/uploads/${selectedTeacher}/${f.filepath}" target="_blank" class="download-btn">Download</a>
+                </div>`;
+            }).join('');
         }
 
         function chatWithSelected() {

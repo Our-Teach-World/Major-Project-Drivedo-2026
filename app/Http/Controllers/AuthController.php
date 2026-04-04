@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Auth as UserAuth;
+use App\Models\Student;
 
 class AuthController extends Controller
 {
@@ -24,7 +24,7 @@ class AuthController extends Controller
             'role.required' => 'Please select a role.',
         ]);
 
-        $user = UserAuth::where('username', $request->username)
+        $user = Student::where('username', $request->username)
                         ->where('role', $request->role)
                         ->first();
 
@@ -51,18 +51,40 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $branches = [
+            'Civil Engineering',
+            'Mechanical Engineering',
+            'Electrical Engineering',
+            'Electronics Engineering (EL)',
+            'Computer Engineering/Science & Engineering',
+            'Instrumentation & Control Plastic Technology',
+            'Chemical Engineering',
+        ];
+
         $validated = $request->validate([
-            'username' => 'required|unique:auth,username|min:3',
+            'username' => 'required|unique:students,username|min:3',
             'password' => 'required|min:6|confirmed',
-            'role' => 'required|in:student,teacher',
+            'role'     => 'required|in:student,teacher',
+            'branch'   => 'required_if:role,student|nullable|in:' . implode(',', $branches),
+            'semester' => 'required_if:role,student|nullable|integer|min:1|max:6',
+        ], [
+            'branch.required_if'   => 'Please select your branch.',
+            'semester.required_if' => 'Please select your semester.',
         ]);
 
-        UserAuth::create([
+        $data = [
             'username' => $request->username,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'status' => 'pending',
-        ]);
+            'role'     => $request->role,
+            'status'   => 'pending',
+        ];
+
+        if ($request->role === 'student') {
+            $data['branch']   = $request->branch;
+            $data['semester'] = $request->semester;
+        }
+
+        Student::create($data);
 
         return redirect()->route('registration.success');
     }
