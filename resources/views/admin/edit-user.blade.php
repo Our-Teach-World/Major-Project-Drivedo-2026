@@ -1,62 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User - EduShare Admin</title>
+@extends('admin.layouts.app')
+
+@section('title', 'Edit User - EduShare Admin')
+@section('header_title', '⚙️ Edit User')
+
+@push('styles')
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            color: #000000;
-        }
-
-        .navbar {
-            background-color: #ffffff;
-            border-bottom: 2px solid #000000;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-title {
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-
-        .navbar-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: 2px solid #000000;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #000000;
-            color: #ffffff;
-        }
-
         .container {
             max-width: 500px;
             margin: 50px auto;
-            padding: 30px 20px;
         }
 
         .form-card {
@@ -64,17 +15,12 @@
             border: 2px solid #000000;
             padding: 30px;
             border-radius: 8px;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            text-align: center;
+            box-shadow: 4px 4px 0px #000;
         }
 
         .user-info {
             background-color: #f9f9f9;
-            border: 1px solid #e0e0e0;
+            border: 2px solid #000;
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
@@ -94,6 +40,7 @@
 
         input[type="text"],
         input[type="password"],
+        input[type="file"],
         select {
             width: 100%;
             padding: 12px;
@@ -101,6 +48,7 @@
             border-radius: 5px;
             font-size: 1rem;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff;
         }
 
         input[type="text"]:focus,
@@ -154,25 +102,10 @@
             color: #ffffff;
         }
 
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border: 2px solid;
-        }
-
         .alert-error {
             background-color: #ffebee;
             border-color: #c62828;
             color: #c62828;
-        }
-
-        .error-list {
-            margin-top: 10px;
-        }
-
-        .error-list li {
-            margin-left: 20px;
         }
 
         .info-text {
@@ -182,47 +115,31 @@
         }
 
         @media (max-width: 768px) {
-            .form-card {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
+            .form-card { padding: 20px; }
+            .button-group { flex-direction: column; }
         }
     </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-title">⚙️ Edit User</div>
-        <div class="navbar-actions">
-            <a href="{{ route('admin.users') }}" class="btn">Back to Users</a>
-            <form method="POST" action="{{ route('admin.logout') }}" style="display: inline;">
-                @csrf
-                <button type="submit" class="btn">Logout</button>
-            </form>
-        </div>
-    </nav>
+@endpush
+
+@section('content')
 
     <div class="container">
         <div class="form-card">
-            <h1>Edit User #{{ $user->id }}</h1>
+            <h1 style="text-align:center; margin-bottom: 25px;">Edit User #{{ $user->id }}</h1>
 
             <div class="user-info">
                 <strong>User ID:</strong> {{ $user->id }}<br>
                 <strong>Created:</strong> {{ $user->created_at->format('d-m-Y H:i A') }}<br>
-                <strong>Current Profile Image:</strong><br>
-                <img src="/drive-in-laravel/uploads/{{ preg_replace('/[^a-zA-Z0-9_]/', '', $user->username) }}/profile.jpg" alt="Profile" style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #000;" onerror="this.style.display='none'">
+                <div style="margin-top: 10px;">
+                    <strong>Current Profile Image:</strong><br>
+                    <img src="/drive-in-laravel/uploads/{{ preg_replace('/[^a-zA-Z0-9_]/', '', $user->username) }}/profile.jpg" alt="Profile" style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #000; margin-top: 5px;" onerror="this.style.display='none'">
+                </div>
             </div>
 
             @if ($errors->any())
                 <div class="alert alert-error">
                     <strong>Please fix the following errors:</strong>
-                    <ul class="error-list">
+                    <ul style="margin-left: 20px; margin-top: 10px;">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -274,5 +191,5 @@
             </form>
         </div>
     </div>
-</body>
-</html>
+
+@endsection

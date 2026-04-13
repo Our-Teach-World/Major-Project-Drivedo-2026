@@ -114,11 +114,12 @@
         }
 
         /* Student-only fields */
-        .student-only {
+        /* Dynamic fields handling */
+        .dynamic-field {
             display: none;
         }
 
-        .student-only.show {
+        .dynamic-field.show {
             display: block;
         }
 
@@ -177,7 +178,7 @@
 
             <div class="form-group">
                 <label for="role">Role</label>
-                <select id="role" name="role" required onchange="toggleStudentFields(this.value)">
+                <select id="role" name="role" required onchange="toggleDynamicFields(this.value)">
                     <option value="">Select Role</option>
                     <option value="student" {{ old('role') === 'student' ? 'selected' : '' }}>Student</option>
                     <option value="teacher" {{ old('role') === 'teacher' ? 'selected' : '' }}>Teacher</option>
@@ -185,49 +186,28 @@
                 <div class="help-text">Teachers need approval before accessing the dashboard</div>
             </div>
 
-            {{-- ── Student-only fields ── --}}
-            <hr class="section-divider" id="student-divider">
+            {{-- ── Dynamic fields based on Role ── --}}
+            <hr class="section-divider" id="dynamic-divider">
 
-            <div class="student-only" id="student-section-label">
-                <div class="section-label">Student Details</div>
+            <div class="dynamic-field" id="dynamic-section-label">
+                <div class="section-label" id="section-label-text">Details</div>
             </div>
 
-            <div class="form-group student-only" id="branch-group">
+            <div class="form-group dynamic-field" id="branch-group">
                 <label for="branch">Branch</label>
                 <select id="branch" name="branch">
                     <option value="">Select Branch</option>
-                    <option value="Civil Engineering"
-                        {{ old('branch') === 'Civil Engineering' ? 'selected' : '' }}>
-                        Civil Engineering
-                    </option>
-                    <option value="Mechanical Engineering"
-                        {{ old('branch') === 'Mechanical Engineering' ? 'selected' : '' }}>
-                        Mechanical Engineering
-                    </option>
-                    <option value="Electrical Engineering"
-                        {{ old('branch') === 'Electrical Engineering' ? 'selected' : '' }}>
-                        Electrical Engineering
-                    </option>
-                    <option value="Electronics Engineering (EL)"
-                        {{ old('branch') === 'Electronics Engineering (EL)' ? 'selected' : '' }}>
-                        Electronics Engineering (EL)
-                    </option>
-                    <option value="Computer Engineering/Science & Engineering"
-                        {{ old('branch') === 'Computer Engineering/Science & Engineering' ? 'selected' : '' }}>
-                        Computer Engineering / Science &amp; Engineering
-                    </option>
-                    <option value="Instrumentation & Control Plastic Technology"
-                        {{ old('branch') === 'Instrumentation & Control Plastic Technology' ? 'selected' : '' }}>
-                        Instrumentation &amp; Control Plastic Technology
-                    </option>
-                    <option value="Chemical Engineering"
-                        {{ old('branch') === 'Chemical Engineering' ? 'selected' : '' }}>
-                        Chemical Engineering
-                    </option>
+                    <option value="Civil Engineering" {{ old('branch') === 'Civil Engineering' ? 'selected' : '' }}>Civil Engineering</option>
+                    <option value="Mechanical Engineering" {{ old('branch') === 'Mechanical Engineering' ? 'selected' : '' }}>Mechanical Engineering</option>
+                    <option value="Electrical Engineering" {{ old('branch') === 'Electrical Engineering' ? 'selected' : '' }}>Electrical Engineering</option>
+                    <option value="Electronics Engineering (EL)" {{ old('branch') === 'Electronics Engineering (EL)' ? 'selected' : '' }}>Electronics Engineering (EL)</option>
+                    <option value="Computer Science & Engineering" {{ old('branch') === 'Computer Science & Engineering' ? 'selected' : '' }}>Computer Science & Engineering</option>
+                    <option value="Instrumentation & Control Plastic Technology" {{ old('branch') === 'Instrumentation & Control Plastic Technology' ? 'selected' : '' }}>Instrumentation & Control Plastic Technology</option>
+                    <option value="Chemical Engineering" {{ old('branch') === 'Chemical Engineering' ? 'selected' : '' }}>Chemical Engineering</option>
                 </select>
             </div>
 
-            <div class="form-group student-only" id="semester-group">
+          <div class="form-group dynamic-field" id="semester-group">
                 <label for="semester">Semester</label>
                 <select id="semester" name="semester">
                     <option value="">Select Semester</option>
@@ -250,31 +230,61 @@
     </div>
 
     <script>
-        function toggleStudentFields(role) {
-            const fields   = document.querySelectorAll('.student-only');
-            const divider  = document.getElementById('student-divider');
-            const branch   = document.getElementById('branch');
-            const semester = document.getElementById('semester');
+        function toggleDynamicFields(role) {
+            const divider = document.getElementById('dynamic-divider');
+            const labelDiv = document.getElementById('dynamic-section-label');
+            const labelText = document.getElementById('section-label-text');
+            const branchGroup = document.getElementById('branch-group');
+            const semesterGroup = document.getElementById('semester-group');
+            
+            const branchInput = document.getElementById('branch');
+            const semesterInput = document.getElementById('semester');
 
             if (role === 'student') {
-                fields.forEach(el => el.classList.add('show'));
+                // Show everything for student
                 divider.classList.add('show');
-                branch.required   = true;
-                semester.required = true;
+                labelDiv.classList.add('show');
+                labelText.innerText = 'Student Details';
+                
+                branchGroup.classList.add('show');
+                branchInput.required = true;
+                
+                semesterGroup.classList.add('show');
+                semesterInput.required = true;
+                
+            } else if (role === 'teacher') {
+                // Show only Branch for teacher
+                divider.classList.add('show');
+                labelDiv.classList.add('show');
+                labelText.innerText = 'Teacher Details';
+                
+                branchGroup.classList.add('show');
+                branchInput.required = true;
+                
+                semesterGroup.classList.remove('show');
+                semesterInput.required = false;
+                semesterInput.value = ''; // Teacher ke liye semester reset kar do
+                
             } else {
-                fields.forEach(el => el.classList.remove('show'));
+                // Hide everything if no role is selected
                 divider.classList.remove('show');
-                branch.required   = false;
-                semester.required = false;
-                branch.value      = '';
-                semester.value    = '';
+                labelDiv.classList.remove('show');
+                branchGroup.classList.remove('show');
+                semesterGroup.classList.remove('show');
+                
+                branchInput.required = false;
+                semesterInput.required = false;
+                branchInput.value = '';
+                semesterInput.value = '';
             }
         }
 
-        // Re-show fields on page reload after validation error with role=student
+        // Re-show fields on page reload after validation error
         document.addEventListener('DOMContentLoaded', function () {
             const roleVal = document.getElementById('role').value;
-            if (roleVal) toggleStudentFields(roleVal);
+            if (roleVal) {
+                toggleDynamicFields(roleVal);
+            }
         });
     </script>
 </body>

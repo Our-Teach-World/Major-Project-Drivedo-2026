@@ -15,7 +15,7 @@ class TeacherController extends Controller
     {
         $user = Auth::user();
         // Load teacher profile from DB (null if not yet created)
-        $teacherProfile = Teacher::where('student_id', $user->id)->first();
+        $teacherProfile = Teacher::where('user_id', $user->id)->first();
         return view('teacher.dashboard', ['user' => $user, 'teacherProfile' => $teacherProfile]);
     }
 
@@ -29,7 +29,7 @@ class TeacherController extends Controller
         $user = Auth::user();
 
         Teacher::updateOrCreate(
-            ['student_id' => $user->id],
+            ['user_id' => $user->id],
             ['display_name' => $request->name]
         );
 
@@ -55,7 +55,7 @@ class TeacherController extends Controller
 
             // Also store the path in the teachers table
             Teacher::updateOrCreate(
-                ['student_id' => $user->id],
+                ['user_id' => $user->id],
                 ['profile_image' => $relativePath]
             );
         }
@@ -68,28 +68,17 @@ class TeacherController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $branches = [
-            'Civil Engineering',
-            'Mechanical Engineering',
-            'Electrical Engineering',
-            'Electronics Engineering (EL)',
-            'Computer Engineering/Science & Engineering',
-            'Instrumentation & Control Plastic Technology',
-            'Chemical Engineering',
-        ];
-
         $request->validate([
-            'branch'   => 'required|in:' . implode(',', $branches),
-            'semester' => 'required|integer|min:1|max:6',
+            'semesters'    => 'required|array|min:1', // Ab ye ek array hona chahiye
+            'semesters.*'  => 'integer|min:1|max:6',  // Array ki har value integer ho
         ]);
 
         $user = Auth::user();
 
         Teacher::updateOrCreate(
-            ['student_id' => $user->id],
+            ['user_id' => $user->id],
             [
-                'branch'   => $request->branch,
-                'semester' => $request->semester,
+                'semester' => json_encode($request->semesters),
             ]
         );
 

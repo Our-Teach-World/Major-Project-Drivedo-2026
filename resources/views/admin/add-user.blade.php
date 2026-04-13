@@ -1,62 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New User - EduShare Admin</title>
+@extends('admin.layouts.app')
+
+@section('title', 'Add New User - EduShare Admin')
+@section('header_title', '➕ Add New User')
+
+@push('styles')
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            color: #000000;
-        }
-
-        .navbar {
-            background-color: #ffffff;
-            border-bottom: 2px solid #000000;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-title {
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-
-        .navbar-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: 2px solid #000000;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #000000;
-            color: #ffffff;
-        }
-
         .container {
             max-width: 500px;
             margin: 50px auto;
-            padding: 30px 20px;
         }
 
         .form-card {
@@ -64,12 +15,7 @@
             border: 2px solid #000000;
             padding: 30px;
             border-radius: 8px;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            text-align: center;
+            box-shadow: 4px 4px 0px #000;
         }
 
         .form-group {
@@ -145,62 +91,29 @@
             color: #ffffff;
         }
 
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border: 2px solid;
-        }
-
         .alert-error {
             background-color: #ffebee;
             border-color: #c62828;
             color: #c62828;
         }
 
-        .error-list {
-            margin-top: 10px;
-        }
-
-        .error-list li {
-            margin-left: 20px;
-        }
-
         @media (max-width: 768px) {
-            .form-card {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
+            .form-card { padding: 20px; }
+            .button-group { flex-direction: column; }
         }
     </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-title">⚙️ Add New User</div>
-        <div class="navbar-actions">
-            <a href="{{ route('admin.users') }}" class="btn">Back to Users</a>
-            <form method="POST" action="{{ route('admin.logout') }}" style="display: inline;">
-                @csrf
-                <button type="submit" class="btn">Logout</button>
-            </form>
-        </div>
-    </nav>
+@endpush
+
+@section('content')
 
     <div class="container">
         <div class="form-card">
-            <h1>Create New User</h1>
+            <h1 style="text-align:center; margin-bottom: 25px;">Create New User</h1>
 
             @if ($errors->any())
                 <div class="alert alert-error">
                     <strong>Please fix the following errors:</strong>
-                    <ul class="error-list">
+                    <ul style="margin-left: 20px; margin-top: 10px;">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -243,5 +156,5 @@
             </form>
         </div>
     </div>
-</body>
-</html>
+
+@endsection

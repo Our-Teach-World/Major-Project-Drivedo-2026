@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use App\Models\Student;
+use App\Models\Teacher;
 
 class AuthController extends Controller
 {
@@ -24,7 +26,7 @@ class AuthController extends Controller
             'role.required' => 'Please select a role.',
         ]);
 
-        $user = Student::where('username', $request->username)
+        $user = User::where('username', $request->username)
                         ->where('role', $request->role)
                         ->first();
 
@@ -56,13 +58,13 @@ class AuthController extends Controller
             'Mechanical Engineering',
             'Electrical Engineering',
             'Electronics Engineering (EL)',
-            'Computer Engineering/Science & Engineering',
+            'Computer Science & Engineering',
             'Instrumentation & Control Plastic Technology',
             'Chemical Engineering',
         ];
 
         $validated = $request->validate([
-            'username' => 'required|unique:students,username|min:3',
+            'username' => 'required|unique:users,username|min:3',
             'password' => 'required|min:6|confirmed',
             'role'     => 'required|in:student,teacher',
             'branch'   => 'required_if:role,student|nullable|in:' . implode(',', $branches),
@@ -72,19 +74,25 @@ class AuthController extends Controller
             'semester.required_if' => 'Please select your semester.',
         ]);
 
-        $data = [
+        $user = User::create([
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'role'     => $request->role,
             'status'   => 'pending',
-        ];
+        ]);
 
         if ($request->role === 'student') {
-            $data['branch']   = $request->branch;
-            $data['semester'] = $request->semester;
+            Student::create([
+                'user_id'  => $user->id,
+                'branch'   => $request->branch,
+                'semester' => $request->semester,
+            ]);
+        } elseif ($request->role === 'teacher') {
+            // Create a base teacher profile here if needed, or wait until the dashboard
+            Teacher::create([
+                'user_id' => $user->id,
+            ]);
         }
-
-        Student::create($data);
 
         return redirect()->route('registration.success');
     }

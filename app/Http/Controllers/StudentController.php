@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Upload;
@@ -23,14 +24,23 @@ class StudentController extends Controller
     {
         $semester = $request->get('semester'); // optional filter
 
-        $query = Student::where('role', 'teacher')
+        $query = User::where('role', 'teacher')
                          ->where('status', 'approved')
                          ->with('teacherProfile');
 
+        if (Auth::check() && Auth::user()->role === 'student') {
+            $studentBranch = optional(Auth::user()->studentProfile)->branch;
+            if ($studentBranch) {
+                $query->whereHas('teacherProfile', function ($q) use ($studentBranch) {
+                    $q->where('branch', $studentBranch);
+                });
+            }
+        }
+
         if ($semester) {
-            // Only return teachers who have at least one file for this semester
-            $query->whereHas('uploads', function ($q) use ($semester) {
-                $q->where('semester', (int) $semester);
+            // Only return teachers who have selected this semester as active
+            $query->whereHas('teacherProfile', function ($q) use ($semester) {
+                $q->where('semester', 'LIKE', '%' . $semester . '%');
             });
         }
 
@@ -64,13 +74,22 @@ class StudentController extends Controller
         $semester    = isset($validated['semester']) ? (int) $validated['semester'] : null;
 
         if ($action === 'teachers') {
-            $query = Student::where('role', 'teacher')
+            $query = User::where('role', 'teacher')
                              ->where('status', 'approved')
                              ->with('teacherProfile');
 
+            if (Auth::check() && Auth::user()->role === 'student') {
+                $studentBranch = optional(Auth::user()->studentProfile)->branch;
+                if ($studentBranch) {
+                    $query->whereHas('teacherProfile', function ($q) use ($studentBranch) {
+                        $q->where('branch', $studentBranch);
+                    });
+                }
+            }
+
             if ($semester) {
-                $query->whereHas('uploads', function ($q) use ($semester) {
-                    $q->where('semester', $semester);
+                $query->whereHas('teacherProfile', function ($q) use ($semester) {
+                    $q->where('semester', 'LIKE', '%' . $semester . '%');
                 });
             }
 
@@ -86,7 +105,7 @@ class StudentController extends Controller
         }
 
         if ($action === 'folders' && $teacherName) {
-            $teacher = Student::where('username', $teacherName)->where('role', 'teacher')->first();
+            $teacher = User::where('username', $teacherName)->where('role', 'teacher')->first();
 
             if ($teacher) {
                 $baseQuery = fn($type) => Upload::where('user_id', $teacher->id)
@@ -104,7 +123,7 @@ class StudentController extends Controller
         }
 
         if ($action === 'files' && $teacherName && $folderName) {
-            $teacher = Student::where('username', $teacherName)->where('role', 'teacher')->first();
+            $teacher = User::where('username', $teacherName)->where('role', 'teacher')->first();
 
             if ($teacher) {
                 $files = Upload::where('user_id', $teacher->id)
@@ -116,5 +135,21 @@ class StudentController extends Controller
         }
 
         return response()->json(['error' => 'Invalid request'], 400);
+    }
+
+      public function myAttendance()
+    {
+        $studentId = auth()->id();
+
+        // Database se directly Total aur Present count fetch karna
+        $attendanceStats = \App\Models\Attendance::where('student_id', $studentId)
+            ->selectRaw('subject_id, 
+                         count(*) as total_classes, 
+                         sum(case when status = "Present" then 1 else 0 end) as present_classes')
+            ->groupBy('subject_id')
+            ->with('subject') // Subject ka naam dikhane ke liye relation
+            ->get();
+
+        return view('student.attendance', compact('attendanceStats'));
     }
 }

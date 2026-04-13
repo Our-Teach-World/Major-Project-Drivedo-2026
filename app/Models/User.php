@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['username', 'password', 'role', 'status', 'name', 'email'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -29,4 +29,37 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Teacher ke liye: Uske subjects fetch karne ke liye
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_teacher', 'user_id', 'subject_id')
+                    ->withPivot('academic_year')
+                    ->withTimestamps();
+    }
+
+    // Student ke liye: Uski attendance fetch karne ke liye
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'student_id');
+    }
+
+    // Profile for student role
+    public function studentProfile()
+    {
+        return $this->hasOne(Student::class, 'user_id');
+    }
+
+    // Profile for teacher role
+    public function teacherProfile()
+    {
+        return $this->hasOne(Teacher::class, 'user_id');
+    }
+
+    public function uploads()
+    {
+        return $this->hasMany(Upload::class, 'user_id');
+    }
 }
+
+
