@@ -16,14 +16,14 @@
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px;">
     <!-- Total Students Card -->
     <div style="background: #fff; border: 4px solid #000; padding: 30px; box-shadow: 10px 10px 0px #000; transition: transform 0.2s; cursor: default;">
-        <div style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #555;">Total Students</div>
+        <div style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #555;">Approved Students</div>
         <div style="font-size: 4rem; font-weight: 900; line-height: 1;">{{ $totalStudents }}</div>
         <div style="margin-top: 15px; font-weight: 700; color: #10b981;">↑ Across All Branches</div>
     </div>
 
     <!-- Total Teachers Card -->
     <div style="background: #fff; border: 4px solid #000; padding: 30px; box-shadow: 10px 10px 0px #000; transition: transform 0.2s; cursor: default;">
-        <div style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #555;">Total Teachers</div>
+        <div style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #555;">Approved Teachers</div>
         <div style="font-size: 4rem; font-weight: 900; line-height: 1;">{{ $totalTeachers }}</div>
         <div style="margin-top: 15px; font-weight: 700; color: #3b82f6;">🎓 Verified Faculty</div>
     </div>

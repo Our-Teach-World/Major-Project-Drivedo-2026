@@ -18,7 +18,7 @@ class PrincipalSeeder extends Seeder
                 'email' => 'principal@edushare.com',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
                 'role' => 'principal',
-                'branch' => 'All'
+                'branch' => 'null'
             ]
         );
     }

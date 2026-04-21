@@ -67,7 +67,7 @@ class AuthController extends Controller
             'username' => 'required|unique:users,username|min:3',
             'password' => 'required|min:6|confirmed',
             'role'     => 'required|in:student,teacher',
-            'branch'   => 'required_if:role,student|nullable|in:' . implode(',', $branches),
+            'branch'   => 'required|in:' . implode(',', $branches),
             'semester' => 'required_if:role,student|nullable|integer|min:1|max:6',
         ], [
             'branch.required_if'   => 'Please select your branch.',
@@ -88,9 +88,9 @@ class AuthController extends Controller
                 'semester' => $request->semester,
             ]);
         } elseif ($request->role === 'teacher') {
-            // Create a base teacher profile here if needed, or wait until the dashboard
             Teacher::create([
                 'user_id' => $user->id,
+                'branch'  => $request->branch,
             ]);
         }
 

@@ -63,7 +63,7 @@
                                 </div>
                             </div>
                             ${n.attachment_path ? `
-                                <a href="/storage/${n.attachment_path}" target="_blank" class="flex items-center gap-1 text-xs font-bold text-primary hover:text-white bg-primary/10 hover:bg-primary px-3 py-2 rounded-lg transition-all">
+                                <a href="/${n.attachment_path}" target="_blank" class="flex items-center gap-1 text-xs font-bold text-primary hover:text-white bg-primary/10 hover:bg-primary px-3 py-2 rounded-lg transition-all">
                                     <span class="material-symbols-outlined text-sm">attach_file</span> VIEW
                                 </a>
                             ` : ''}

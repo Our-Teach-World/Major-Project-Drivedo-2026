@@ -15,8 +15,8 @@ class PrincipalController extends Controller
     public function dashboard()
     {
         // Explicitly using namespace to ensure correct model is used
-        $totalStudents = \App\Models\User::where('role', 'student')->count();
-        $totalTeachers = \App\Models\User::where('role', 'teacher')->count();
+        $totalStudents = \App\Models\User::where('role', 'student')->where('status', 'approved')->count();
+        $totalTeachers = \App\Models\User::where('role', 'teacher')->where('status', 'approved')->count();
         
         // Count branches from students, teachers, and admin tables (excluding 'All')
         $branches = Student::distinct()->pluck('branch')

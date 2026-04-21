@@ -810,7 +810,7 @@
                             <div class="notice-badge">NEW</div>
                             <div class="notice-title">${n.title}</div>
                             <div class="notice-content">${n.content}</div>
-                            ${n.attachment_path ? `<a href="/storage/${n.attachment_path}" target="_blank" class="notice-attachment">📎 View Attachment</a>` : ''}
+                            ${n.attachment_path ? `<a href="/${n.attachment_path}" target="_blank" class="notice-attachment">📎 View Attachment</a>` : ''}
                             <div class="notice-meta">
                                 <span>
                                     By: ${ (function() {
@@ -821,7 +821,7 @@
                                         if (role === 'principal') return 'Principal';
                                         if (role === 'hod') return `HOD of ${creator.branch || 'Department'}`;
                                         if (role === 'teacher') {
-                                            const name = creator.teacher_profile ? creator.teacher_profile.display_name : creator.username;
+                                            const name = (creator.teacher_profile && creator.teacher_profile.display_name) ? creator.teacher_profile.display_name : creator.username;
                                             return `Prof. ${name}`;
                                         }
                                         return creator.username;

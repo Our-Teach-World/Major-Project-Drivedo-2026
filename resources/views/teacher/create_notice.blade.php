@@ -74,7 +74,7 @@
                             <span class="w-1 h-1 bg-primary rounded-full"></span> Target Semester
                         </label>
                         <div class="relative">
-                            <select name="target_semester" 
+                            <select name="target_semester" required
                                     class="w-full bg-surface-container-low border border-outline-variant/20 rounded-xl px-4 py-4 text-on-surface text-sm focus:ring-2 focus:ring-primary/40 focus:border-primary focus:outline-none transition-all cursor-pointer appearance-none font-bold">
                                 <option value="">Select Target Semester</option>
                                 @foreach($semesters as $sem)

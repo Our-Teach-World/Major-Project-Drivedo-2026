@@ -48,16 +48,26 @@ class NoticeController extends Controller
     public function store(Request $request)
     {
         // A. Form Validation
-        $request->validate([
+        $rules = [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,png|max:5120', // Max 5MB
-        ]);
+        ];
+
+        // Teachers are REQUIRED to choose a specific semester
+        if (request()->is('teacher/*')) {
+             $rules['target_semester'] = 'required';
+        }
+
+        $request->validate($rules);
 
         // B. File Upload Logic (agar koi PDF attach ki hai)
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
-            $attachmentPath = $request->file('attachment')->store('notices', 'public');
+            $file = $request->file('attachment');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('notices'), $filename);
+            $attachmentPath = 'notices/' . $filename;
         }
 
         // C. Determine Creator strictly based on the route being used
@@ -155,7 +165,7 @@ class NoticeController extends Controller
         $branch = $profile->branch;
         $semester = $profile->semester;
 
-        $notices = Notice::where('target_role', 'student')
+        $notices = Notice::whereIn('target_role', ['student', 'all'])
             ->where(function($mainQuery) use ($branch, $semester) {
                 $mainQuery->where(function($q) {
                     $q->whereNull('target_branch')->whereNull('target_semester');

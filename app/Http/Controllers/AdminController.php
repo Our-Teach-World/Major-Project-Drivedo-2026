@@ -165,10 +165,19 @@ class AdminController extends Controller
                 'status' => 'pending',
             ]);
 
+            $admin = Admin::find(session('admin_id'));
+            $branch = ($admin && $admin->role !== 'principal') ? $admin->branch : null;
+
             if ($request->role === 'student') {
-                Student::create(['user_id' => $user->id]);
+                Student::create([
+                    'user_id' => $user->id,
+                    'branch' => $branch
+                ]);
             } elseif ($request->role === 'teacher') {
-                Teacher::create(['user_id' => $user->id]);
+                Teacher::create([
+                    'user_id' => $user->id,
+                    'branch' => $branch
+                ]);
             }
 
             return redirect()->route('admin.users')->with('success', 'User created successfully.');

@@ -47,7 +47,7 @@
                                     return 'Admin';
                                 })()}
                             </span>
-                            ${n.attachment_path ? `<a href="/storage/${n.attachment_path}" target="_blank" style="color: #2563eb; text-decoration: underline;">📎 Attachment</a>` : ''}
+                            ${n.attachment_path ? `<a href="/${n.attachment_path}" target="_blank" style="color: #2563eb; text-decoration: underline;">📎 Attachment</a>` : ''}
                         </div>
                     </div>`).join('');
             });

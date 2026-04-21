@@ -256,7 +256,7 @@
 
     <script>
         function toggleSidebar() {
-            document.getElementById('mainSidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mainSidebar').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('hidden');
         }
         function openDrawer() {
