@@ -11,15 +11,15 @@
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(function(OneSignal) {
         OneSignal.init({
-            appId: "{{ env('ONESIGNAL_APP_ID') }}",
+            appId: "{{ config('services.onesignal.app_id') }}",
         });
 
-        // Set Tags for Targeting
+        // Set Tags for Targeting (v16 Syntax)
         @php
             $tProf = \App\Models\Teacher::where('user_id', auth()->id())->first();
         @endphp
         @if($tProf)
-            OneSignal.sendTags({
+            OneSignal.User.addTags({
                 role: 'teacher',
                 branch: '{{ $tProf->branch }}'
             });
@@ -115,6 +115,8 @@
             </div>
 
             <div class="flex items-center gap-3 md:gap-4">
+                @include('partials.nav-notifications')
+
                 <span class="text-on-surface-variant text-sm font-medium hidden sm:inline">
                     Welcome, {{ Auth::user()->username }}!
                 </span>

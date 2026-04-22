@@ -8,6 +8,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\NotificationController;
 
 // Public Routes
 Route::get('/', function () {
@@ -133,3 +134,6 @@ Route::prefix('principal')->middleware(['auth.principal'])->group(function () {
     Route::get('/notices/faculty', [NoticeController::class, 'facultyIndex'])->name('principal.notices.index');
     Route::get('/notices', [NoticeController::class, 'adminBoard'])->name('principal.notices.board');
 });
+
+// Common Notification Routes
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');

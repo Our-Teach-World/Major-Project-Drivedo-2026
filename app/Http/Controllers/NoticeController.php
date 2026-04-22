@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Notice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Notifications\SystemAlert;
+use Illuminate\Support\Facades\Notification;
 
 class NoticeController extends Controller
 {
@@ -133,7 +135,7 @@ class NoticeController extends Controller
             }
 
             $notifData = [
-                'app_id' => env('ONESIGNAL_APP_ID'),
+                'app_id' => config('services.onesignal.app_id'),
                 'headings' => ['en' => '📢 ' . $request->title],
                 'contents' => ['en' => substr($request->content, 0, 100) . '...'],
                 'url' => $notice->target_role === 'student' ? url('/student/dashboard?section=notices') : url('/dashboard'),
@@ -146,11 +148,49 @@ class NoticeController extends Controller
             }
 
             Http::withHeaders([
-                'Authorization' => 'Basic ' . env('ONESIGNAL_REST_API_KEY'),
+                'Authorization' => 'Basic ' . config('services.onesignal.rest_api_key'),
                 'Content-Type' => 'application/json',
             ])->post('https://onesignal.com/api/v1/notifications', $notifData);
         } catch (\Exception $e) {
             \Log::error('OneSignal Error: ' . $e->getMessage());
+        }
+
+        // E. Internal System Notifications
+        try {
+            $notificationTitle = "New Notice: " . $notice->title;
+            $notificationMsg = "A new notice has been posted for your " . ($notice->target_semester ? "Semester " . $notice->target_semester : "branch") . ".";
+
+            if ($notice->target_role === 'student') {
+                $actionUrl = url('/student/dashboard?section=notices');
+                $students = \App\Models\User::where('role', 'student')
+                    ->whereHas('studentProfile', function($query) use ($notice) {
+                        if ($notice->target_branch) $query->where('branch', $notice->target_branch);
+                        if ($notice->target_semester) $query->where('semester', $notice->target_semester);
+                    })->get();
+                Notification::send($students, new SystemAlert($notificationTitle, $notificationMsg, '📢', $actionUrl));
+            } elseif ($notice->target_role === 'teacher') {
+                $actionUrl = url('/teacher/notices');
+                $teachers = \App\Models\User::where('role', 'teacher')
+                    ->whereHas('teacherProfile', function($query) use ($notice) {
+                        if ($notice->target_branch) $query->where('branch', $notice->target_branch);
+                    })->get();
+                Notification::send($teachers, new SystemAlert($notificationTitle, $notificationMsg, '👨‍🏫', $actionUrl));
+                
+                // If Principal sends to faculty, notify HODs too
+                $currentAdmin = \App\Models\Admin::find(session('admin_id'));
+                if ($currentAdmin && $currentAdmin->role === 'principal') {
+                    $hods = \App\Models\Admin::where('role', 'hod');
+                    if ($notice->target_branch) $hods->where('branch', $notice->target_branch);
+                    Notification::send($hods->get(), new SystemAlert($notificationTitle, $notificationMsg, '🏢', url('/admin/notices')));
+                }
+            } elseif ($notice->target_role === 'all') {
+                Notification::send(\App\Models\User::where('role', 'student')->get(), new SystemAlert($notificationTitle, $notificationMsg, '🌎', url('/student/dashboard?section=notices')));
+                Notification::send(\App\Models\User::where('role', 'teacher')->get(), new SystemAlert($notificationTitle, $notificationMsg, '🌎', url('/teacher/notices')));
+                // Notify all HODs but exclude Principal
+                Notification::send(\App\Models\Admin::where('role', '!=', 'principal')->get(), new SystemAlert($notificationTitle, $notificationMsg, '🏢', url('/admin/notices')));
+            }
+        } catch (\Exception $e) {
+            \Log::error('System Notification Error: ' . $e->getMessage());
         }
 
         return redirect()->back()->with('success', 'Notice published and notifications sent successfully!');

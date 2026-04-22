@@ -8,6 +8,8 @@ use Smalot\PdfParser\Parser;
 use App\Models\Upload;
 use App\Models\Teacher;
 use App\Services\UploadService;
+use App\Notifications\SystemAlert;
+use Illuminate\Support\Facades\Notification;
 
 class TeacherController extends Controller
 {
@@ -149,6 +151,27 @@ class TeacherController extends Controller
             ]);
 
             $uploadedCount++;
+        }
+
+        // Send Notifications to Students
+        if ($uploadedCount > 0) {
+            try {
+                $teacherProfile = Teacher::where('user_id', $user->id)->first();
+                $branch = $teacherProfile->branch;
+                
+                $notificationTitle = "New Study Material";
+                $notificationMsg = "{$user->username} has uploaded new content for Semester {$semester}.";
+                $actionUrl = url('/student/dashboard?section=study&teacher=' . $user->username);
+
+                $students = \App\Models\User::where('role', 'student')
+                    ->whereHas('studentProfile', function($query) use ($branch, $semester) {
+                        $query->where('branch', $branch)->where('semester', $semester);
+                    })->get();
+
+                Notification::send($students, new SystemAlert($notificationTitle, $notificationMsg, '📚', $actionUrl));
+            } catch (\Exception $e) {
+                \Log::error('Upload Notification Error: ' . $e->getMessage());
+            }
         }
 
         if (!empty($errors)) {

@@ -9,15 +9,15 @@
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(function(OneSignal) {
         OneSignal.init({
-            appId: "{{ env('ONESIGNAL_APP_ID') }}",
+            appId: "{{ config('services.onesignal.app_id') }}",
         });
 
-        // Set Tags for Targeting
+        // Set Tags for Targeting (v16 Syntax)
         @php
             $adminUser = \App\Models\Admin::find(session('admin_id'));
         @endphp
         @if($adminUser)
-            OneSignal.sendTags({
+            OneSignal.User.addTags({
                 role: '{{ $adminUser->role }}',
                 branch: '{{ $adminUser->branch ?? "All" }}'
             });
@@ -410,7 +410,10 @@
         <header class="top-navbar">
             <button class="hamburger" onclick="toggleSidebar()">☰</button>
             <div class="page-title">@yield('header_title', 'EduShare Admin')</div>
-            <div style="margin-left: auto;">
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 20px;">
+                @if(session('admin_role') !== 'principal')
+                    @include('partials.nav-notifications')
+                @endif
                 @if($adminUser && request()->routeIs('admin.dashboard'))
                     <span style="font-weight: 600; border: 2px solid #000; padding: 5px 10px; border-radius: 20px; background: #f0f0f0;">
                        👋 Hi, {{ $adminUser->username }}

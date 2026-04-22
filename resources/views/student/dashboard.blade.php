@@ -9,15 +9,15 @@
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(function(OneSignal) {
         OneSignal.init({
-            appId: "{{ env('ONESIGNAL_APP_ID') }}",
+            appId: "{{ config('services.onesignal.app_id') }}",
             notifyButton: {
                 enable: true,
             },
         });
 
-        // Set Tags for Targeting
+        // Set Tags for Targeting (v16 Syntax)
         @if(auth()->check() && auth()->user()->studentProfile)
-            OneSignal.sendTags({
+            OneSignal.User.addTags({
                 role: 'student',
                 branch: '{{ auth()->user()->studentProfile->branch }}',
                 semester: '{{ auth()->user()->studentProfile->semester }}'
@@ -429,7 +429,8 @@
                     <h2 style="margin: 0; font-size: 1.3rem;">Dashboard</h2>
                 </div>
                 
-                <div class="user-info">
+                <div class="user-info" style="display: flex; align-items: center; gap: 20px;">
+                    @include('partials.nav-notifications')
                     <span>Hi, {{ Auth::user()->username }}!</span>
                     <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                         @csrf
@@ -860,9 +861,17 @@
                 }
             }
 
-            // 2. Load Teachers if list exists
+            // 2. Load Teachers and Handle Deep Linking
             if (document.getElementById('teacherList')) {
                 loadTeachers();
+                
+                // If a teacher parameter is present, automatically select them
+                const teacherParam = urlParams.get('teacher');
+                if (teacherParam && sectionParam === 'study') {
+                    // We call selectTeacher directly with the username. 
+                    // The teacherDisplayName will fallback to username until the list loads correctly.
+                    selectTeacher(teacherParam, teacherParam);
+                }
             }
         });
 
