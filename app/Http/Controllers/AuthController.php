@@ -69,9 +69,12 @@ class AuthController extends Controller
             'role'     => 'required|in:student,teacher',
             'branch'   => 'required|in:' . implode(',', $branches),
             'semester' => 'required_if:role,student|nullable|integer|min:1|max:6',
+            'enrollment_no' => 'required_if:role,student|nullable|string|unique:students,enrollment_no',
         ], [
             'branch.required_if'   => 'Please select your branch.',
             'semester.required_if' => 'Please select your semester.',
+            'enrollment_no.required_if' => 'Please enter your enrollment number.',
+            'enrollment_no.unique' => 'This enrollment number is already registered.',
         ]);
 
         $user = User::create([
@@ -84,6 +87,7 @@ class AuthController extends Controller
         if ($request->role === 'student') {
             Student::create([
                 'user_id'  => $user->id,
+                'enrollment_no' => $request->enrollment_no,
                 'branch'   => $request->branch,
                 'semester' => $request->semester,
             ]);

@@ -56,13 +56,18 @@ Route::middleware(['auth.teacher'])->prefix('teacher')->group(function () {
     // Teacher ka dashboard jahan uske subjects dikhenge
     Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
     
-    // Attendance lene wala page
-    // Attendance lene wala page (Ab ye semester ke hisaab se khulega)
+    // 1. Static/Specific Routes first
+    Route::get('/attendance/export-selection', [\App\Http\Controllers\BulkAttendanceController::class, 'exportView'])->name('attendance.export.view');
+    Route::get('/attendance/bulk', [\App\Http\Controllers\BulkAttendanceController::class, 'index'])->name('attendance.bulk');
+    Route::post('/attendance/bulk/store', [\App\Http\Controllers\BulkAttendanceController::class, 'store'])->name('attendance.bulk.store');
+    
+    // 2. Dashboard and Wildcard Routes
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/{semester}', [AttendanceController::class, 'create'])->name('attendance.create');
-    
-    // Attendance save karne ki request
     Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
+
+    // Attendance Export Download (This can stay specific)
+    Route::get('/attendance/export-download/{semester}/{month}/{subject}', [\App\Http\Controllers\BulkAttendanceController::class, 'exportMonthlyReport'])->name('attendance.export.download');
 
     // Notice Routes for Teachers
     Route::get('/notices/create', [NoticeController::class, 'create'])->name('teacher.notices.create');

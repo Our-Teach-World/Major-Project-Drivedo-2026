@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.principal' => \App\Http\Middleware\AuthPrincipal::class,
         ]);
     })
+    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+        $schedule->command('app:remind-attendance')->saturdays()->at('18:00');
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

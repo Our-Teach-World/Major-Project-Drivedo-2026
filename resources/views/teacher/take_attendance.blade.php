@@ -32,6 +32,31 @@
         background: #151026; border: 1px solid #4b455c; padding: 12px; border-radius: 8px; color: white;
     }
 
+    /* Bulk Actions */
+    .bulk-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    .action-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 12px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .btn-all-present { background: rgba(16, 185, 129, 0.1); color: var(--success-color); border-color: var(--success-color); }
+    .btn-all-absent { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); border-color: var(--danger-color); }
+    .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
     /* Student List Form */
     .student-card {
         background: var(--card-bg); padding: 15px 20px; border-radius: 12px; margin-bottom: 12px;
@@ -63,6 +88,14 @@
     }
     .save-btn { background: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
     .save-btn:hover { background: #6c3bff; transform: scale(1.05); }
+    .save-btn:disabled { background: #4b455c; cursor: not-allowed; opacity: 0.5; }
+
+    /* Sunday Warning */
+    .sunday-warning {
+        background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger-color); color: var(--danger-color);
+        padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold;
+        display: none;
+    }
 
     /* Mobile Responsiveness */
     @media (max-width: 600px) {
@@ -74,13 +107,17 @@
 </style>
 
 <div class="attendance-wrapper">
+    <div id="sundayNotice" class="sunday-warning">
+        ⚠️ Selection Restricted: Sunday is a holiday. Attendance cannot be recorded for this day.
+    </div>
+
     <form action="{{ route('attendance.store') }}" method="POST" id="attendanceForm">
         @csrf
 
         <div class="controls-container">
             <div class="input-group">
                 <label>Date of Lecture</label>
-                <input type="date" name="attendance_date" value="{{ $todayDate }}" required>
+                <input type="date" name="attendance_date" id="attendanceDate" value="{{ $todayDate }}" onchange="checkSunday(this.value)" required>
             </div>
             
             <div class="input-group">
@@ -97,6 +134,15 @@
                 <span style="font-size: 14px; color: #afa7c2;">Marking Attendance for</span>
                 <strong style="color: #b3a1ff; font-size: 18px;">Semester {{ $semester }}</strong>
             </div>
+        </div>
+
+        <div class="bulk-actions">
+            <button type="button" class="action-btn btn-all-present" onclick="markAll(true)">
+                <span class="material-symbols-outlined">done_all</span> Mark All Present
+            </button>
+            <button type="button" class="action-btn btn-all-absent" onclick="markAll(false)">
+                <span class="material-symbols-outlined">close_fullscreen</span> Mark All Absent
+            </button>
         </div>
 
         <div class="student-list" id="studentList">
@@ -139,7 +185,7 @@
                 <span style="color: var(--success-color); margin-right: 20px;">Present: <strong id="presentCount">{{ $students->count() }}</strong></span>
                 <span style="color: var(--danger-color);">Absent: <strong id="absentCount">0</strong></span>
             </div>
-            <button type="submit" class="save-btn" onclick="this.innerHTML='Saving...'; this.style.opacity='0.7';">
+            <button type="submit" id="saveBtn" class="save-btn" onclick="this.innerHTML='Saving...'; this.style.opacity='0.7';">
                 Save Attendance
             </button>
         </div>
@@ -163,12 +209,43 @@
         document.getElementById('absentCount').innerText = absent;
     }
 
-    // Update individual label opacity based on toggle
     function updateStatus(checkbox, labelId) {
         updateCounters();
     }
 
-    // Initialize counters on page load
-    document.addEventListener('DOMContentLoaded', updateCounters);
+    // Mark All Logic
+    function markAll(status) {
+        const checkboxes = document.querySelectorAll('.attendance-checkbox');
+        checkboxes.forEach(chk => {
+            chk.checked = status;
+        });
+        updateCounters();
+    }
+
+    // Sunday Lock Logic
+    function checkSunday(dateString) {
+        const day = new Date(dateString).getUTCDay();
+        const notice = document.getElementById('sundayNotice');
+        const saveBtn = document.getElementById('saveBtn');
+        const list = document.getElementById('studentList');
+
+        if (day === 0) { // 0 is Sunday
+            notice.style.display = 'block';
+            saveBtn.disabled = true;
+            list.style.opacity = '0.3';
+            list.style.pointerEvents = 'none';
+        } else {
+            notice.style.display = 'none';
+            saveBtn.disabled = false;
+            list.style.opacity = '1';
+            list.style.pointerEvents = 'auto';
+        }
+    }
+
+    // Initialize counters and check sunday on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCounters();
+        checkSunday(document.getElementById('attendanceDate').value);
+    });
 </script>
 @endsection

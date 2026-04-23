@@ -113,6 +113,13 @@
             margin-top: 5px;
         }
 
+        .error-message {
+            color: #c62828;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
         /* Student-only fields */
         /* Dynamic fields handling */
         .dynamic-field {
@@ -193,6 +200,14 @@
                 <div class="section-label" id="section-label-text">Details</div>
             </div>
 
+            <div class="form-group dynamic-field" id="enrollment-group">
+                <label for="enrollment_no">Enrollment Number</label>
+                <input type="text" id="enrollment_no" name="enrollment_no" value="{{ old('enrollment_no') }}" placeholder="e.g. 23010101001" style="{{ $errors->has('enrollment_no') ? 'border-color: #c62828;' : '' }}">
+                @error('enrollment_no')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
             <div class="form-group dynamic-field" id="branch-group">
                 <label for="branch">Branch</label>
                 <select id="branch" name="branch">
@@ -240,12 +255,18 @@
             const branchInput = document.getElementById('branch');
             const semesterInput = document.getElementById('semester');
 
+            const enrollmentGroup = document.getElementById('enrollment-group');
+            const enrollmentInput = document.getElementById('enrollment_no');
+
             if (role === 'student') {
                 // Show everything for student
                 divider.classList.add('show');
                 labelDiv.classList.add('show');
                 labelText.innerText = 'Student Details';
                 
+                enrollmentGroup.classList.add('show');
+                enrollmentInput.required = true;
+
                 branchGroup.classList.add('show');
                 branchInput.required = true;
                 
@@ -258,6 +279,10 @@
                 labelDiv.classList.add('show');
                 labelText.innerText = 'Teacher Details';
                 
+                enrollmentGroup.classList.remove('show');
+                enrollmentInput.required = false;
+                enrollmentInput.value = '';
+
                 branchGroup.classList.add('show');
                 branchInput.required = true;
                 
@@ -269,11 +294,14 @@
                 // Hide everything if no role is selected
                 divider.classList.remove('show');
                 labelDiv.classList.remove('show');
+                enrollmentGroup.classList.remove('show');
                 branchGroup.classList.remove('show');
                 semesterGroup.classList.remove('show');
                 
+                enrollmentInput.required = false;
                 branchInput.required = false;
                 semesterInput.required = false;
+                enrollmentInput.value = '';
                 branchInput.value = '';
                 semesterInput.value = '';
             }

@@ -90,7 +90,11 @@ class AdminController extends Controller
                         ->orWhere('status', 'LIKE', "%$search%");
                 });
             }
-            $users = $ajaxQuery->orderBy('id', 'DESC')->get(['id', 'username', 'role', 'status', 'created_at']);
+            
+            $users = $ajaxQuery->leftJoin('students', 'users.id', '=', 'students.user_id')
+                ->select('users.*', 'students.enrollment_no')
+                ->orderBy('users.id', 'DESC')
+                ->get();
 
             return response()->json($users);
         }
@@ -156,6 +160,7 @@ class AdminController extends Controller
                 'username' => 'required|unique:users,username|min:6',
                 'password' => 'required|min:4',
                 'role' => 'required|in:teacher,student',
+                'enrollment_no' => 'required_if:role,student|nullable|string|unique:students,enrollment_no',
             ]);
 
             $user = User::create([
@@ -171,7 +176,8 @@ class AdminController extends Controller
             if ($request->role === 'student') {
                 Student::create([
                     'user_id' => $user->id,
-                    'branch' => $branch
+                    'branch' => $branch,
+                    'enrollment_no' => $request->enrollment_no
                 ]);
             } elseif ($request->role === 'teacher') {
                 Teacher::create([
@@ -197,6 +203,7 @@ class AdminController extends Controller
                 'role' => 'required|in:teacher,student',
                 'password' => 'nullable|min:4',
                 'profileImage' => 'nullable|image|max:5000',
+                'enrollment_no' => 'required_if:role,student|nullable|string|unique:students,enrollment_no,' . ($user->studentProfile->id ?? 'NULL'),
             ]);
 
             $data = [
@@ -214,6 +221,12 @@ class AdminController extends Controller
             // Handle profile image upload
             if ($request->hasFile('profileImage')) {
                 UploadService::saveProfileImage($request->file('profileImage'), $user->username);
+            }
+
+            if ($user->role === 'student' && $user->studentProfile) {
+                $user->studentProfile->update([
+                    'enrollment_no' => $request->enrollment_no
+                ]);
             }
 
             return redirect()->route('admin.users')->with('success', 'User updated successfully.');

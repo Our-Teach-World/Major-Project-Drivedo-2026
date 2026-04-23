@@ -181,6 +181,7 @@
                 @endif
                 <th>ID</th>
                 <th>Username</th>
+                <th>Enrollment</th>
                 <th>Role</th>
                 <th>Password</th>
                 <th>Created At</th>
@@ -198,6 +199,7 @@
                     @endif
                     <td data-label="ID">{{ $user->id }}</td>
                     <td data-label="Username">{{ $user->username }}</td>
+                    <td data-label="Enrollment">{{ $user->studentProfile->enrollment_no ?? '-' }}</td>
                     <td data-label="Role">{{ ucfirst($user->role) }}</td>
                     <td data-label="Password">••••••••</td>
                     <td data-label="Created At">{{ $user->created_at->format('d-m-Y H:i A') }}</td>
@@ -281,6 +283,7 @@
                         ${ !isPrincipal ? `<td data-label="Select"><input type="checkbox" class="select-user" value="${u.id}" style="cursor:pointer;"></td>` : '' }
                         <td data-label="ID">${u.id}</td>
                         <td data-label="Username">${u.username}</td>
+                        <td data-label="Enrollment">${u.enrollment_no || '-'}</td>
                         <td data-label="Role">${u.role.charAt(0).toUpperCase() + u.role.slice(1)}</td>
                         <td data-label="Password">••••••••</td>
                         <td data-label="Created At">${new Date(u.created_at).toLocaleString('en-IN')}</td>

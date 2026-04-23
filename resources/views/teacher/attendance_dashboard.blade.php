@@ -23,9 +23,15 @@
     @endif
 
     {{-- Page Header --}}
-    <header class="mb-10">
-        <h1 class="text-4xl font-extrabold text-on-surface tracking-tight mb-2">Smart Attendance</h1>
-        <p class="text-on-surface-variant">Manage and take attendance for your active semesters.</p>
+    <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <h1 class="text-4xl font-extrabold text-on-surface tracking-tight mb-2">Smart Attendance</h1>
+            <p class="text-on-surface-variant">Manage and take attendance for your active semesters.</p>
+        </div>
+        <a href="{{ route('attendance.export.view') }}" class="bg-primary text-on-primary-fixed px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:scale-105 transition-all shadow-[0_10px_20px_rgba(179,161,255,0.3)]">
+            <span class="material-symbols-outlined">download</span>
+            Export Monthly Report
+        </a>
     </header>
 
     {{-- ── Assigned Classes (Smart Attendance) ── --}}
@@ -67,11 +73,19 @@
                         <h3 class="text-lg font-bold text-on-surface mb-1">Semester {{ $sem }} Students</h3>
                         <p class="text-xs text-on-surface-variant mb-5">Take today's attendance</p>
                         
-                        <a href="{{ route('attendance.create', ['semester' => $sem]) }}" 
-                           class="w-full bg-surface-bright hover:bg-primary hover:text-white text-on-surface-variant font-bold text-sm py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors">
-                            <span class="material-symbols-outlined text-[18px]">how_to_reg</span>
-                            Mark Attendance
-                        </a>
+                        <div class="flex flex-col gap-2">
+                            <a href="{{ route('attendance.create', ['semester' => $sem]) }}" 
+                               class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary-fixed font-bold text-sm py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all">
+                                <span class="material-symbols-outlined text-[18px]">how_to_reg</span>
+                                Mark Today
+                            </a>
+                            
+                            <a href="{{ route('attendance.bulk', ['semester' => $sem]) }}" 
+                               class="w-full bg-surface-bright hover:bg-primary/20 text-on-surface-variant hover:text-primary font-bold text-sm py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border border-outline-variant/10">
+                                <span class="material-symbols-outlined text-[18px]">grid_on</span>
+                                Submit Weekly Attendance
+                            </a>
+                        </div>
                     </div>
                 @endforeach
             </div>

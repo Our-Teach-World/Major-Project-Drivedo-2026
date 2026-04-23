@@ -132,12 +132,31 @@
 
                 <div class="form-group">
                     <label for="role">Role *</label>
-                    <select id="role" name="role" required>
+                    <select id="role" name="role" required onchange="toggleEnrollment(this.value)">
                         <option value="">-- Select Role --</option>
                         <option value="teacher" {{ old('role') == 'teacher' ? 'selected' : '' }}>Teacher</option>
                         <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student</option>
                     </select>
                 </div>
+
+                <div class="form-group" id="enrollment-group" style="display: {{ old('role') == 'student' ? 'block' : 'none' }};">
+                    <label for="enrollment_no">Enrollment Number *</label>
+                    <input type="text" id="enrollment_no" name="enrollment_no" value="{{ old('enrollment_no') }}" placeholder="e.g. 23010101001">
+                </div>
+
+                <script>
+                    function toggleEnrollment(role) {
+                        const group = document.getElementById('enrollment-group');
+                        const input = document.getElementById('enrollment_no');
+                        if (role === 'student') {
+                            group.style.display = 'block';
+                            input.required = true;
+                        } else {
+                            group.style.display = 'none';
+                            input.required = false;
+                        }
+                    }
+                </script>
 
                 <div class="form-group">
                     <label for="password">Password *</label>
