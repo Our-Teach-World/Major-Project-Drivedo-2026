@@ -272,4 +272,18 @@ class TeacherController extends Controller
 
         return 'others';
     }
+
+    public function timetableViewer()
+    {
+        $user = auth()->user();
+        $profile = \App\Models\Teacher::where('user_id', $user->id)->first();
+        
+        $teacherName = optional($profile)->display_name ?? $user->username;
+
+        $timetables = \App\Models\Timetable::where('teacher_name', $teacherName)
+            ->get()
+            ->groupBy('day');
+
+        return view('teacher.timetable', compact('timetables', 'teacherName'));
+    }
 }

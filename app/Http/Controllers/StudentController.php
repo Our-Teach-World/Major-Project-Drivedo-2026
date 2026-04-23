@@ -152,4 +152,20 @@ class StudentController extends Controller
 
         return view('student.attendance', compact('attendanceStats'));
     }
+
+    public function timetableViewer()
+    {
+        $profile = auth()->user()->studentProfile;
+        if (!$profile) return back()->with('error', 'Profile not found.');
+
+        $branch = $profile->branch;
+        $semester = $profile->semester;
+
+        $timetables = \App\Models\Timetable::where('branch', $branch)
+            ->where('semester', $semester)
+            ->get()
+            ->groupBy('day');
+
+        return view('student.timetable', compact('timetables', 'branch', 'semester'));
+    }
 }

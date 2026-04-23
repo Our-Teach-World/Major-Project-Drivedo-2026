@@ -394,6 +394,9 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.subjects') }}" class="nav-link {{ request()->routeIs('admin.subjects') ? 'active' : '' }}">📚 Manage Subjects</a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.timetable.setup') }}" class="nav-link {{ request()->routeIs('admin.timetable.setup') ? 'active' : '' }}">🗓️ Schedule Timetable</a>
+                </li>
             @endif
         </ul>
 

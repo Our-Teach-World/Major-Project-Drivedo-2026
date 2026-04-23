@@ -410,7 +410,7 @@
                 <a href="{{ route('student.attendance') }}" class="nav-item {{ Route::is('student.attendance') ? 'active' : '' }}">
                     <span class="nav-icon">📊</span> My Attendance
                 </a>
-                <a href="#" class="nav-item" style="opacity: 0.6;" title="Coming Soon">
+                <a href="{{ route('student.timetable') }}" class="nav-item {{ Route::is('student.timetable') ? 'active' : '' }}">
                     <span class="nav-icon">📅</span> Timetable
                 </a>
                 <a href="{{ route('student.dashboard') }}?section=notices" 

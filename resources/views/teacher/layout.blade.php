@@ -88,7 +88,7 @@
                 <span class="material-symbols-outlined">fact_check</span> Smart Attendance
             </a>
 
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/50 hover:text-on-surface transition-colors">
+            <a href="{{ route('teacher.timetable') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('teacher.timetable') ? 'bg-primary/10 text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-bright/50 hover:text-on-surface' }} transition-colors">
                 <span class="material-symbols-outlined">calendar_month</span> Timetable Viewer
             </a>
 

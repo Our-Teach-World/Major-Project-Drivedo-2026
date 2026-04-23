@@ -74,6 +74,7 @@ Route::middleware(['auth.teacher'])->prefix('teacher')->group(function () {
     Route::post('/notices/store', [NoticeController::class, 'store'])->name('teacher.notices.store');
     Route::get('/notices/faculty', [NoticeController::class, 'facultyIndex'])->name('teacher.notices.index');
     Route::get('/notices', [NoticeController::class, 'teacherBoard'])->name('teacher.notices.board');
+    Route::get('/timetable', [TeacherController::class, 'timetableViewer'])->name('teacher.timetable');
 });
 
 
@@ -86,6 +87,7 @@ Route::middleware(['auth.student'])->prefix('student')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
     Route::get('/attendance', [StudentController::class, 'myAttendance'])->name('student.attendance');   
     Route::get('/notices', [NoticeController::class, 'studentIndex'])->name('student.notices');
+    Route::get('/timetable', [StudentController::class, 'timetableViewer'])->name('student.timetable');
 });
 
 
@@ -124,7 +126,11 @@ Route::prefix('admin')->group(function () {
         Route::post('/subjects/bulk-store', [AdminController::class, 'bulkStoreSubject'])->name('admin.subjects.bulkStore');
         Route::delete('/subjects/destroy/{id}', [AdminController::class, 'destroySubject'])->name('admin.subjects.destroy');
 
-        // Removed from here to allow teacher access too
+        // Timetable Routes for HOD
+        Route::get('/timetable/setup', [\App\Http\Controllers\TimetableController::class, 'schedule'])->name('admin.timetable.setup');
+        Route::post('/timetable/store', [\App\Http\Controllers\TimetableController::class, 'store'])->name('admin.timetable.store');
+        Route::get('/timetable/print/{semester}', [\App\Http\Controllers\TimetableController::class, 'print'])->name('admin.timetable.print');
+        Route::get('/timetable/get-subjects', [\App\Http\Controllers\TimetableController::class, 'getSubjects'])->name('admin.timetable.getSubjects');
     });
 });
 // Principal Routes
