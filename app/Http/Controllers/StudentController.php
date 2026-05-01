@@ -25,8 +25,8 @@ class StudentController extends Controller
         $semester = $request->get('semester'); // optional filter
 
         $query = User::where('role', 'teacher')
-                         ->where('status', 'approved')
-                         ->with('teacherProfile');
+            ->where('status', 'approved')
+            ->with('teacherProfile');
 
         if (Auth::check() && Auth::user()->role === 'student') {
             $studentBranch = optional(Auth::user()->studentProfile)->branch;
@@ -45,16 +45,16 @@ class StudentController extends Controller
         }
 
         $teachers = $query->get(['id', 'username'])
-                          ->map(function ($teacher) {
-                              return [
-                                  'id'            => $teacher->id,
-                                  'username'      => $teacher->username,
-                                  'display_name'  => optional($teacher->teacherProfile)->display_name ?? $teacher->username,
-                                  'profile_image' => optional($teacher->teacherProfile)->profile_image,
-                                  'bio'           => optional($teacher->teacherProfile)->bio,
-                                  'branch'        => optional($teacher->teacherProfile)->branch,
-                              ];
-                          });
+            ->map(function ($teacher) {
+                return [
+                    'id' => $teacher->id,
+                    'username' => $teacher->username,
+                    'display_name' => optional($teacher->teacherProfile)->display_name ?? $teacher->username,
+                    'profile_image' => optional($teacher->teacherProfile)->profile_image,
+                    'bio' => optional($teacher->teacherProfile)->bio,
+                    'branch' => optional($teacher->teacherProfile)->branch,
+                ];
+            });
 
         return response()->json($teachers);
     }
@@ -62,21 +62,21 @@ class StudentController extends Controller
     public function getFiles(Request $request)
     {
         $validated = $request->validate([
-            'action'   => 'required|in:teachers,folders,files',
-            'teacher'  => 'nullable|string|max:255',
-            'folder'   => 'nullable|string|max:255',
+            'action' => 'required|in:teachers,folders,files',
+            'teacher' => 'nullable|string|max:255',
+            'folder' => 'nullable|string|max:255',
             'semester' => 'nullable|integer|min:1|max:6',
         ]);
 
-        $action      = $validated['action'];
+        $action = $validated['action'];
         $teacherName = $validated['teacher'] ?? null;
-        $folderName  = $validated['folder'] ?? null;
-        $semester    = isset($validated['semester']) ? (int) $validated['semester'] : null;
+        $folderName = $validated['folder'] ?? null;
+        $semester = isset($validated['semester']) ? (int) $validated['semester'] : null;
 
         if ($action === 'teachers') {
             $query = User::where('role', 'teacher')
-                             ->where('status', 'approved')
-                             ->with('teacherProfile');
+                ->where('status', 'approved')
+                ->with('teacherProfile');
 
             if (Auth::check() && Auth::user()->role === 'student') {
                 $studentBranch = optional(Auth::user()->studentProfile)->branch;
@@ -94,13 +94,13 @@ class StudentController extends Controller
             }
 
             $teachers = $query->get(['id', 'username'])
-                              ->map(function ($t) {
-                                  return [
-                                      'username'      => $t->username,
-                                      'display_name'  => optional($t->teacherProfile)->display_name ?? $t->username,
-                                      'profile_image' => optional($t->teacherProfile)->profile_image,
-                                  ];
-                              });
+                ->map(function ($t) {
+                    return [
+                        'username' => $t->username,
+                        'display_name' => optional($t->teacherProfile)->display_name ?? $t->username,
+                        'profile_image' => optional($t->teacherProfile)->profile_image,
+                    ];
+                });
             return response()->json($teachers);
         }
 
@@ -114,9 +114,9 @@ class StudentController extends Controller
 
                 $folders = [
                     ['name' => 'documents', 'icon' => '📄', 'count' => $baseQuery('documents')->count()],
-                    ['name' => 'images',    'icon' => '🖼️', 'count' => $baseQuery('images')->count()],
-                    ['name' => 'audio',     'icon' => '🎵', 'count' => $baseQuery('audio')->count()],
-                    ['name' => 'video',     'icon' => '🎬', 'count' => $baseQuery('video')->count()],
+                    ['name' => 'images', 'icon' => '🖼️', 'count' => $baseQuery('images')->count()],
+                    ['name' => 'audio', 'icon' => '🎵', 'count' => $baseQuery('audio')->count()],
+                    ['name' => 'video', 'icon' => '🎬', 'count' => $baseQuery('video')->count()],
                 ];
                 return response()->json($folders);
             }
@@ -127,9 +127,9 @@ class StudentController extends Controller
 
             if ($teacher) {
                 $files = Upload::where('user_id', $teacher->id)
-                               ->where('filepath', 'like', "%{$folderName}%")
-                               ->when($semester, fn($q) => $q->where('semester', $semester))
-                               ->get(['filename', 'filepath', 'semester']);
+                    ->where('filepath', 'like', "%{$folderName}%")
+                    ->when($semester, fn($q) => $q->where('semester', $semester))
+                    ->get(['filename', 'filepath', 'semester']);
                 return response()->json($files);
             }
         }
@@ -137,7 +137,7 @@ class StudentController extends Controller
         return response()->json(['error' => 'Invalid request'], 400);
     }
 
-      public function myAttendance()
+    public function myAttendance()
     {
         $studentId = auth()->id();
 
@@ -156,7 +156,8 @@ class StudentController extends Controller
     public function timetableViewer()
     {
         $profile = auth()->user()->studentProfile;
-        if (!$profile) return back()->with('error', 'Profile not found.');
+        if (!$profile)
+            return back()->with('error', 'Profile not found.');
 
         $branch = $profile->branch;
         $semester = $profile->semester;

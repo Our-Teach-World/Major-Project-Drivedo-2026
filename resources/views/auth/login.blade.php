@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - EduShare</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: #f5f5f5;
+            background-color: #CCD0CF;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            color: #06141B;
         }
 
         .login-container {
             background-color: #ffffff;
-            border: 2px solid #000000;
-            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            max-width: 400px;
+            border: 1px solid rgba(6, 20, 27, 0.05);
+            box-shadow: 0 10px 50px rgba(6, 20, 27, 0.1);
+            border-radius: 24px;
+            max-width: 420px;
             width: 100%;
             padding: 40px;
         }
@@ -34,64 +38,78 @@
         h2 {
             text-align: center;
             margin-bottom: 30px;
-            color: #000000;
-            font-size: 1.8rem;
+            color: #06141B;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #000000;
+            font-weight: 700;
+            color: #253745;
+            font-size: 0.9rem;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #000000;
-            border-radius: 5px;
+            padding: 14px;
+            border: 1px solid rgba(6, 20, 27, 0.1);
+            border-radius: 12px;
             font-size: 1rem;
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #F8F9F9;
+            color: #06141B;
             font-family: inherit;
+            transition: all 0.2s;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+            border-color: #253745;
+            box-shadow: 0 0 0 3px rgba(37, 55, 69, 0.1);
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #000000;
-            color: #ffffff;
-            border: 2px solid #000000;
-            border-radius: 5px;
+            padding: 14px;
+            background-color: #253745;
+            color: #CCD0CF;
+            border: none;
+            border-radius: 12px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 800;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(37, 55, 69, 0.15);
         }
 
         button:hover {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #1a2833;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 55, 69, 0.25);
         }
 
         .links {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+        }
+
+        .links p {
+            color: #4A5568;
+            font-size: 0.95rem;
         }
 
         .links a {
-            color: #000000;
+            color: #253745;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 700;
         }
 
         .links a:hover {
@@ -99,21 +117,18 @@
         }
 
         .alert {
-            background-color: #ffebee;
-            border: 2px solid #c62828;
-            color: #c62828;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .success {
-            background-color: #e8f5e9;
-            border: 2px solid #2e7d32;
-            color: #2e7d32;
+            background-color: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <h2>Login</h2>
@@ -144,6 +159,7 @@
                     <option value="">Select Role</option>
                     <option value="student">Student</option>
                     <option value="teacher">Teacher</option>
+                    <option value="alumni">Alumni</option>
                 </select>
             </div>
 
@@ -155,4 +171,5 @@
         </div>
     </div>
 </body>
+
 </html>

@@ -43,11 +43,10 @@
             </h2>
         </div>
         
-        @php 
-            $activeSems = json_decode(optional($teacherProfile ?? null)->semester ?? '[]', true) ?? [];
-            if(!is_array($activeSems) && !empty($teacherProfile->semester)) {
-                $activeSems = [$teacherProfile->semester];
-            }
+        @php
+            $rawSem = optional($teacherProfile ?? null)->semester;
+            $activeSems = is_array($rawSem) ? $rawSem : (json_decode($rawSem ?? '[]', true) ?? []);
+            if(!is_array($activeSems)) $activeSems = [];
         @endphp
 
         @if(empty($activeSems))

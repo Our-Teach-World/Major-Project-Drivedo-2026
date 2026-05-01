@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - EduShare</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: #f5f5f5;
+            background-color: #CCD0CF;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 40px 20px;
+            color: #06141B;
         }
 
         .register-container {
             background-color: #ffffff;
-            border: 2px solid #000000;
-            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            max-width: 440px;
+            border: 1px solid rgba(6, 20, 27, 0.05);
+            box-shadow: 0 10px 50px rgba(6, 20, 27, 0.1);
+            border-radius: 24px;
+            max-width: 480px;
             width: 100%;
             padding: 40px;
         }
@@ -34,64 +38,81 @@
         h2 {
             text-align: center;
             margin-bottom: 30px;
-            color: #000000;
-            font-size: 1.8rem;
+            color: #06141B;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #000000;
+            font-weight: 700;
+            color: #253745;
+            font-size: 0.9rem;
         }
 
-        input, select {
+        input,
+        select,
+        textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #000000;
-            border-radius: 5px;
+            padding: 14px;
+            border: 1px solid rgba(6, 20, 27, 0.1);
+            border-radius: 12px;
             font-size: 1rem;
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #F8F9F9;
+            color: #06141B;
             font-family: inherit;
+            transition: all 0.2s;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+            border-color: #253745;
+            box-shadow: 0 0 0 3px rgba(37, 55, 69, 0.1);
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #000000;
-            color: #ffffff;
-            border: 2px solid #000000;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 14px;
+            background-color: #253745;
+            color: #CCD0CF;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 800;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(37, 55, 69, 0.15);
+            margin-top: 10px;
         }
 
         button:hover {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #1a2833;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 55, 69, 0.25);
         }
 
         .links {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+        }
+
+        .links p {
+            color: #4A5568;
+            font-size: 0.95rem;
         }
 
         .links a {
-            color: #000000;
+            color: #253745;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 700;
         }
 
         .links a:hover {
@@ -99,42 +120,50 @@
         }
 
         .alert {
-            background-color: #ffebee;
-            border: 2px solid #c62828;
-            color: #c62828;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            background-color: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .help-text {
-            font-size: 0.85rem;
-            color: #666666;
-            margin-top: 5px;
-        }
-
-        .error-message {
-            color: #c62828;
             font-size: 0.8rem;
-            margin-top: 5px;
+            color: #718096;
+            margin-top: 6px;
             font-weight: 500;
         }
 
-        /* Student-only fields */
+        .error-message {
+            color: #DC2626;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
         /* Dynamic fields handling */
         .dynamic-field {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         .dynamic-field.show {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .section-divider {
             display: none;
             border: none;
-            border-top: 2px dashed #cccccc;
-            margin: 22px 0;
+            border-top: 1px solid rgba(6, 20, 27, 0.08);
+            margin: 25px 0;
         }
 
         .section-divider.show {
@@ -142,15 +171,16 @@
         }
 
         .section-label {
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-            color: #555;
-            margin-bottom: 14px;
+            color: #718096;
+            margin-bottom: 15px;
         }
     </style>
 </head>
+
 <body>
     <div class="register-container">
         <h2>Register</h2>
@@ -189,8 +219,9 @@
                     <option value="">Select Role</option>
                     <option value="student" {{ old('role') === 'student' ? 'selected' : '' }}>Student</option>
                     <option value="teacher" {{ old('role') === 'teacher' ? 'selected' : '' }}>Teacher</option>
+                    <option value="alumni" {{ old('role') === 'alumni' ? 'selected' : '' }}>Alumni</option>
                 </select>
-                <div class="help-text">Teachers need approval before accessing the dashboard</div>
+                <div class="help-text">Teachers and Alumni need approval before accessing the dashboard</div>
             </div>
 
             {{-- ── Dynamic fields based on Role ── --}}
@@ -202,27 +233,43 @@
 
             <div class="form-group dynamic-field" id="enrollment-group">
                 <label for="enrollment_no">Enrollment Number</label>
-                <input type="text" id="enrollment_no" name="enrollment_no" value="{{ old('enrollment_no') }}" placeholder="e.g. 23010101001" style="{{ $errors->has('enrollment_no') ? 'border-color: #c62828;' : '' }}">
+                <input type="text" id="enrollment_no" name="enrollment_no" value="{{ old('enrollment_no') }}"
+                    placeholder="e.g. 23010101001"
+                    style="{{ $errors->has('enrollment_no') ? 'border-color: #DC2626;' : '' }}">
                 @error('enrollment_no')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
+            </div>
+
+            <div class="form-group dynamic-field" id="company-group">
+                <label for="company">Company / Organization</label>
+                <input type="text" id="company" name="company" value="{{ old('company') }}" placeholder="e.g. Google, TCS, or Self-employed">
+            </div>
+
+            <div class="form-group dynamic-field" id="bio-group">
+                <label for="bio">Professional Bio</label>
+                <textarea id="bio" name="bio" rows="3">{{ old('bio') }}</textarea>
+                <div class="help-text">Briefly describe your experience and expertise</div>
             </div>
 
             <div class="form-group dynamic-field" id="branch-group">
                 <label for="branch">Branch</label>
                 <select id="branch" name="branch">
                     <option value="">Select Branch</option>
-                    <option value="Civil Engineering" {{ old('branch') === 'Civil Engineering' ? 'selected' : '' }}>Civil Engineering</option>
+                    <option value="Civil Engineering" {{ old('branch') === 'Civil Engineering' ? 'selected' : '' }}>Civil
+                        Engineering</option>
                     <option value="Mechanical Engineering" {{ old('branch') === 'Mechanical Engineering' ? 'selected' : '' }}>Mechanical Engineering</option>
                     <option value="Electrical Engineering" {{ old('branch') === 'Electrical Engineering' ? 'selected' : '' }}>Electrical Engineering</option>
                     <option value="Electronics Engineering (EL)" {{ old('branch') === 'Electronics Engineering (EL)' ? 'selected' : '' }}>Electronics Engineering (EL)</option>
                     <option value="Computer Science & Engineering" {{ old('branch') === 'Computer Science & Engineering' ? 'selected' : '' }}>Computer Science & Engineering</option>
-                    <option value="Instrumentation & Control Plastic Technology" {{ old('branch') === 'Instrumentation & Control Plastic Technology' ? 'selected' : '' }}>Instrumentation & Control Plastic Technology</option>
-                    <option value="Chemical Engineering" {{ old('branch') === 'Chemical Engineering' ? 'selected' : '' }}>Chemical Engineering</option>
+                    <option value="Instrumentation & Control Plastic Technology" {{ old('branch') === 'Instrumentation & Control Plastic Technology' ? 'selected' : '' }}>Instrumentation & Control Plastic Technology
+                    </option>
+                    <option value="Chemical Engineering" {{ old('branch') === 'Chemical Engineering' ? 'selected' : '' }}>
+                        Chemical Engineering</option>
                 </select>
             </div>
 
-          <div class="form-group dynamic-field" id="semester-group">
+            <div class="form-group dynamic-field" id="semester-group">
                 <label for="semester">Semester</label>
                 <select id="semester" name="semester">
                     <option value="">Select Semester</option>
@@ -251,59 +298,53 @@
             const labelText = document.getElementById('section-label-text');
             const branchGroup = document.getElementById('branch-group');
             const semesterGroup = document.getElementById('semester-group');
-            
+
             const branchInput = document.getElementById('branch');
             const semesterInput = document.getElementById('semester');
 
             const enrollmentGroup = document.getElementById('enrollment-group');
             const enrollmentInput = document.getElementById('enrollment_no');
 
+            const companyGroup = document.getElementById('company-group');
+            const bioGroup = document.getElementById('bio-group');
+
+            // Hide all by default
+            [enrollmentGroup, branchGroup, semesterGroup, companyGroup, bioGroup].forEach(g => g.classList.remove('show'));
+            [enrollmentInput, branchInput, semesterInput].forEach(i => i.required = false);
+
             if (role === 'student') {
-                // Show everything for student
                 divider.classList.add('show');
                 labelDiv.classList.add('show');
                 labelText.innerText = 'Student Details';
-                
+
                 enrollmentGroup.classList.add('show');
                 enrollmentInput.required = true;
-
                 branchGroup.classList.add('show');
                 branchInput.required = true;
-                
                 semesterGroup.classList.add('show');
                 semesterInput.required = true;
-                
+
             } else if (role === 'teacher') {
-                // Show only Branch for teacher
                 divider.classList.add('show');
                 labelDiv.classList.add('show');
                 labelText.innerText = 'Teacher Details';
-                
-                enrollmentGroup.classList.remove('show');
-                enrollmentInput.required = false;
-                enrollmentInput.value = '';
 
                 branchGroup.classList.add('show');
                 branchInput.required = true;
-                
-                semesterGroup.classList.remove('show');
-                semesterInput.required = false;
-                semesterInput.value = ''; // Teacher ke liye semester reset kar do
-                
+
+            } else if (role === 'alumni') {
+                divider.classList.add('show');
+                labelDiv.classList.add('show');
+                labelText.innerText = 'Alumni Details';
+
+                companyGroup.classList.add('show');
+                bioGroup.classList.add('show');
+                branchGroup.classList.add('show');
+                branchInput.required = true;
+
             } else {
-                // Hide everything if no role is selected
                 divider.classList.remove('show');
                 labelDiv.classList.remove('show');
-                enrollmentGroup.classList.remove('show');
-                branchGroup.classList.remove('show');
-                semesterGroup.classList.remove('show');
-                
-                enrollmentInput.required = false;
-                branchInput.required = false;
-                semesterInput.required = false;
-                enrollmentInput.value = '';
-                branchInput.value = '';
-                semesterInput.value = '';
             }
         }
 
@@ -316,4 +357,5 @@
         });
     </script>
 </body>
+
 </html>

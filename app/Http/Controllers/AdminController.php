@@ -24,7 +24,7 @@ class AdminController extends Controller
 
         if ($admin && Hash::check($request->password, $admin->password)) {
             session([
-                'admin_id' => $admin->id, 
+                'admin_id' => $admin->id,
                 'admin_username' => $admin->username,
                 'admin_role' => $admin->role ?? 'hod'
             ]);
@@ -42,39 +42,61 @@ class AdminController extends Controller
     public function dashboard()
     {
         $admin = Admin::find(session('admin_id'));
-        $query = User::whereIn('role', ['teacher', 'student']);
+        $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
 
         if ($admin && $admin->branch) {
-            $query->where(function($q) use ($admin) {
-                $q->whereHas('studentProfile', function($sq) use ($admin) {
-                    $sq->where('branch', $admin->branch);
-                })->orWhereHas('teacherProfile', function($tq) use ($admin) {
-                    $tq->where('branch', $admin->branch);
+            $query->where(function ($q) use ($admin) {
+                $q->where(function ($sq) use ($admin) {
+                    $sq->where('role', 'student')
+                        ->whereHas('studentProfile', function ($sp) use ($admin) {
+                            $sp->where('branch', $admin->branch);
+                        });
+                })->orWhere(function ($tq) use ($admin) {
+                    $tq->where('role', 'teacher')
+                        ->whereHas('teacherProfile', function ($tp) use ($admin) {
+                            $tp->where('branch', $admin->branch);
+                        });
+                })->orWhere(function ($aq) use ($admin) {
+                    $aq->where('role', 'alumni')
+                        ->where('branch', $admin->branch);
                 });
             });
         }
 
         $baseQuery = clone $query;
         $totalUsers = (clone $baseQuery)->count();
-        $pendingUsers = (clone $baseQuery)->where('status', 'pending')->count();
+        $pendingUsers = (clone $baseQuery)->whereIn('status', ['pending', ''])->count();
         $approvedUsers = (clone $baseQuery)->where('status', 'approved')->count();
         $teachers = (clone $baseQuery)->where('role', 'teacher')->count();
         $students = (clone $baseQuery)->where('role', 'student')->count();
+        $alumni = (clone $baseQuery)->where('role', 'alumni')->count();
 
-        return view('admin.dashboard', compact('totalUsers', 'pendingUsers', 'approvedUsers', 'teachers', 'students'));
+        return view('admin.dashboard', compact('totalUsers', 'pendingUsers', 'approvedUsers', 'teachers', 'students', 'alumni'));
     }
 
     public function users(Request $request)
     {
         $admin = Admin::find(session('admin_id'));
-        $query = User::whereIn('role', ['teacher', 'student']);
+        $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
 
         if ($admin && $admin->branch && $admin->role !== 'principal') {
-            $query->where(function($q) use ($admin) {
-                $q->whereHas('studentProfile', function($sq) use ($admin) {
-                    $sq->where('branch', $admin->branch);
-                })->orWhereHas('teacherProfile', function($tq) use ($admin) {
-                    $tq->where('branch', $admin->branch);
+            // Only filter by branch when admin has a branch assigned.
+            // Use role-aware whereHas so users without profile rows are NOT hidden
+            // from admins who have no branch restriction.
+            $query->where(function ($q) use ($admin) {
+                $q->where(function ($sq) use ($admin) {
+                    $sq->where('role', 'student')
+                        ->whereHas('studentProfile', function ($sp) use ($admin) {
+                            $sp->where('branch', $admin->branch);
+                        });
+                })->orWhere(function ($tq) use ($admin) {
+                    $tq->where('role', 'teacher')
+                        ->whereHas('teacherProfile', function ($tp) use ($admin) {
+                            $tp->where('branch', $admin->branch);
+                        });
+                })->orWhere(function ($aq) use ($admin) {
+                    $aq->where('role', 'alumni')
+                        ->where('branch', $admin->branch);
                 });
             });
         }
@@ -90,7 +112,7 @@ class AdminController extends Controller
                         ->orWhere('status', 'LIKE', "%$search%");
                 });
             }
-            
+
             $users = $ajaxQuery->leftJoin('students', 'users.id', '=', 'students.user_id')
                 ->select('users.*', 'students.enrollment_no')
                 ->orderBy('users.id', 'DESC')
@@ -106,7 +128,13 @@ class AdminController extends Controller
     public function approveUser($id)
     {
         $user = User::findOrFail($id);
-        $user->update(['status' => 'approved']);
+        $updateData = ['status' => 'approved'];
+        
+        if ($user->role === 'alumni') {
+            $updateData['application_status'] = 'approved';
+        }
+        
+        $user->update($updateData);
 
         // Always return JSON for fetch()/AJAX calls
         if (request()->ajax() || request()->wantsJson()) {
@@ -143,6 +171,7 @@ class AdminController extends Controller
 
         if ($action === 'approve') {
             User::whereIn('id', $userIds)->update(['status' => 'approved']);
+            User::whereIn('id', $userIds)->where('role', 'alumni')->update(['application_status' => 'approved']);
         } elseif ($action === 'delete') {
             // Need to clean up profiles manually if no cascade
             Student::whereIn('user_id', $userIds)->delete();
@@ -159,7 +188,7 @@ class AdminController extends Controller
             $request->validate([
                 'username' => 'required|unique:users,username|min:6',
                 'password' => 'required|min:4',
-                'role' => 'required|in:teacher,student',
+                'role' => 'required|in:teacher,student,alumni',
                 'enrollment_no' => 'required_if:role,student|nullable|string|unique:students,enrollment_no',
             ]);
 
@@ -200,7 +229,7 @@ class AdminController extends Controller
             $request->validate([
                 'username' => 'required|min:6|unique:users,username,' . $id,
                 'status' => 'required|in:pending,approved',
-                'role' => 'required|in:teacher,student',
+                'role' => 'required|in:teacher,student,alumni',
                 'password' => 'nullable|min:4',
                 'profileImage' => 'nullable|image|max:5000',
                 'enrollment_no' => 'required_if:role,student|nullable|string|unique:students,enrollment_no,' . ($user->studentProfile->id ?? 'NULL'),
@@ -211,6 +240,10 @@ class AdminController extends Controller
                 'status' => $request->status,
                 'role' => $request->role,
             ];
+
+            if ($request->role === 'alumni' && $request->status === 'approved') {
+                $data['application_status'] = 'approved';
+            }
 
             if ($request->password) {
                 $data['password'] = Hash::make($request->password);
@@ -238,13 +271,13 @@ class AdminController extends Controller
     public function export()
     {
         $admin = Admin::find(session('admin_id'));
-        $query = User::whereIn('role', ['teacher', 'student']);
+        $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
 
         if ($admin && $admin->branch) {
-            $query->where(function($q) use ($admin) {
-                $q->whereHas('studentProfile', function($sq) use ($admin) {
+            $query->where(function ($q) use ($admin) {
+                $q->whereHas('studentProfile', function ($sq) use ($admin) {
                     $sq->where('branch', $admin->branch);
-                })->orWhereHas('teacherProfile', function($tq) use ($admin) {
+                })->orWhereHas('teacherProfile', function ($tq) use ($admin) {
                     $tq->where('branch', $admin->branch);
                 });
             });
@@ -252,7 +285,7 @@ class AdminController extends Controller
 
         $users = $query->get();
         $csv = "Id,Name,Role,Password,Reg Date,Status\n";
-        
+
         foreach ($users as $user) {
             $csv .= "{$user->id},{$user->username},{$user->role}," . str_repeat('*', 8) . ",{$user->created_at->format('d-m-Y H:i A')},{$user->status}\n";
         }
@@ -269,10 +302,10 @@ class AdminController extends Controller
 
         if ($admin && $admin->branch) {
             $subjects = Subject::where('branch', $admin->branch)
-                               ->orderBy('semester')
-                               ->orderBy('name')
-                               ->get()
-                               ->groupBy('semester');
+                ->orderBy('semester')
+                ->orderBy('name')
+                ->get()
+                ->groupBy('semester');
         }
 
         return view('admin.subjects', compact('subjects'));
@@ -281,7 +314,7 @@ class AdminController extends Controller
     public function bulkStoreSubject(Request $request)
     {
         $admin = Admin::find(session('admin_id'));
-        
+
         if (!$admin || !$admin->branch) {
             return back()->withErrors(['error' => 'You must have a branch assigned to create subjects.']);
         }
@@ -310,7 +343,7 @@ class AdminController extends Controller
     public function destroySubject($id)
     {
         $subject = Subject::findOrFail($id);
-        
+
         $admin = Admin::find(session('admin_id'));
         if ($admin && $admin->branch === $subject->branch) {
             $subject->delete();

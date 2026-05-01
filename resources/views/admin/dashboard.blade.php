@@ -86,6 +86,10 @@
             <div class="stat-number">{{ $students }}</div>
             <div class="stat-label">Students</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ $alumni }}</div>
+            <div class="stat-label">Alumni</div>
+        </div>
     </div>
 
     <div class="charts-section">
@@ -136,10 +140,10 @@
         const roleChart = new Chart(document.getElementById('roleChart'), {
             type: 'doughnut',
             data: {
-                labels: ['Teachers', 'Students'],
+                labels: ['Teachers', 'Students', 'Alumni'],
                 datasets: [{
-                    data: [{{ $teachers }}, {{ $students }}],
-                    backgroundColor: ['#3b82f6', '#f472b6'],
+                    data: [{{ $teachers }}, {{ $students }}, {{ $alumni }}],
+                    backgroundColor: ['#3b82f6', '#f472b6', '#a855f7'],
                     borderColor: '#000000',
                     borderWidth: 2
                 }]

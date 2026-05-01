@@ -46,98 +46,114 @@
 </div>
 
 <style>
-    /* Brutalist Styles for Notifications */
+    /* Academic Precision Styles for Notifications */
     .noti-bell-btn {
-        background: #fff;
-        border: 2px solid #000;
-        padding: 5px 10px;
-        font-size: 1.5rem;
+        background: #ffffff;
+        border: 1px solid rgba(6, 20, 27, 0.08);
+        padding: 8px 12px;
+        font-size: 1.3rem;
         cursor: pointer;
         position: relative;
-        transition: 0.2s;
-        box-shadow: 3px 3px 0px #000;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 12px;
+        color: #06141B;
     }
+    
     .noti-bell-btn:hover {
-        transform: translate(-1px, -1px);
-        box-shadow: 4px 4px 0px #000;
-    }
-    .noti-bell-btn:active {
-        transform: translate(1px, 1px);
-        box-shadow: 1px 1px 0px #000;
+        background: #F2F4F3;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(6, 20, 27, 0.05);
     }
 
     .noti-badge {
         position: absolute;
-        top: -8px;
-        right: -8px;
-        background: #ff0000;
-        color: #fff;
-        font-size: 0.75rem;
+        top: -5px;
+        right: -5px;
+        background: #253745;
+        color: #CCD0CF;
+        font-size: 0.65rem;
         font-weight: 800;
         padding: 2px 6px;
-        border: 2px solid #000;
-        border-radius: 4px;
-        box-shadow: 1px 1px 0px #000;
+        border: 1px solid rgba(204, 208, 207, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(37, 55, 69, 0.2);
     }
 
     .noti-dropdown {
         display: none;
         position: absolute;
-        top: 50px;
+        top: 60px;
         right: 0;
-        width: 320px;
-        background: #fff;
-        border: 3px solid #000;
-        box-shadow: 8px 8px 0px #000;
+        width: 350px;
+        background: #ffffff;
+        border: 1px solid rgba(6, 20, 27, 0.08);
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(6, 20, 27, 0.12);
         z-index: 9999;
-        max-height: 450px;
-        overflow-y: auto;
+        max-height: 500px;
+        overflow: hidden;
     }
+
     .noti-dropdown.show {
         display: block;
-        animation: brutalPop 0.15s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        animation: smoothSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    @keyframes brutalPop {
-        from { transform: scale(0.95); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
+
+    @keyframes smoothSlide {
+        from { transform: translateY(10px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
     }
 
     .noti-header {
-        padding: 12px;
-        font-weight: 900;
+        padding: 20px 25px;
+        font-weight: 800;
         font-size: 1.1rem;
-        border-bottom: 3px solid #000;
-        background: #f0f0f0;
-        text-transform: uppercase;
+        border-bottom: 1px solid rgba(6, 20, 27, 0.05);
+        background: #ffffff;
+        color: #06141B;
+        letter-spacing: -0.5px;
+    }
+
+    .noti-body {
+        overflow-y: auto;
+        max-height: 400px;
     }
 
     .noti-item {
-        padding: 12px;
-        border-bottom: 2px solid #000;
+        padding: 18px 25px;
+        border-bottom: 1px solid rgba(6, 20, 27, 0.03);
         display: flex;
-        gap: 12px;
+        gap: 15px;
         cursor: pointer;
-        transition: 0.2s;
+        transition: all 0.2s;
     }
+
     .noti-item:hover {
-        background: #fdfdfd;
-        transform: scale(1.02);
+        background: #F8F9F9;
     }
+
     .noti-item.unread {
-        background: #fff9e6; /* Slight highlight for unread */
-        font-weight: 600;
+        background: rgba(37, 55, 69, 0.02);
     }
+
     .noti-item.read {
-        opacity: 0.85;
-        background: #fff;
+        opacity: 0.7;
     }
+
     .noti-item:last-child {
         border-bottom: none;
     }
 
     .noti-icon {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         flex-shrink: 0;
+        background: #F2F4F3;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
     }
 
     .noti-content {
@@ -145,28 +161,31 @@
     }
 
     .noti-title {
-        font-weight: 800;
+        font-weight: 700;
         font-size: 0.95rem;
-        margin-bottom: 2px;
-        color: #000;
+        margin-bottom: 3px;
+        color: #06141B;
     }
+
     .noti-msg {
         font-size: 0.85rem;
-        color: #333;
-        line-height: 1.3;
+        color: #4A5568;
+        line-height: 1.4;
     }
+
     .noti-time {
-        font-size: 0.7rem;
-        color: #666;
-        margin-top: 5px;
-        font-style: italic;
+        font-size: 0.75rem;
+        color: #A0AEC0;
+        margin-top: 6px;
+        font-weight: 500;
     }
 
     .noti-empty {
-        padding: 30px 15px;
+        padding: 50px 25px;
         text-align: center;
-        color: #666;
-        font-weight: 700;
+        color: #A0AEC0;
+        font-weight: 600;
+        font-size: 0.9rem;
     }
 </style>
 

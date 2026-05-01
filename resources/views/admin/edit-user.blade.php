@@ -169,6 +169,7 @@
                     <select id="role" name="role" required onchange="toggleEnrollment(this.value)">
                         <option value="teacher" {{ old('role', $user->role) == 'teacher' ? 'selected' : '' }}>Teacher</option>
                         <option value="student" {{ old('role', $user->role) == 'student' ? 'selected' : '' }}>Student</option>
+                        <option value="alumni" {{ old('role', $user->role) == 'alumni' ? 'selected' : '' }}>Alumni</option>
                     </select>
                 </div>
 

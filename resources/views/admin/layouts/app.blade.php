@@ -29,12 +29,12 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #f5f5f5;
-            color: #000000;
+            background-color: #CCD0CF;
+            color: #06141B;
             display: flex;
             min-height: 100vh;
             overflow-x: hidden;
@@ -44,7 +44,7 @@
         .sidebar {
             width: 260px;
             background-color: #ffffff;
-            border-right: 2px solid #000000;
+            border-right: 1px solid rgba(6, 20, 27, 0.08);
             display: flex;
             flex-direction: column;
             position: fixed;
@@ -57,7 +57,7 @@
 
         .sidebar-header {
             padding: 20px;
-            border-bottom: 2px solid #000000;
+            border-bottom: 1px solid rgba(6, 20, 27, 0.08);
             text-align: center;
         }
 
@@ -72,75 +72,71 @@
         .profile-circle {
             width: 45px;
             height: 45px;
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #253745;
+            color: #CCD0CF;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.3rem;
             font-weight: bold;
-            border: 2px solid #000000;
             flex-shrink: 0;
         }
 
         .admin-name {
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1.1rem;
+            color: #06141B;
             margin: 0;
         }
 
         .admin-branch {
-            font-size: 0.8rem;
-            color: #333333;
-            background: #e0e0e0;
-            padding: 4px 10px;
-            border-radius: 15px;
+            font-size: 0.75rem;
+            color: #253745;
+            background: #F2F4F3;
+            padding: 4px 12px;
+            border-radius: 20px;
             display: inline-block;
-            border: 1px solid #000;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .nav-links {
             list-style: none;
-            padding: 15px;
+            padding: 20px 15px;
             flex: 1;
         }
 
         .nav-item {
             padding: 0;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .nav-link {
             display: block;
             padding: 12px 15px;
-            color: #000000;
+            color: #4A5568;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.2s ease-in-out;
-            border-radius: 8px;
-            border: 2px solid transparent;
+            border-radius: 12px;
         }
 
         .nav-link:hover {
-            border: 2px solid #000000;
-            box-shadow: 3px 3px 0px #000;
-            background-color: #ffffff;
-            transform: translateY(-2px);
+            background-color: rgba(37, 55, 69, 0.05);
+            color: #253745;
         }
         
         .nav-link.active {
-            background-color: #000000;
-            color: #ffffff;
-            border: 2px solid #000000;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+            background-color: #253745;
+            color: #CCD0CF;
+            box-shadow: 0px 8px 16px rgba(37, 55, 69, 0.15);
         }
 
         .sidebar-footer {
-            padding: 15px 20px;
-            border-top: 2px solid #000000;
+            padding: 20px;
+            border-top: 1px solid rgba(6, 20, 27, 0.08);
         }
 
         /* ── Main Content Area ── */
@@ -157,40 +153,43 @@
         /* ── Top Navbar ── */
         .top-navbar {
             background-color: #ffffff;
-            border-bottom: 2px solid #000000;
-            padding: 15px 20px;
+            border-bottom: 1px solid rgba(6, 20, 27, 0.08);
+            padding: 15px 30px;
             display: flex;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 90;
+            box-shadow: 0 2px 10px rgba(6, 20, 27, 0.02);
         }
 
         .hamburger {
             display: none;
-            background: none;
-            border: 2px solid #000;
-            font-size: 1.5rem;
+            background: #F2F4F3;
+            border: 1px solid rgba(6, 20, 27, 0.1);
+            font-size: 1.2rem;
             cursor: pointer;
-            padding: 2px 8px;
-            border-radius: 5px;
+            padding: 6px 10px;
+            border-radius: 8px;
             margin-right: 15px;
+            color: #06141B;
         }
         
         .hamburger:hover {
-            background: #000;
-            color: #fff;
+            background: #E2E8F0;
         }
 
         .page-title {
-            font-weight: 700;
-            font-size: 1.3rem;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #06141B;
+            letter-spacing: -0.5px;
             flex: 1;
         }
 
         /* ── Content Wrapper ── */
         .content-wrapper {
-            padding: 30px 20px;
+            padding: 40px 30px;
             flex: 1;
             max-width: 1400px;
             width: 100%;
@@ -199,75 +198,80 @@
 
         /* ── Common Components ── */
         .btn {
-            padding: 8px 16px;
-            border: 2px solid #000000;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 5px;
-            font-weight: 600;
+            padding: 10px 20px;
+            border: 1px solid rgba(37, 55, 69, 0.1);
+            background-color: #F8F9F9;
+            color: #253745;
+            border-radius: 10px;
+            font-weight: 700;
             cursor: pointer;
             text-decoration: none;
-            transition: 0.3s;
+            transition: all 0.2s;
             display: inline-block;
+            font-size: 0.9rem;
         }
 
         .btn:hover {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #E2E8F0;
+            transform: translateY(-1px);
         }
 
         .btn-primary { 
-            background-color: #000000; 
-            color: #ffffff; 
+            background-color: #253745; 
+            color: #CCD0CF; 
+            border: none;
+            box-shadow: 0 4px 12px rgba(37, 55, 69, 0.15);
         }
 
         .btn-primary:hover { 
-            background-color: #333333; 
+            background-color: #1a2833; 
+            box-shadow: 0 6px 15px rgba(37, 55, 69, 0.25);
         }
         
         .btn-success { 
-            background-color: #2e7d32; 
+            background-color: #059669; 
             color: #ffffff; 
-            border-color: #2e7d32; 
+            border: none;
         }
         .btn-success:hover { 
-            background-color: #1b5e20; 
+            background-color: #047857; 
         }
         
         .btn-danger { 
-            background-color: #c62828; 
+            background-color: #DC2626; 
             color: #ffffff; 
-            border-color: #c62828; 
+            border: none;
         }
         .btn-danger:hover { 
-            background-color: #ad1457; 
+            background-color: #B91C1C; 
         }
 
         .card {
             background-color: #ffffff;
-            border: 2px solid #000000;
-            border-radius: 8px;
-            padding: 20px;
+            border: 1px solid rgba(6, 20, 27, 0.05);
+            border-radius: 20px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 4px 4px 0px #000;
+            box-shadow: 0px 4px 25px rgba(6, 20, 27, 0.04);
         }
 
         .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border: 2px solid #000;
-            font-weight: bold;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            border: 1px solid transparent;
         }
 
-        .alert-success { background-color: #d1fae5; color: #065f46; }
-        .alert-danger { background-color: #fee2e2; color: #991b1b; }
+        .alert-success { background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0; }
+        .alert-danger { background-color: #FEF2F2; color: #991B1B; border-color: #FECACA; }
 
         /* ── Custom Modal ── */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(6, 20, 27, 0.4);
+            backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -283,12 +287,11 @@
 
         .modal-box {
             background: #fff;
-            border: 2px solid #000;
-            box-shadow: 8px 8px 0px #000;
-            padding: 25px;
-            border-radius: 8px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(6, 20, 27, 0.15);
+            padding: 40px;
             width: 90%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
             transform: translateY(-20px);
             transition: transform 0.3s ease;
@@ -298,8 +301,8 @@
             transform: translateY(0);
         }
 
-        .modal-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; color: #dc2626; }
-        .modal-body { margin-bottom: 25px; color: #333; font-size: 1.05rem; }
+        .modal-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; color: #06141B; letter-spacing: -0.5px; }
+        .modal-body { margin-bottom: 30px; color: #4A5568; font-size: 1.1rem; line-height: 1.6; }
         
         .modal-actions {
             display: flex;
@@ -311,6 +314,7 @@
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
+                box-shadow: 20px 0 50px rgba(6, 20, 27, 0.1);
             }
             .sidebar.show {
                 transform: translateX(0);
@@ -321,6 +325,9 @@
             }
             .hamburger {
                 display: block;
+            }
+            .top-navbar {
+                padding: 15px 20px;
             }
         }
     </style>
@@ -397,6 +404,9 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.timetable.setup') }}" class="nav-link {{ request()->routeIs('admin.timetable.setup') ? 'active' : '' }}">🗓️ Schedule Timetable</a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.certchain.templates.index') }}" class="nav-link {{ request()->routeIs('admin.certchain.templates.*') ? 'active' : '' }}">📜 CertChain Templates</a>
+                </li>
             @endif
         </ul>
 
@@ -418,7 +428,7 @@
                     @include('partials.nav-notifications')
                 @endif
                 @if($adminUser && request()->routeIs('admin.dashboard'))
-                    <span style="font-weight: 600; border: 2px solid #000; padding: 5px 10px; border-radius: 20px; background: #f0f0f0;">
+                    <span style="font-weight: 800; border: 1px solid rgba(6, 20, 27, 0.1); padding: 6px 15px; border-radius: 20px; background: #F2F4F3; font-size: 0.85rem; color: #253745;">
                        👋 Hi, {{ $adminUser->username }}
                     </span>
                 @endif

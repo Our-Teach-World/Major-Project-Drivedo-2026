@@ -136,6 +136,7 @@
                         <option value="">-- Select Role --</option>
                         <option value="teacher" {{ old('role') == 'teacher' ? 'selected' : '' }}>Teacher</option>
                         <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student</option>
+                        <option value="alumni" {{ old('role') == 'alumni' ? 'selected' : '' }}>Alumni</option>
                     </select>
                 </div>
 

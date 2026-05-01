@@ -34,8 +34,8 @@ class User extends Authenticatable
     public function subjects()
     {
         return $this->belongsToMany(Subject::class, 'subject_teacher', 'user_id', 'subject_id')
-                    ->withPivot('academic_year')
-                    ->withTimestamps();
+            ->withPivot('academic_year')
+            ->withTimestamps();
     }
 
     // Student ke liye: Uski attendance fetch karne ke liye
@@ -59,6 +59,27 @@ class User extends Authenticatable
     public function uploads()
     {
         return $this->hasMany(Upload::class, 'user_id');
+    }
+
+    // Mentorship relations
+    public function mentorshipRequests()
+    {
+        return $this->hasMany(MentorshipRequest::class, 'student_id');
+    }
+
+    public function alumniRequests()
+    {
+        return $this->hasMany(MentorshipRequest::class, 'alumni_id');
+    }
+
+    public function studentSessions()
+    {
+        return $this->hasMany(MentorshipSession::class, 'student_id');
+    }
+
+    public function alumniSessions()
+    {
+        return $this->hasMany(MentorshipSession::class, 'alumni_id');
     }
 }
 
