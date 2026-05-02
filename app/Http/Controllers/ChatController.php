@@ -68,7 +68,7 @@ class ChatController extends Controller
             $apiKey = config('services.nvidia.key') ?? env('NVIDIA_API_KEY');
             $apiUrl = env('NVIDIA_API_URL', 'https://integrate.api.nvidia.com/v1/chat/completions');
 
-            $response = Http::withHeaders([
+            $response = Http::timeout(120)->connectTimeout(30)->withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Accept' => 'application/json',
             ])->post($apiUrl, [
@@ -139,7 +139,7 @@ class ChatController extends Controller
                 "User Request: " . $userMessage . "\n\n" .
                 "Resume Text:\n" . $extractedText;
 
-            $response = Http::withHeaders([
+            $response = Http::timeout(120)->connectTimeout(30)->withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Accept' => 'application/json',
             ])->post($apiUrl, [
