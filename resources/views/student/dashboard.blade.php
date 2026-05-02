@@ -414,6 +414,55 @@
             overflow-y: auto;
             padding: 25px;
             background-color: #F8F9F9;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message-wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        .message-wrapper.user {
+            justify-content: flex-end;
+        }
+
+        .message-wrapper.assistant, .message-wrapper.system {
+            justify-content: flex-start;
+        }
+
+        .message {
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 85%;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .message.user {
+            background-color: #253745;
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant {
+            background-color: #ffffff;
+            color: #06141B;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(6, 20, 27, 0.08);
+        }
+
+        .message.system {
+            background-color: rgba(37, 55, 69, 0.05);
+            color: #718096;
+            font-size: 0.8rem;
+            font-style: italic;
+            border-radius: 10px;
+            max-width: 95%;
         }
 
         .chat-input-group {
@@ -739,20 +788,45 @@
 
                     <div id="resumeSection" class="section">
                         <h2>📄 Resume Advisor</h2>
-                        <p style="margin-bottom: 20px; color: #666;">Upload your resume for AI analysis and improvements.
-                        </p>
+                        <p style="margin-bottom: 20px; color: #666;">Upload your resume for AI analysis and improvements.</p>
+                        
                         <div class="resume-advisor">
-                            <div class="drop-zone" id="resumeDropZone"
-                                onclick="document.getElementById('resumeFileInput').click()">
+                            <!-- Drop Zone -->
+                            <div class="drop-zone" id="resumeDropZone" onclick="document.getElementById('resumeFileInput').click()">
                                 <div style="font-size: 3rem; margin-bottom: 10px;">📁</div>
                                 <div style="font-weight: 700;">Click to upload your resume</div>
-                                <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">PDF, DOCX, TXT · Max 5 MB
-                                </div>
+                                <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">PDF, DOCX, TXT · Max 5 MB</div>
                             </div>
-                            <input type="file" id="resumeFileInput" accept=".pdf,.docx,.txt" style="display:none;"
-                                onchange="handleResumeFile(this.files[0])">
+                            <input type="file" id="resumeFileInput" accept=".pdf,.docx,.txt" style="display:none;" onchange="handleResumeFile(this.files[0])">
 
-                            <div style="display: none;" id="resumeResponseBox">
+                            <!-- File Loaded State -->
+                            <div id="resumeLoaded" style="display: none; align-items: center; gap: 15px; background: #f0f4f8; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #d1d9e0;">
+                                <div id="resumeLoadedName" style="font-weight: 600; flex: 1; color: #253745;"></div>
+                                <button onclick="clearResume()" style="background: none; border: none; color: #e53e3e; font-weight: 700; cursor: pointer; font-size: 0.85rem;">✕ REMOVE</button>
+                            </div>
+
+                            <!-- Optional Message -->
+                            <div id="resumeOptions" style="margin-bottom: 20px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; color: #253745; text-transform: uppercase; letter-spacing: 0.5px;">Additional Notes (Optional)</label>
+                                <textarea id="resumeMessage" placeholder="e.g. Focus on my technical skills for a Web Developer role..." 
+                                    style="width: 100%; padding: 15px; border: 1px solid rgba(6, 20, 27, 0.1); border-radius: 12px; font-size: 0.9rem; min-height: 100px; resize: vertical;"></textarea>
+                            </div>
+
+                            <!-- Action Button -->
+                            <button id="analyseBtn" onclick="analyseResume()" disabled 
+                                style="width: 100%; padding: 18px; background: #253745; color: #CCD0CF; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;">
+                                ⚡ ANALYSE RESUME
+                            </button>
+
+                            <!-- Result Box -->
+                            <div id="resumeResponse" style="display: none; margin-top: 35px; border-top: 2px dashed #eee; padding-top: 30px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #253745;">📋 AI FEEDBACK & SUGGESTIONS</h3>
+                                    <button onclick="copyResumeResponse()" style="padding: 8px 16px; background: #ffffff; border: 1px solid #d1d9e0; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                                        COPY TEXT
+                                    </button>
+                                </div>
+                                <div id="resumeResponseBody" style="background: #ffffff; border: 1px solid rgba(6,20,27,0.05); padding: 25px; border-radius: 20px; line-height: 1.8; font-size: 0.95rem; white-space: pre-wrap; color: #2d3748; box-shadow: 0 4px 15px rgba(0,0,0,0.02);"></div>
                             </div>
                         </div>
                     </div>
@@ -1238,25 +1312,21 @@
 
 
         function addMessage(type, content) {
-
             const messages = document.getElementById('chatMessages');
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper ' + type;
 
             const msgDiv = document.createElement('div');
-
             msgDiv.className = 'message ' + type;
-
             msgDiv.textContent = content;
 
-            messages.appendChild(msgDiv);
-
+            wrapper.appendChild(msgDiv);
+            messages.appendChild(wrapper);
             messages.scrollTop = messages.scrollHeight;
 
-
-
             // Add to history
-
             chatHistory.push({ role: type === 'user' ? 'user' : 'assistant', content: content });
-
         }
 
 
