@@ -11,26 +11,26 @@
 <div class="grid lg:grid-cols-3 gap-6">
     {{-- Left: Editor --}}
     <div class="lg:col-span-2 space-y-5">
-        <div class="card p-6">
-            <h3 class="font-semibold text-gray-800 mb-4">Template Info</h3>
+        <div class="bg-white border-2 border-black p-6 rounded-xl shadow-[4px_4px_0px_#000]">
+            <h3 class="font-bold text-gray-900 mb-4">TEMPLATE INFO</h3>
             <div class="grid md:grid-cols-3 gap-4 mb-4">
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Template Name <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-bold text-black uppercase mb-1.5">Template Name <span class="text-red-500">*</span></label>
                     <input type="text" name="name" value="{{ old('name', $template->name ?? '') }}" required
-                        class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full border-2 border-black rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-[2px_2px_0px_#000]"
                         placeholder="e.g. Participation Certificate">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Type <span class="text-red-500">*</span></label>
-                    <select name="type" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-bold text-black uppercase mb-1.5">Type <span class="text-red-500">*</span></label>
+                    <select name="type" required class="w-full border-2 border-black rounded-lg px-3 py-2.5 text-sm focus:outline-none shadow-[2px_2px_0px_#000]">
                         @foreach(['participation','achievement','completion','winner'] as $t)
                         <option value="{{ $t }}" {{ old('type', $template->type ?? '') === $t ? 'selected' : '' }}>{{ ucfirst($t) }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Border Style</label>
-                    <select name="border_style" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-bold text-black uppercase mb-1.5">Border Style</label>
+                    <select name="border_style" class="w-full border-2 border-black rounded-lg px-3 py-2.5 text-sm focus:outline-none shadow-[2px_2px_0px_#000]">
                         @foreach(['classic','modern','minimal'] as $b)
                         <option value="{{ $b }}" {{ old('border_style', $template->border_style ?? 'classic') === $b ? 'selected' : '' }}>{{ ucfirst($b) }}</option>
                         @endforeach
@@ -39,19 +39,21 @@
                 <div class="flex items-center gap-2 mt-4">
                     <input type="checkbox" name="is_active" value="1" id="is_active"
                         {{ old('is_active', $template->is_active ?? true) ? 'checked' : '' }}
-                        class="rounded border-gray-300 text-blue-600">
-                    <label for="is_active" class="text-sm text-gray-700">Active (available for issuing)</label>
+                        class="rounded border-2 border-black text-black w-5 h-5">
+                    <label for="is_active" class="text-sm font-bold text-black uppercase">Active</label>
                 </div>
             </div>
         </div>
 
-        <div class="card p-6">
+        <div class="bg-white border-2 border-black p-6 rounded-xl shadow-[4px_4px_0px_#000]">
             <div class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold text-gray-800">HTML Content <span class="text-red-500">*</span></h3>
-                <button type="button" onclick="previewTemplate()" class="text-xs text-blue-600 hover:underline border border-blue-200 px-3 py-1 rounded-lg">👁 Preview</button>
+                <h3 class="font-bold text-gray-900">HTML CONTENT <span class="text-red-500">*</span></h3>
+                <button type="button" onclick="previewTemplate()" class="text-xs font-bold text-black bg-blue-100 hover:bg-blue-200 border-2 border-black px-4 py-1.5 rounded-lg transition-all shadow-[2px_2px_0px_#000]">
+                    👁 LIVE PREVIEW
+                </button>
             </div>
             <textarea name="html_content" id="htmlEditor" rows="22" required
-                class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                class="w-full border-2 border-black rounded-lg px-3 py-2.5 text-xs font-mono focus:outline-none shadow-[2px_2px_0px_#000] resize-none"
                 placeholder="Paste your certificate HTML here...">{{ old('html_content', $template->html_content ?? $defaultHtml ?? '') }}</textarea>
         </div>
     </div>
@@ -104,26 +106,16 @@
             </ul>
         </div>
 
-        <div class="flex flex-col gap-2">
-            <button type="submit" class="btn-primary text-center">
-                {{ isset($template) ? '💾 Update Template' : '✅ Save Template' }}
+        <div class="flex flex-col gap-3">
+            <button type="submit" class="w-full py-4 bg-black text-white border-2 border-black rounded-xl font-black text-sm uppercase tracking-widest hover:bg-gray-800 transition-all shadow-[6px_6px_0px_#3b82f6]">
+                {{ isset($template) ? 'Update Template' : 'Save Template' }}
             </button>
-            <a href="{{ route('admin.certchain.templates.index') }}" class="text-center text-sm text-gray-400 hover:text-gray-600">Cancel</a>
+            <a href="{{ route('admin.certchain.templates.index') }}" class="text-center text-xs font-bold text-gray-500 hover:text-black uppercase tracking-wider">Cancel</a>
         </div>
     </div>
 </div>
 </form>
 
-{{-- Preview iframe modal --}}
-<div id="previewModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl w-full max-w-5xl h-[80vh] flex flex-col">
-        <div class="flex items-center justify-between p-4 border-b">
-            <h3 class="font-semibold">Template Preview (Sample Data)</h3>
-            <button onclick="closePreview()" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
-        </div>
-        <iframe id="previewFrame" class="flex-1 w-full rounded-b-xl"></iframe>
-    </div>
-</div>
 
 @push('scripts')
 <script>
@@ -151,18 +143,15 @@ function previewTemplate() {
     };
     let rendered = html;
     Object.entries(sample).forEach(([k,v]) => {
-        // We use string concatenation here to prevent Blade from parsing these as directives
         const p3 = '{' + '{' + '{' + k + '}' + '}' + '}';
         const p2 = '{' + '{' + k + '}' + '}';
         rendered = rendered.replaceAll(p3, v).replaceAll(p2, v);
     });
-    const frame = document.getElementById('previewFrame');
-    frame.srcdoc = rendered;
-    document.getElementById('previewModal').classList.remove('hidden');
-}
-
-function closePreview() {
-    document.getElementById('previewModal').classList.add('hidden');
+    
+    const previewWindow = window.open('', '_blank');
+    previewWindow.document.open();
+    previewWindow.document.write(rendered);
+    previewWindow.document.close();
 }
 </script>
 @endpush

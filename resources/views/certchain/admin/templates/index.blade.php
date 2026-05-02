@@ -10,32 +10,32 @@
 @section('content')
 <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
     @forelse($templates as $template)
-    <div class="card p-5 flex flex-col">
+    <div class="bg-white border-2 border-black p-5 flex flex-col rounded-xl shadow-[6px_6px_0px_#000] hover:transform hover:-translate-y-1 transition-all">
         <div class="flex items-start justify-between mb-3">
             <div>
-                <h3 class="font-semibold text-gray-800">{{ $template->name }}</h3>
-                <p class="text-xs text-gray-400 mt-0.5">{{ ucfirst($template->type) }} &bull; {{ ucfirst($template->border_style) }} border</p>
+                <h3 class="font-bold text-gray-900">{{ $template->name }}</h3>
+                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider mt-0.5">{{ $template->type }}</p>
             </div>
-            <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $template->is_active ? 'badge-verified' : 'bg-gray-100 text-gray-500' }}">
-                {{ $template->is_active ? 'Active' : 'Inactive' }}
+            <span class="px-2 py-0.5 border-2 border-black rounded-lg text-xs font-bold {{ $template->is_active ? 'bg-green-100' : 'bg-gray-100 text-gray-500' }}">
+                {{ $template->is_active ? 'ACTIVE' : 'INACTIVE' }}
             </span>
         </div>
-        <p class="text-xs text-gray-500 mb-3">Created by {{ $template->creator->name ?? '—' }} &bull; {{ $template->created_at->format('d M Y') }}</p>
-        <p class="text-xs text-gray-400 mb-4">{{ $template->certificates()->count() }} certificates issued using this template</p>
+        <p class="text-xs text-gray-600 mb-1 font-medium">By: {{ $template->creator->name ?? 'Admin' }}</p>
+        <p class="text-xs text-gray-500 mb-4 font-mono">{{ $template->certificates()->count() }} ISSUED</p>
 
         <div class="mt-auto flex gap-2">
             <a href="{{ route('admin.certchain.templates.preview', $template) }}" target="_blank"
-                class="flex-1 text-center px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition">
-                👁 Preview
+                class="flex-1 text-center px-3 py-2 border-2 border-black rounded-lg text-xs font-bold hover:bg-gray-50 transition-all">
+                👁 PREVIEW
             </a>
             <a href="{{ route('admin.certchain.templates.edit', $template) }}"
-                class="flex-1 text-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 transition">
-                ✏ Edit
+                class="flex-1 text-center px-3 py-2 bg-black text-white border-2 border-black rounded-lg text-xs font-bold hover:bg-gray-800 transition-all shadow-[2px_2px_0px_#3b82f6]">
+                ✏ EDIT
             </a>
             @if($template->certificates()->count() === 0)
-            <form method="POST" action="{{ route('admin.certchain.templates.destroy', $template) }}" onsubmit="return confirm('Delete this template?')">
+            <form method="POST" action="{{ route('admin.certchain.templates.destroy', $template) }}" class="confirm-delete-form">
                 @csrf @method('DELETE')
-                <button class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs hover:bg-red-100 transition">🗑</button>
+                <button class="px-3 py-2 bg-red-100 text-red-600 border-2 border-black rounded-lg text-xs hover:bg-red-200 transition-all">🗑</button>
             </form>
             @endif
         </div>

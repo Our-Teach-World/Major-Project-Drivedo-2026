@@ -44,7 +44,7 @@ class AdminController extends Controller
         $admin = Admin::find(session('admin_id'));
         $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
 
-        if ($admin && $admin->branch) {
+        if ($admin && $admin->branch && !in_array($admin->role, ['principal', 'admin'])) {
             $query->where(function ($q) use ($admin) {
                 $q->where(function ($sq) use ($admin) {
                     $sq->where('role', 'student')
@@ -79,7 +79,7 @@ class AdminController extends Controller
         $admin = Admin::find(session('admin_id'));
         $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
 
-        if ($admin && $admin->branch && $admin->role !== 'principal') {
+        if ($admin && $admin->branch && !in_array($admin->role, ['principal', 'admin'])) {
             // Only filter by branch when admin has a branch assigned.
             // Use role-aware whereHas so users without profile rows are NOT hidden
             // from admins who have no branch restriction.
@@ -200,7 +200,7 @@ class AdminController extends Controller
             ]);
 
             $admin = Admin::find(session('admin_id'));
-            $branch = ($admin && $admin->role !== 'principal') ? $admin->branch : null;
+            $branch = ($admin && !in_array($admin->role, ['principal', 'admin'])) ? $admin->branch : null;
 
             if ($request->role === 'student') {
                 Student::create([
@@ -273,7 +273,7 @@ class AdminController extends Controller
         $admin = Admin::find(session('admin_id'));
         $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
 
-        if ($admin && $admin->branch) {
+        if ($admin && $admin->branch && !in_array($admin->role, ['principal', 'admin'])) {
             $query->where(function ($q) use ($admin) {
                 $q->whereHas('studentProfile', function ($sq) use ($admin) {
                     $sq->where('branch', $admin->branch);
@@ -300,7 +300,7 @@ class AdminController extends Controller
         $admin = Admin::find(session('admin_id'));
         $subjects = collect();
 
-        if ($admin && $admin->branch) {
+        if ($admin && $admin->branch && !in_array($admin->role, ['principal', 'admin'])) {
             $subjects = Subject::where('branch', $admin->branch)
                 ->orderBy('semester')
                 ->orderBy('name')

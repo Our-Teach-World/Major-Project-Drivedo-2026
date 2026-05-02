@@ -33,7 +33,7 @@ class TemplateController extends Controller
         CertificateTemplate::create([
             ...$data,
             'is_active'  => $request->boolean('is_active', true),
-            'created_by' => auth()->id(),
+            'created_by' => session('admin_id'),
         ]);
 
         return redirect()->route('admin.certchain.templates.index')->with('success', 'Template created successfully!');
