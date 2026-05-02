@@ -68,14 +68,17 @@ class ChatController extends Controller
             $apiKey = config('services.nvidia.key') ?? env('NVIDIA_API_KEY');
             $apiUrl = env('NVIDIA_API_URL', 'https://integrate.api.nvidia.com/v1/chat/completions');
 
-            $response = Http::withToken($apiKey)
-                ->post($apiUrl, [
-                    'model' => 'meta/llama-3.1-8b-instruct', // Default model
-                    'messages' => $messages,
-                    'temperature' => 0.5,
-                    'top_p' => 1,
-                    'max_tokens' => 1024,
-                ]);
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Accept' => 'application/json',
+            ])->post($apiUrl, [
+                'model' => 'moonshotai/kimi-k2.6',
+                'messages' => $messages,
+                'temperature' => 1.0,
+                'top_p' => 1.0,
+                'max_tokens' => 4096,
+                'chat_template_kwargs' => ['thinking' => false],
+            ]);
 
             if ($response->successful()) {
                 $aiData = $response->json();
@@ -136,16 +139,19 @@ class ChatController extends Controller
                 "User Request: " . $userMessage . "\n\n" .
                 "Resume Text:\n" . $extractedText;
 
-            $response = Http::withToken($apiKey)
-                ->post($apiUrl, [
-                    'model' => 'meta/llama-3.1-8b-instruct',
-                    'messages' => [
-                        ['role' => 'system', 'content' => $systemPrompt],
-                        ['role' => 'user', 'content' => 'Analyze this resume.']
-                    ],
-                    'temperature' => 0.7,
-                    'max_tokens' => 2048,
-                ]);
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Accept' => 'application/json',
+            ])->post($apiUrl, [
+                'model' => 'moonshotai/kimi-k2.6',
+                'messages' => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => 'Analyze this resume.']
+                ],
+                'temperature' => 0.7,
+                'max_tokens' => 4096,
+                'chat_template_kwargs' => ['thinking' => false],
+            ]);
 
             if ($response->successful()) {
                 $aiData = $response->json();
