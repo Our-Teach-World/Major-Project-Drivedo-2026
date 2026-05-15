@@ -1,6 +1,6 @@
 @extends('teacher.layout')
 
-@section('page_title', 'Smart Quiz Management')
+@section('page_title', 'Quiz Management')
 
 @section('content')
 <style>

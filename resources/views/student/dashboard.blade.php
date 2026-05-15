@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - EduShare</title>
+    <title>Student Dashboard - CampusCore</title>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -636,7 +636,7 @@
 
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-title">🎓 EduShare</div>
+                <div class="sidebar-title">🎓 CampusCore</div>
                 <button class="close-sidebar-btn" onclick="toggleSidebar()">✕</button>
             </div>
 
@@ -685,7 +685,7 @@
 
                 {{-- Smart Quiz System --}}
                 <a href="{{ route('student.quizzes.index') }}" class="nav-item {{ Route::is('student.quizzes.*') ? 'active' : '' }}">
-                    <span class="nav-icon">📝</span> Smart Quiz
+                    <span class="nav-icon">📝</span>Quiz
                 </a>
 
                 {{-- Book Exchange Feature --}}

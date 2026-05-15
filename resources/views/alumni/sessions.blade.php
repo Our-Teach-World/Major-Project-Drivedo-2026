@@ -1,6 +1,6 @@
 @extends('alumni.layouts.app')
 
-@section('title', 'My Sessions - EduShare')
+@section('title', 'My Sessions - CampusCore')
 @section('header_title', '📅 My Mentorship Sessions')
 
 @section('content')

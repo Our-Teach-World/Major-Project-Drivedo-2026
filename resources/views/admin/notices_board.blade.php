@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Staff Notice Board - EduShare Admin')
+@section('title', 'Staff Notice Board - CampusCore Admin')
 @section('header_title', '📢 Staff Notice Board')
 
 @section('content')

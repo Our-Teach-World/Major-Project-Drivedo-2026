@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Manage HODs - EduShare Principal')
+@section('title', 'Manage HODs - CampusCore Principal')
 
 @section('header_title', 'HOD Management')
 
@@ -29,7 +29,7 @@
 
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 800; text-transform: uppercase; margin-bottom: 8px;">Email (Optional)</label>
-                    <input type="email" name="email" style="width: 100%; padding: 12px; border: 3px solid #000; font-weight: 600; font-size: 1.1rem; outline: none;" placeholder="hod@edushare.com">
+                    <input type="email" name="email" style="width: 100%; padding: 12px; border: 3px solid #000; font-weight: 600; font-size: 1.1rem; outline: none;" placeholder="hod@campuscore.com">
                 </div>
 
                 <div style="margin-bottom: 20px;">

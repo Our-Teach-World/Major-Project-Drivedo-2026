@@ -15,7 +15,7 @@ class PrincipalSeeder extends Seeder
         \App\Models\Admin::updateOrCreate(
             ['username' => 'Principal'],
             [
-                'email' => 'principal@edushare.com',
+                'email' => 'principal@campuscore.com',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
                 'role' => 'principal',
                 'branch' => 'null'

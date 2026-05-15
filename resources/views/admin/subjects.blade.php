@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Manage Subjects - EduShare Admin')
+@section('title', 'Manage Subjects - CampusCore Admin')
 @section('header_title', '📚 Manage Subjects')
 
 @push('styles')

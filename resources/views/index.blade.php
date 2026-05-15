@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduShare | Architectural Academic Intelligence</title>
+    <title>CampusCore | Architectural Academic Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -318,7 +318,7 @@
 <body>
 
     <nav id="navbar" class="nav-fixed">
-        <a href="/" class="logo">EDUSHARE.</a>
+        <a href="/" class="logo">CAMPUSCORE.</a>
         <div class="nav-links">
             <a href="#intelligence">Intelligence</a>
             <a href="#connectivity">Connectivity</a>
@@ -413,7 +413,7 @@
 
     <footer>
         <div class="footer-col">
-            <a href="/" class="footer-logo">EDUSHARE.</a>
+            <a href="/" class="footer-logo">CAMPUSCORE.</a>
             <p style="opacity: 0.6; max-width: 300px;">Setting the global standard for architectural academic intelligence and document management.</p>
         </div>
         <div class="footer-col">

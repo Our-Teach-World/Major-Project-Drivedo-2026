@@ -1,6 +1,6 @@
 @extends('alumni.layouts.app')
 
-@section('title', 'Session Chat - EduShare')
+@section('title', 'Session Chat - CampusCore')
 @section('header_title', '💬 Mentorship Chat')
 
 @push('styles')

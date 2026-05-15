@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduShare - Teacher Panel</title>
+    <title>CampusCore - Teacher Panel</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -73,7 +73,7 @@
     <aside id="mainSidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-outline-variant flex flex-col md:translate-x-0">
         <div class="h-[72px] flex items-center justify-between px-6 border-b border-outline-variant">
             <span class="text-xl font-black text-primary select-none">
-                📚 EduShare
+                📚 CampusCore
             </span>
             <button onclick="toggleSidebar()" class="md:hidden text-on-surface-variant hover:text-on-surface">
                 <span class="material-symbols-outlined">close</span>
@@ -108,7 +108,7 @@
 
             <!-- Smart Quiz System -->
             <a href="{{ route('teacher.quizzes.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('teacher.quizzes.*') ? 'bg-primary text-on-primary font-semibold shadow-md' : 'text-on-surface-variant hover:bg-primary/5 hover:text-primary' }} transition-all">
-                <span class="material-symbols-outlined">quiz</span> Smart Quiz
+                <span class="material-symbols-outlined">quiz</span> Quiz
             </a>
         </nav>
     </aside>

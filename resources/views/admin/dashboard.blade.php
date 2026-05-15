@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Dashboard Overview - EduShare Admin')
+@section('title', 'Dashboard Overview - CampusCore Admin')
 @section('header_title', '📊 Dashboard Overview')
 
 @push('styles')

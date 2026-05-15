@@ -61,7 +61,7 @@
             </div>
             <button type="button" onclick="addQuestion()" class="btn-action px-6 py-3 flex items-center gap-2 text-xs shadow-lg active:scale-95">
                 <span class="material-symbols-outlined text-sm">add_circle</span>
-                ADD ITEM
+                ADD 
             </button>
         </div>
 

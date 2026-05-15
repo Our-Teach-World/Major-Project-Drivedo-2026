@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Manage Users - EduShare Admin')
+@section('title', 'Manage Users - CampusCore Admin')
 @section('header_title', '👥 Manage Users')
 
 @push('styles')

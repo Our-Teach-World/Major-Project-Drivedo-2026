@@ -91,13 +91,16 @@ class QuizAttemptController extends Controller
             ->firstOrFail();
 
         // Get class average for comparison
-        $avgScore = QuizResult::where('quiz_id', $quiz->id)->avg('score');
+        $avgScore = QuizResult::where('quiz_id', $quiz->id)->avg('score') ?? 0;
+        
+        // Get highest score for comparison
+        $maxScore = QuizResult::where('quiz_id', $quiz->id)->max('score') ?? 0;
         
         // Get rank
         $rank = QuizResult::where('quiz_id', $quiz->id)
             ->where('score', '>', $result->score)
             ->count() + 1;
 
-        return view('student.quiz.result', compact('quiz', 'result', 'avgScore', 'rank'));
+        return view('student.quiz.result', compact('quiz', 'result', 'avgScore', 'maxScore', 'rank'));
     }
 }

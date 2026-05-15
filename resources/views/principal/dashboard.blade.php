@@ -1,8 +1,8 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Principal Dashboard - EduShare')
+@section('title', 'Principal Dashboard - CampusCore')
 
-@section('header_title', 'EduShare Principal Panel')
+@section('header_title', 'CampusCore Principal Panel')
 
 @section('content')
 <div class="row">
@@ -41,10 +41,10 @@
         <div style="background: #000; color: #fff; border: 4px solid #000; padding: 30px; box-shadow: 8px 8px 0px #333;">
             <h3 style="font-weight: 900; margin-bottom: 20px; text-transform: uppercase; color: #fff;">Principal's Message</h3>
             <p style="font-size: 1.1rem; font-weight: 600; line-height: 1.6; opacity: 0.9;">
-                Welcome to the EduShare Command Center. As the Principal, you have complete oversight over all departments, faculty, and students. Use the controls to maintain academic excellence and ensure smooth communication across the institution.
+                Welcome to the CampusCore Command Center. As the Principal, you have complete oversight over all departments, faculty, and students. Use the controls to maintain academic excellence and ensure smooth communication across the institution.
             </p>
             <div style="margin-top: 20px; font-weight: 800; font-size: 1.2rem; border-top: 1px solid #333; pt: 15px;">
-                - EduShare System
+                - CampusCore System
             </div>
         </div>
     </div>

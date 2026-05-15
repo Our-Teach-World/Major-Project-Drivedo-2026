@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Successful - EduShare</title>
+    <title>Registration Successful - CampusCore</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -122,7 +122,7 @@
             <p><strong>Students</strong> can log in immediately.</p>
         </div>
 
-        <p>Thank you for joining EduShare!</p>
+        <p>Thank you for joining CampusCore!</p>
 
         <div class="links">
             <a href="{{ route('login') }}" class="btn">Go to Login</a>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard - EduShare')</title>
+    <title>@yield('title', 'Admin Dashboard - CampusCore')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
@@ -423,7 +423,7 @@
     <main class="main-content">
         <header class="top-navbar">
             <button class="hamburger" onclick="toggleSidebar()">☰</button>
-            <div class="page-title">@yield('header_title', 'EduShare Admin')</div>
+            <div class="page-title">@yield('header_title', 'CampusCore Admin')</div>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 20px;">
                 @if(session('admin_role') !== 'principal')
                     @include('partials.nav-notifications')

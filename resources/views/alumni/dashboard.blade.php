@@ -1,6 +1,6 @@
 @extends('alumni.layouts.app')
 
-@section('title', 'Alumni Dashboard - EduShare')
+@section('title', 'Alumni Dashboard - CampusCore')
 @section('header_title', '📊 Dashboard Overview')
 
 @push('styles')
