@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Certchain\Admin;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Controllers\Controller;
 use App\Models\CertificateTemplate;
 use Illuminate\Http\Request;
 
@@ -35,7 +33,7 @@ class TemplateController extends Controller
         CertificateTemplate::create([
             ...$data,
             'is_active'  => $request->boolean('is_active', true),
-            'created_by' => auth()->id(),
+            'created_by' => session('admin_id') ?? 1,
         ]);
 
         return redirect()->route('admin.certchain.templates.index')->with('success', 'Template created successfully!');

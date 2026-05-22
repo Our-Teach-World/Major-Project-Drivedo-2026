@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Certchain\Admin;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Controllers\Controller;
 use App\Models\Certificate;
 use App\Models\Event;
 use App\Models\User;
