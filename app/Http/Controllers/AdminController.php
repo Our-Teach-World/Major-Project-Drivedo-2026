@@ -10,6 +10,10 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Subject;
 use App\Services\UploadService;
+use App\Models\Certificate;
+use App\Models\Event;
+use App\Models\BlockchainBlock;
+use App\Services\BlockchainService;
 
 class AdminController extends Controller
 {
@@ -39,7 +43,7 @@ class AdminController extends Controller
         return back()->withErrors(['login' => 'Invalid credentials.']);
     }
 
-    public function dashboard()
+    public function dashboard(BlockchainService $blockchain)
     {
         $admin = Admin::find(session('admin_id'));
         $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
@@ -71,7 +75,26 @@ class AdminController extends Controller
         $students = (clone $baseQuery)->where('role', 'student')->count();
         $alumni = (clone $baseQuery)->where('role', 'alumni')->count();
 
-        return view('admin.dashboard', compact('totalUsers', 'pendingUsers', 'approvedUsers', 'teachers', 'students', 'alumni'));
+        // Certchain Stats
+        $stats = [
+            'total_users'        => User::count(),
+            'total_events'       => Event::count(),
+            'total_certificates' => Certificate::count(),
+            'total_blocks'       => BlockchainBlock::count(),
+            'emails_sent'        => Certificate::where('email_sent', true)->count(),
+            'revoked'            => Certificate::where('status', 'revoked')->count(),
+        ];
+
+        $recentCertificates = Certificate::with(['event', 'issuer'])->latest()->limit(8)->get();
+        $chainStatus = $blockchain->validateChain();
+
+        $monthlyStats = Certificate::selectRaw("MONTH(created_at) as month, COUNT(*) as count")
+            ->whereRaw("YEAR(created_at) = ?", [date('Y')])
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        return view('admin.dashboard', compact('totalUsers', 'pendingUsers', 'approvedUsers', 'teachers', 'students', 'alumni', 'stats', 'recentCertificates', 'chainStatus', 'monthlyStats'));
     }
 
     public function users(Request $request)
