@@ -1,10 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.certchain_app')
 @section('title','Admin Dashboard')
 @section('page-title','Admin Dashboard')
 @section('page-subtitle','System overview and blockchain status')
 
 @section('header-actions')
-<a href="{{ route('certificates.create') }}" class="btn-primary text-sm">+ Issue Certificate</a>
+<a href="{{ route('teacher.certchain.certificates.create') }}" class="btn-primary text-sm">+ Issue Certificate</a>
 @endsection
 
 @section('content')
@@ -42,7 +42,7 @@
             @if(!$chainStatus['valid']) — {{ count($chainStatus['errors']) }} error(s) detected @endif
         </p>
     </div>
-    <a href="{{ route('admin.blockchain') }}" class="btn-primary text-sm">View Ledger</a>
+    <a href="{{ route('admin.certchain.blockchain') }}" class="btn-primary text-sm">View Ledger</a>
 </div>
 
 <div class="grid lg:grid-cols-2 gap-6">
@@ -50,7 +50,7 @@
     <div class="card p-5">
         <div class="flex items-center justify-between mb-4">
             <h3 class="font-semibold text-gray-800">Recent Certificates</h3>
-            <a href="{{ route('certificates.index') }}" class="text-xs text-blue-600 hover:underline">View all →</a>
+            <a href="{{ route('teacher.certchain.certificates.index') }}" class="text-xs text-blue-600 hover:underline">View all →</a>
         </div>
         <div class="space-y-3">
             @forelse($recentCertificates as $cert)

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.certchain_app')
 @section('title','Blockchain Ledger')
 @section('page-title','Blockchain Ledger')
 @section('page-subtitle','Immutable chain of all issued certificates')

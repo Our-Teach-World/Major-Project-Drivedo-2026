@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.certchain_app')
 @section('title','My Profile')
 @section('page-title','My Profile')
 @section('page-subtitle','Update your information and signature')

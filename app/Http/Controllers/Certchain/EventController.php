@@ -2,25 +2,23 @@
 
 namespace App\Http\Controllers\Certchain;
 
-use App\Models\CertchainEvent as Event;
+use App\Http\Controllers\Controller;
+
+use App\Models\Event;
 use Illuminate\Http\Request;
 
-class EventController extends \App\Http\Controllers\Controller
+class EventController extends Controller
 {
     public function index()
     {
-        // Only show events created by this teacher
-        $events = Event::where('created_by', auth()->id())
-            ->with(['certificates'])
-            ->latest()
-            ->paginate(12);
-        return view('certchain.faculty.events.index', compact('events'));
+        $events = Event::with(['creator', 'certificates'])
+            ->latest()->paginate(12);
+        return view('faculty.events.index', compact('events'));
     }
 
     public function create()
     {
-        $teacherBranch = auth()->user()->teacherProfile->branch ?? '';
-        return view('certchain.faculty.events.create', compact('teacherBranch'));
+        return view('faculty.events.create');
     }
 
     public function store(Request $request)
@@ -35,22 +33,18 @@ class EventController extends \App\Http\Controllers\Controller
             'department' => 'nullable|string|max:255',
         ]);
 
-        $data['created_by'] = auth()->id();
-        $data['status'] = 'active';
-
-        Event::create($data);
+        Event::create([...$data, 'created_by' => auth()->id()]);
 
         return redirect()->route('teacher.certchain.events.index')->with('success', 'Event created successfully!');
     }
 
     public function edit(Event $event)
     {
-        return view('certchain.faculty.events.edit', compact('event'));
+        return view('faculty.events.edit', compact('event'));
     }
 
     public function update(Request $request, Event $event)
     {
-
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',

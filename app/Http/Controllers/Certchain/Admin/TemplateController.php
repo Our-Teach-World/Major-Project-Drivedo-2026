@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Certchain\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\CertchainTemplate as CertificateTemplate;
+
+use App\Http\Controllers\Controller;
+use App\Models\CertificateTemplate;
 use Illuminate\Http\Request;
 
 class TemplateController extends Controller
@@ -11,13 +13,13 @@ class TemplateController extends Controller
     public function index()
     {
         $templates = CertificateTemplate::with('creator')->latest()->paginate(10);
-        return view('certchain.admin.templates.index', compact('templates'));
+        return view('admin.templates.index', compact('templates'));
     }
 
     public function create()
     {
         $defaultHtml = $this->getDefaultTemplate();
-        return view('certchain.admin.templates.create', compact('defaultHtml'));
+        return view('admin.templates.create', compact('defaultHtml'));
     }
 
     public function store(Request $request)
@@ -33,7 +35,7 @@ class TemplateController extends Controller
         CertificateTemplate::create([
             ...$data,
             'is_active'  => $request->boolean('is_active', true),
-            'created_by' => session('admin_id'),
+            'created_by' => auth()->id(),
         ]);
 
         return redirect()->route('admin.certchain.templates.index')->with('success', 'Template created successfully!');
@@ -41,7 +43,7 @@ class TemplateController extends Controller
 
     public function edit(CertificateTemplate $template)
     {
-        return view('certchain.admin.templates.edit', compact('template'));
+        return view('admin.templates.edit', compact('template'));
     }
 
     public function update(Request $request, CertificateTemplate $template)

@@ -2,13 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\CertchainCertificate;
-use App\Models\CertchainTemplate;
-use App\Models\CertchainEvent;
+use App\Models\Certificate;
+use App\Models\Event;
 use App\Models\User;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class CertificateService
@@ -17,19 +15,13 @@ class CertificateService
         protected BlockchainService $blockchain
     ) {}
 
-    /**
-     * Issue a single certificate — full pipeline:
-     * create record → mine block → generate QR → generate PDF → send email
-     */
-    public function issue(array $data, User $issuedBy): CertchainCertificate
+    public function issue(array $data, User $issuedBy): Certificate
     {
-        // 1. Generate unique Certificate ID
         $certId = $this->blockchain->generateCertificateId(
             strtoupper(substr($data['event_name'] ?? 'CERT', 0, 4))
         );
 
-        // 2. Create certificate record
-        $certificate = CertchainCertificate::create([
+        $certificate = Certificate::create([
             'certificate_id'    => $certId,
             'event_id'          => $data['event_id'],
             'template_id'       => $data['template_id'],
@@ -45,32 +37,26 @@ class CertificateService
             'status'            => 'issued',
         ]);
 
-        // 3. Mine blockchain block
         $this->blockchain->mineBlock($certificate->fresh(['event', 'issuer']));
 
-        // 4. Generate QR code
         $qrPath = $this->generateQRCode($certificate);
         $certificate->update(['qr_code_path' => $qrPath]);
 
-        // 5. Generate PDF
         $pdfPath = $this->generatePDF($certificate->fresh(['event', 'issuer', 'template', 'blockchainBlock']));
         $certificate->update(['pdf_path' => $pdfPath]);
 
         return $certificate->fresh();
     }
 
-    /**
-     * Issue certificates in bulk from CSV-like array
-     */
     public function bulkIssue(array $studentsData, int $eventId, int $templateId, User $issuedBy): array
     {
         $results = ['success' => [], 'failed' => []];
 
         foreach ($studentsData as $student) {
             try {
-                $student['event_id'] = $eventId;
+                $student['event_id']    = $eventId;
                 $student['template_id'] = $templateId;
-                $student['event_name'] = CertchainEvent::find($eventId)?->name ?? 'EVENT';
+                $student['event_name']  = Event::find($eventId)?->name ?? 'EVENT';
                 $cert = $this->issue($student, $issuedBy);
                 $results['success'][] = $cert;
             } catch (\Exception $e) {
@@ -84,91 +70,172 @@ class CertificateService
         return $results;
     }
 
-    /**
-     * Generate QR code image pointing to verification URL
-     */
-    protected function generateQRCode(CertchainCertificate $certificate): string
+    public function generateQRCode(Certificate $certificate): string
     {
         $verifyUrl = route('verify.certificate', ['id' => $certificate->certificate_id]);
-        $filename = "generate-pdf/qrcodes/{$certificate->certificate_id}.svg";
-        $directory = public_path('generate-pdf/qrcodes');
-
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
+        $filename  = "qrcodes/{$certificate->certificate_id}.svg";
 
         $qr = QrCode::format('svg')
-            ->size(200)
+            ->size(150)
             ->errorCorrection('H')
             ->generate($verifyUrl);
 
-        File::put(public_path($filename), $qr);
+        Storage::disk('public')->put($filename, $qr);
         return $filename;
     }
 
-    /**
-     * Generate PDF certificate using template
-     */
-    public function generatePDF(CertchainCertificate $certificate): string
+    public function generatePDF(Certificate $certificate): string
     {
-        $template = $certificate->template;
         $event    = $certificate->event;
         $issuer   = $certificate->issuer;
         $block    = $certificate->blockchainBlock;
 
-        $qrCodeData = null;
-        if ($certificate->qr_code_path && File::exists(public_path($certificate->qr_code_path))) {
-            $qrCodeData = File::get(public_path($certificate->qr_code_path));
-        }
+        $collegeName = config('app.college_name', env('COLLEGE_NAME', 'Your College'));
+        $studentName = $certificate->student_name;
+        $enrollment  = $certificate->enrollment_number;
+        $branch      = $certificate->student_branch ?? '';
+        $year        = $certificate->student_year ?? '';
+        $eventName   = $event->name;
+        $eventDate   = $event->event_date->format('d M Y');
+        $venue       = $event->venue ?? '';
+        $achievement = $certificate->achievement;
+        $issuedDate  = $certificate->issued_date->format('d M Y');
+        $issuedBy    = $issuer->name;
+        $designation = $issuer->designation ?? '';
+        $certId      = $certificate->certificate_id;
+        $blockHash   = $block ? substr($block->block_hash, 0, 24) . '...' : '';
 
-        // Render template with real data
-        $rendered = $template->render([
-            'student_name'      => $certificate->student_name,
-            'enrollment_number' => $certificate->enrollment_number,
-            'student_branch'    => $certificate->student_branch ?? '',
-            'student_year'      => $certificate->student_year ?? '',
-            'event_name'        => $event->name,
-            'event_date'        => $event->event_date->format('d M Y'),
-            'event_type'        => $event->event_type,
-            'venue'             => $event->venue ?? '',
-            'achievement'       => $certificate->achievement,
-            'description'       => $certificate->description ?? '',
-            'issued_date'       => $certificate->issued_date->format('d M Y'),
-            'issued_by'         => $issuer->name,
-            'issuer_designation'=> $issuer->designation ?? '',
-            'certificate_id'    => $certificate->certificate_id,
-            'block_hash'        => $block ? substr($block->block_hash, 0, 16) . '...' : '',
-            'college_name'      => config('app.college_name', env('COLLEGE_NAME', 'Your College')),
-            'qr_code'           => $qrCodeData ?? '',
-        ]);
+        // A4 Landscape: 297mm x 210mm
+        $pdf = new \FPDF('L', 'mm', 'A4');
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
 
-        $pdf = Pdf::loadHTML($rendered)
-            ->setPaper('a4', 'landscape')
-            ->setOptions([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled'      => true,
-                'defaultFont'          => 'serif',
-            ]);
+        // ── Outer Navy Border ──────────────────────────
+        $pdf->SetFillColor(26, 58, 92);
+        $pdf->Rect(0, 0, 297, 8, 'F');    // Top
+        $pdf->Rect(0, 202, 297, 8, 'F'); // Bottom
+        $pdf->Rect(0, 0, 8, 210, 'F');   // Left
+        $pdf->Rect(289, 0, 8, 210, 'F'); // Right
 
-        $filename = "generate-pdf/certificates/{$certificate->certificate_id}.pdf";
-        $directory = public_path('generate-pdf/certificates');
+        // ── Inner Gold Border ──────────────────────────
+        $pdf->SetDrawColor(201, 168, 76);
+        $pdf->SetLineWidth(0.5);
+        $pdf->Rect(11, 11, 275, 188);
 
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
+        // ── College Name ── Y=32 ───────────────────────
+        $pdf->SetFont('Times', '', 8);
+        $pdf->SetTextColor(26, 58, 92);
+        $pdf->SetXY(0, 32);
+        $pdf->Cell(297, 5, strtoupper($collegeName), 0, 1, 'C');
 
-        File::put(public_path($filename), $pdf->output());
+        // ── Gold Line Top ──────────────────────────────
+        $pdf->SetDrawColor(201, 168, 76);
+        $pdf->SetLineWidth(0.3);
+        $pdf->Line(100, 38, 197, 38);
+
+        // ── Certificate Title ── Y=40 ──────────────────
+        $pdf->SetFont('Times', 'B', 34);
+        $pdf->SetTextColor(201, 168, 76);
+        $pdf->SetXY(0, 40);
+        $pdf->Cell(297, 14, 'Certificate', 0, 1, 'C');
+
+        // ── Achievement ── Y=54 ───────────────────────
+        $pdf->SetFont('Times', '', 8);
+        $pdf->SetTextColor(136, 136, 136);
+        $pdf->SetXY(0, 55);
+        $pdf->Cell(297, 5, 'OF ' . strtoupper($achievement), 0, 1, 'C');
+
+        // ── Gold Line Bottom ───────────────────────────
+        $pdf->Line(80, 62, 217, 62);
+
+        // ── Presented To ── Y=65 ──────────────────────
+        $pdf->SetFont('Times', 'I', 10);
+        $pdf->SetTextColor(153, 153, 153);
+        $pdf->SetXY(0, 65);
+        $pdf->Cell(297, 7, 'This is proudly presented to', 0, 1, 'C');
+
+        // ── Student Name ── Y=73 ──────────────────────
+        $pdf->SetFont('Times', 'B', 28);
+        $pdf->SetTextColor(26, 58, 92);
+        $pdf->SetXY(0, 73);
+        $pdf->Cell(297, 13, $studentName, 0, 1, 'C');
+
+        // Name underline
+        $nameWidth = $pdf->GetStringWidth($studentName) + 20;
+        $nameX     = (297 - $nameWidth) / 2;
+        $pdf->SetDrawColor(201, 168, 76);
+        $pdf->SetLineWidth(0.5);
+        $pdf->Line($nameX, 86, $nameX + $nameWidth, 86);
+
+        // ── Enrollment Info ── Y=90 ───────────────────
+        $pdf->SetFont('Times', '', 9);
+        $pdf->SetTextColor(85, 85, 85);
+        $pdf->SetXY(0, 90);
+        $infoLine = 'Enrollment No: ' . $enrollment . '   |   ' . $branch . '   |   ' . $year;
+        $pdf->Cell(297, 6, $infoLine, 0, 1, 'C');
+
+        // ── Body Text ── Y=100 ────────────────────────
+        $pdf->SetFont('Times', '', 9);
+        $pdf->SetTextColor(85, 85, 85);
+        $pdf->SetXY(0, 100);
+        $descriptionText = $certificate->description ? $certificate->description : 'for successfully participating in the';
+        $pdf->Cell(297, 6, $descriptionText, 0, 1, 'C');
+
+        $pdf->SetFont('Times', 'B', 11);
+        $pdf->SetTextColor(26, 58, 92);
+        $pdf->SetXY(0, 107);
+        $pdf->Cell(297, 7, $eventName, 0, 1, 'C');
+
+        $pdf->SetFont('Times', '', 9);
+        $pdf->SetTextColor(85, 85, 85);
+        $pdf->SetXY(0, 115);
+        $pdf->Cell(297, 6, 'held on ' . $eventDate . ' at ' . $venue, 0, 1, 'C');
+
+        // ── Signature Lines ── Y=145 ──────────────────
+        $sigY = 148;
+        $pdf->SetDrawColor(170, 170, 170);
+        $pdf->SetLineWidth(0.2);
+        $pdf->Line(50, $sigY, 140, $sigY);    // Left
+        $pdf->Line(157, $sigY, 247, $sigY);   // Right
+
+        // Left: Issued By
+        $pdf->SetFont('Times', 'B', 9);
+        $pdf->SetTextColor(51, 51, 51);
+        $pdf->SetXY(50, $sigY + 2);
+        $pdf->Cell(90, 5, $issuedBy, 0, 0, 'C');
+
+        // Right: Date
+        $pdf->SetXY(157, $sigY + 2);
+        $pdf->Cell(90, 5, 'Date: ' . $issuedDate, 0, 0, 'C');
+
+        // Left: Designation
+        $pdf->SetFont('Times', 'I', 7);
+        $pdf->SetTextColor(102, 102, 102);
+        $pdf->SetXY(50, $sigY + 8);
+        $pdf->Cell(90, 4, $designation, 0, 0, 'C');
+
+        // ── Bottom Info ── Y=196-199 ──────────────────
+        $verifyUrl = route('verify.certificate', ['id' => $certificate->certificate_id]);
+
+        $pdf->SetXY(14, 196);
+        $pdf->SetFont('Times', '', 5.5);
+        $pdf->SetTextColor(170, 170, 170);
+        $pdf->Cell(269, 3, 'Certificate ID: ' . $certId . '   |   Block Hash: ' . $blockHash, 0, 0, 'L');
+
+        $pdf->SetXY(14, 199);
+        $pdf->Cell(269, 3, 'Verify at: ' . $verifyUrl, 0, 0, 'L');
+
+        // ── Save PDF ───────────────────────────────────
+        $filename = "certificates/{$certificate->certificate_id}.pdf";
+        Storage::disk('public')->put($filename, $pdf->Output('S'));
 
         return $filename;
     }
 
-    /**
-     * Send certificate email to student
-     */
-    public function sendEmail(CertchainCertificate $certificate): bool
+    public function sendEmail(Certificate $certificate): bool
     {
         try {
-            $pdfPath = public_path($certificate->pdf_path);
+            $pdfPath = Storage::disk('public')->path($certificate->pdf_path);
 
             Mail::send('emails.certificate', [
                 'certificate' => $certificate,

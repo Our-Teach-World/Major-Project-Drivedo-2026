@@ -1,163 +1,93 @@
-@extends('admin.layouts.app')
+@extends('layouts.certchain_app')
+@section('title','Admin Dashboard')
+@section('page-title','Admin Dashboard')
+@section('page-subtitle','System overview and blockchain status')
 
-@section('title', 'Dashboard Overview - CampusCore Admin')
-@section('header_title', '📊 Dashboard Overview')
-
-@push('styles')
-    <style>
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background-color: #ffffff;
-            border: 2px solid #000000;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 4px 4px 0px #000;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #000000;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            font-weight: 600;
-            color: #333333;
-        }
-
-        .charts-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .chart-container {
-            background-color: #ffffff;
-            border: 2px solid #000000;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 4px 4px 0px #000;
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .charts-section { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-@endpush
-
-@section('content')
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalUsers }}</div>
-            <div class="stat-label">Total Users</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $approvedUsers }}</div>
-            <div class="stat-label">Approved Users</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $pendingUsers }}</div>
-            <div class="stat-label">Pending Approvals</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $teachers }}</div>
-            <div class="stat-label">Teachers</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $students }}</div>
-            <div class="stat-label">Students</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $alumni }}</div>
-            <div class="stat-label">Alumni</div>
-        </div>
-    </div>
-
-    <div class="charts-section">
-        <div class="chart-container">
-            <h2 style="margin-bottom: 15px;">User Status Distribution</h2>
-            <canvas id="userStatusChart" height="200"></canvas>
-        </div>
-        <div class="chart-container">
-            <h2 style="margin-bottom: 15px;">Role Distribution</h2>
-            <canvas id="roleChart" height="200"></canvas>
-        </div>
-    </div>
-
-    <!-- Staff Notice Board has been moved to a dedicated page accessible via the sidebar -->
-
+@section('header-actions')
+<a href="{{ route('teacher.certchain.certificates.create') }}" class="btn-primary text-sm">+ Issue Certificate</a>
 @endsection
 
-@push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // User Status Chart
-        const userStatusChart = new Chart(document.getElementById('userStatusChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Approved', 'Pending'],
-                datasets: [{
-                    label: 'Users',
-                    data: [{{ $approvedUsers }}, {{ $pendingUsers }}],
-                    backgroundColor: ['#4ade80', '#fbbf24'],
-                    borderColor: ['#000000', '#000000'],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
-                    }
-                }
-            }
-        });
+@section('content')
+{{-- Stats Grid --}}
+<div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+    @php
+    $statCards = [
+        ['label'=>'Total Users',       'value'=>$stats['total_users'],        'icon'=>'👥', 'color'=>'blue'],
+        ['label'=>'Events',            'value'=>$stats['total_events'],        'icon'=>'📅', 'color'=>'purple'],
+        ['label'=>'Certificates',      'value'=>$stats['total_certificates'],  'icon'=>'📜', 'color'=>'green'],
+        ['label'=>'Blockchain Blocks', 'value'=>$stats['total_blocks'],        'icon'=>'⛓',  'color'=>'yellow'],
+        ['label'=>'Emails Sent',       'value'=>$stats['emails_sent'],         'icon'=>'📧', 'color'=>'teal'],
+        ['label'=>'Revoked',           'value'=>$stats['revoked'],             'icon'=>'🚫', 'color'=>'red'],
+    ];
+    @endphp
+    @foreach($statCards as $card)
+    <div class="card p-5">
+        <p class="text-2xl mb-2">{{ $card['icon'] }}</p>
+        <p class="text-2xl font-bold text-gray-800">{{ number_format($card['value']) }}</p>
+        <p class="text-xs text-gray-500 mt-1">{{ $card['label'] }}</p>
+    </div>
+    @endforeach
+</div>
 
-        const roleChart = new Chart(document.getElementById('roleChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Teachers', 'Students', 'Alumni'],
-                datasets: [{
-                    data: [{{ $teachers }}, {{ $students }}, {{ $alumni }}],
-                    backgroundColor: ['#3b82f6', '#f472b6', '#a855f7'],
-                    borderColor: '#000000',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
+{{-- Blockchain Status --}}
+<div class="card p-5 mb-6 flex items-center gap-4 {{ $chainStatus['valid'] ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500' }}">
+    <span class="text-3xl">{{ $chainStatus['valid'] ? '✅' : '🚨' }}</span>
+    <div class="flex-1">
+        <p class="font-semibold text-gray-800">Blockchain Chain Integrity: 
+            <span class="{{ $chainStatus['valid'] ? 'text-green-600' : 'text-red-600' }}">
+                {{ $chainStatus['valid'] ? 'VALID & INTACT' : 'COMPROMISED' }}
+            </span>
+        </p>
+        <p class="text-sm text-gray-500">{{ $chainStatus['total_blocks'] }} blocks in chain
+            @if(!$chainStatus['valid']) — {{ count($chainStatus['errors']) }} error(s) detected @endif
+        </p>
+    </div>
+    <a href="{{ route('admin.certchain.blockchain') }}" class="btn-primary text-sm">View Ledger</a>
+</div>
 
-        });
-    </script>
-@endpush
+<div class="grid lg:grid-cols-2 gap-6">
+    {{-- Recent Certificates --}}
+    <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-gray-800">Recent Certificates</h3>
+            <a href="{{ route('teacher.certchain.certificates.index') }}" class="text-xs text-blue-600 hover:underline">View all →</a>
+        </div>
+        <div class="space-y-3">
+            @forelse($recentCertificates as $cert)
+            <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-800 truncate">{{ $cert->student_name }}</p>
+                    <p class="text-xs text-gray-400">{{ $cert->certificate_id }} &bull; {{ $cert->event->name ?? 'N/A' }}</p>
+                </div>
+                <span class="ml-2 px-2 py-0.5 rounded-full text-xs font-medium {{ $cert->status === 'issued' ? 'badge-verified' : 'badge-revoked' }}">
+                    {{ ucfirst($cert->status) }}
+                </span>
+            </div>
+            @empty
+            <p class="text-sm text-gray-400 text-center py-4">No certificates issued yet.</p>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- Monthly Chart --}}
+    <div class="card p-5">
+        <h3 class="font-semibold text-gray-800 mb-4">Certificates This Year</h3>
+        <div class="space-y-2">
+            @php
+            $months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            $max = max(array_values($monthlyStats) ?: [1]);
+            @endphp
+            @foreach($months as $i => $month)
+            @php $count = $monthlyStats[$i+1] ?? 0; $width = $max > 0 ? round(($count/$max)*100) : 0; @endphp
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-gray-400 w-7">{{ $month }}</span>
+                <div class="flex-1 bg-gray-100 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full transition-all" style="width:{{ $width }}%"></div>
+                </div>
+                <span class="text-xs text-gray-500 w-6 text-right">{{ $count }}</span>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endsection

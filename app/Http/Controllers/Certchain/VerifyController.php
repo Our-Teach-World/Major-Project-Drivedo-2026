@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers\Certchain;
 
-use App\Models\CertchainCertificate as Certificate;
+use App\Http\Controllers\Controller;
+
+use App\Models\Certificate;
 use App\Services\BlockchainService;
 use Illuminate\Http\Request;
 
-class VerifyController extends \App\Http\Controllers\Controller
+class VerifyController extends Controller
 {
-    public function __construct(protected BlockchainService $blockchain) {}
+    public function __construct(protected BlockchainService $blockchain)
+    {
+    }
 
     public function index()
     {
-        return view('certchain.verify.index');
+        return view('verify.index');
     }
 
     public function search(Request $request)
@@ -36,7 +40,7 @@ class VerifyController extends \App\Http\Controllers\Controller
 
         $verification = $this->blockchain->verifyCertificate($certificate);
 
-        return view('certchain.verify.result', compact('certificate', 'verification'));
+        return view('verify.result', compact('certificate', 'verification'));
     }
 
     public function certificate(string $id)
@@ -46,6 +50,6 @@ class VerifyController extends \App\Http\Controllers\Controller
 
         $verification = $this->blockchain->verifyCertificate($certificate);
 
-        return view('certchain.verify.result', compact('certificate', 'verification'));
+        return view('verify.result', compact('certificate', 'verification'));
     }
 }

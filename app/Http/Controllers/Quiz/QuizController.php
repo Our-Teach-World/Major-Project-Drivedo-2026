@@ -98,6 +98,38 @@ class QuizController extends Controller
         return view('quiz.results', compact('quiz', 'results'));
     }
 
+    
+    public function showAttempt(Quiz $quiz, QuizResult $result)
+    {
+        if ($quiz->created_by !== Auth::id()) {
+            abort(403);
+        }
+
+        $quiz->load('questions');
+        $userAnswers = \App\Models\QuizAnswer::where('user_id', $result->user_id)
+            ->whereIn('question_id', $quiz->questions->pluck('id'))
+            ->get()->keyBy('question_id');
+
+        return view('quiz.attempt', compact('quiz', 'result', 'userAnswers'));
+    }
+
+    public function resetAttempt(Quiz $quiz, QuizResult $result)
+    {
+        if ($quiz->created_by !== Auth::id()) {
+            abort(403);
+        }
+
+        // Delete the user's answers for this quiz
+        \App\Models\QuizAnswer::where('user_id', $result->user_id)
+            ->whereIn('question_id', $quiz->questions()->pluck('id'))
+            ->delete();
+
+        // Delete the result itself
+        $result->delete();
+
+        return back()->with('success', 'Student attempt has been reset. They can now retake the quiz.');
+    }
+
     public function toggleStatus(Quiz $quiz)
     {
         if ($quiz->created_by !== Auth::id()) {

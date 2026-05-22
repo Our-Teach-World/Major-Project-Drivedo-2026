@@ -101,6 +101,11 @@ class QuizAttemptController extends Controller
             ->where('score', '>', $result->score)
             ->count() + 1;
 
-        return view('student.quiz.result', compact('quiz', 'result', 'avgScore', 'maxScore', 'rank'));
+        $quiz->load('questions');
+        $userAnswers = QuizAnswer::where('user_id', Auth::id())
+            ->whereIn('question_id', $quiz->questions->pluck('id'))
+            ->get()->keyBy('question_id');
+
+        return view('student.quiz.result', compact('quiz', 'result', 'avgScore', 'maxScore', 'rank', 'userAnswers'));
     }
 }

@@ -109,6 +109,8 @@ Route::middleware(['auth.teacher'])->prefix('teacher')->group(function () {
         Route::post('/{quiz}/questions', [\App\Http\Controllers\Quiz\QuizController::class, 'storeQuestions'])->name('teacher.quizzes.questions.store');
         Route::get('/{quiz}/results', [\App\Http\Controllers\Quiz\QuizController::class, 'results'])->name('teacher.quizzes.results');
         Route::post('/{quiz}/toggle', [\App\Http\Controllers\Quiz\QuizController::class, 'toggleStatus'])->name('teacher.quizzes.toggle');
+        Route::get('/{quiz}/results/{result}', [\App\Http\Controllers\Quiz\QuizController::class, 'showAttempt'])->name('teacher.quizzes.attempt.show');
+        Route::delete('/{quiz}/results/{result}', [\App\Http\Controllers\Quiz\QuizController::class, 'resetAttempt'])->name('teacher.quizzes.attempt.reset');
     });
 });
 
@@ -206,6 +208,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/timetable/get-subjects', [\App\Http\Controllers\TimetableController::class, 'getSubjects'])->name('admin.timetable.getSubjects');
 
         // CertChain Template Routes for Admin
+        Route::prefix('certchain')->group(function () {
+            Route::get('/blockchain', [\App\Http\Controllers\Certchain\Admin\AdminController::class, 'blockchain'])->name('admin.certchain.blockchain');
+        });
+
         Route::prefix('certchain/templates')->group(function () {
             Route::get('/', [\App\Http\Controllers\Certchain\Admin\TemplateController::class, 'index'])->name('admin.certchain.templates.index');
             Route::get('/create', [\App\Http\Controllers\Certchain\Admin\TemplateController::class, 'create'])->name('admin.certchain.templates.create');

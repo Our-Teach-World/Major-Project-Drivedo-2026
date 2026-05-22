@@ -3,455 +3,523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusCore | Architectural Academic Intelligence</title>
+    <title>CampusCore | The Ultimate Academic Ecosystem</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- GSAP for best-in-class animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
         :root {
-            --bg-base: #CCD0CF;
-            --text-main: #06141B;
-            --primary: #253745;
-            --accent-indigo: #4F46E5;
-            --accent-emerald: #10B981;
-            --accent-amber: #F59E0B;
-            --glass-white: rgba(255, 255, 255, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.4);
-            --transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            --bg-base: #FAFAFA;
+            --bg-alt: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-muted: #64748B;
+            --accent-glow: #4F46E5;
+            --accent-secondary: #0EA5E9;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(15, 23, 42, 0.08);
+            --card-bg: #FFFFFF;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Space Grotesk', sans-serif;
-            scroll-behavior: smooth;
+            cursor: none; /* Hide default cursor for custom one */
         }
 
         body {
             background-color: var(--bg-base);
-            color: var(--text-main);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Architectural Mesh Background */
-        body::before {
-            content: "";
+        h1, h2, h3, h4, .display-text {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background-color: var(--accent-glow);
+        }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(79, 70, 229, 0.5);
+            transition: width 0.2s, height 0.2s;
+        }
+
+        /* Dynamic Background Mesh */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background-image: 
-                radial-gradient(circle at 2px 2px, rgba(6, 20, 27, 0.05) 1px, transparent 0);
-            background-size: 40px 40px;
-            z-index: -1;
-            opacity: 0.5;
-        }
-
-        /* Typography Masterclass */
-        h1, h2, h3 { font-weight: 700; letter-spacing: -0.06em; }
-        p { font-family: 'Inter', sans-serif; font-weight: 400; color: rgba(6, 20, 27, 0.8); }
-
-        .display-xl {
-            font-size: clamp(80px, 15vw, 160px);
-            line-height: 0.8;
-            text-transform: uppercase;
-            letter-spacing: -0.08em;
-        }
-
-        /* Nav System */
-        .nav-fixed {
-            position: fixed;
-            top: 0; width: 100%;
-            padding: 32px 80px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            transition: var(--transition);
-        }
-
-        .nav-fixed.scrolled {
-            padding: 20px 80px;
-            backdrop-filter: blur(20px);
-            background: rgba(204, 208, 207, 0.8);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .logo {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--primary);
-            text-decoration: none;
-            letter-spacing: -0.05em;
-        }
-
-        .nav-links { display: flex; gap: 48px; }
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            transition: var(--transition);
-            opacity: 0.6;
-        }
-        .nav-links a:hover { opacity: 1; color: var(--accent-indigo); }
-
-        /* Button Architecture */
-        .btn {
-            padding: 18px 48px;
-            border-radius: 0px; /* Sharp corners for absolute precision */
-            font-weight: 700;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-size: 11px;
-            transition: var(--transition);
-            cursor: pointer;
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: var(--bg-base);
-            border: 1px solid var(--primary);
-        }
-
-        .btn-primary:hover {
-            background: transparent;
-            color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(37, 55, 69, 0.15);
-        }
-
-        .btn-glass {
-            background: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--text-main);
-        }
-
-        .btn-glass:hover {
-            background: var(--text-main);
-            color: var(--bg-base);
-            transform: translateY(-5px);
-        }
-
-        /* Hero: The Statement */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 0 80px;
-            position: relative;
-            background: var(--bg-base);
-        }
-
-        .hero-content {
-            z-index: 10;
-            max-width: 1200px;
-        }
-
-        .hero-tag {
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: 0.5em;
-            text-transform: uppercase;
-            color: var(--accent-indigo);
-            margin-bottom: 40px;
-            display: block;
-        }
-
-        .hero-title {
-            margin-bottom: 60px;
-            color: var(--text-main);
-        }
-
-        .hero-subtitle {
-            font-size: 22px;
-            max-width: 650px;
-            margin-bottom: 80px;
-            line-height: 1.4;
-            opacity: 0.9;
-        }
-
-        /* Background Graphics - CLEAN */
-        .hero-backdrop {
-            position: absolute;
-            top: 0; right: 0;
-            width: 50%; height: 100%;
-            background: url('/images/hero_clean.png') no-repeat center center/cover;
-            mask-image: linear-gradient(to left, black 50%, transparent 100%);
-            opacity: 0.9;
-            z-index: 1;
-        }
-
-        /* Sections */
-        .section {
-            padding: 180px 80px;
-            position: relative;
-        }
-
-        .container { max-width: 1440px; margin: 0 auto; }
-
-        /* Feature Tiers */
-        .tier-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 120px;
-            align-items: center;
-            margin-bottom: 180px;
-        }
-
-        .tier-content h2 {
-            font-size: 72px;
-            margin-bottom: 32px;
-            color: var(--primary);
-        }
-
-        .tier-content p {
-            font-size: 20px;
-            margin-bottom: 48px;
-            max-width: 500px;
-        }
-
-        /* The Glass Block */
-        .glass-block {
-            background: var(--glass-white);
-            backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border);
-            padding: 80px;
-            position: relative;
-            transition: var(--transition);
-        }
-
-        .glass-block::before {
-            content: "";
-            position: absolute;
-            top: -1px; left: -1px; right: -1px; bottom: -1px;
-            border: 1px solid rgba(255,255,255,0.8);
+                radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.05), transparent 25%);
             z-index: -1;
             pointer-events: none;
         }
 
-        .glass-block:hover {
-            transform: scale(1.03) rotate(1deg);
-            background: rgba(255,255,255,0.6);
-            box-shadow: 0 80px 120px rgba(0,0,0,0.08);
+        /* Nav - Fixed & Readable Glassmorphism */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 24px 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+        .nav-scrolled {
+            padding: 16px 5vw;
+        }
+        .logo {
+            font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;
+            color: var(--text-primary);
+        }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a {
+            color: var(--text-primary); text-decoration: none; font-size: 13px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px;
+            position: relative; opacity: 0.8;
+        }
+        .nav-links a:hover { opacity: 1; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0%; height: 2px;
+            background: var(--accent-glow); transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* Buttons */
+        .btn {
+            display: inline-block; padding: 16px 40px;
+            border-radius: 100px; font-size: 14px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+            text-decoration: none; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+            border: 2px solid transparent;
+        }
+        .btn-primary {
+            background: var(--text-primary); color: white;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2); transform: translateY(-2px);
+        }
+        .btn-glow {
+            background: transparent; border-color: var(--text-primary); color: var(--text-primary);
+        }
+        .btn-glow:hover {
+            background: var(--text-primary); color: white;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1); transform: translateY(-2px);
         }
 
-        .block-tag {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--accent-indigo);
-            letter-spacing: 0.3em;
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 120px 5vw 0; position: relative; overflow: hidden;
+        }
+        .hero-content {
+            text-align: center; z-index: 10; max-width: 1200px;
+        }
+        .huge-text {
+            font-size: clamp(60px, 12vw, 200px);
+            font-weight: 900; line-height: 0.85;
+            letter-spacing: -0.05em; text-transform: uppercase;
+            background: linear-gradient(to bottom right, var(--text-primary), #64748B);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+        .hero-sub {
+            font-size: clamp(18px, 2vw, 24px); color: var(--text-muted);
+            max-width: 700px; margin: 0 auto 50px; font-weight: 400; line-height: 1.6;
+        }
+
+        /* Impact Section - The Hard Work */
+        .impact-section {
+            padding: 120px 5vw;
+            background: var(--text-primary);
+            color: white;
+            border-radius: 40px;
+            margin: 0 2vw 150px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .impact-section::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% -20%, rgba(79, 70, 229, 0.3), transparent 70%);
+        }
+        .impact-title {
+            font-size: clamp(40px, 6vw, 80px);
+            font-weight: 900; margin-bottom: 40px; line-height: 1;
+            position: relative; z-index: 2;
+        }
+        .impact-text {
+            font-size: 20px; color: rgba(255,255,255,0.8);
+            max-width: 800px; margin: 0 auto 60px; line-height: 1.8;
+            position: relative; z-index: 2;
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+            position: relative; z-index: 2; border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 60px;
+        }
+        .stat-item h4 { font-size: 64px; font-weight: 900; color: var(--accent-glow); margin-bottom: 10px; line-height: 1; }
+        .stat-item p { font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
+
+        /* Sections */
+        .section {
+            padding: 150px 5vw; position: relative;
+        }
+        .section-title {
+            font-size: clamp(40px, 8vw, 120px); font-weight: 900;
+            line-height: 0.9; margin-bottom: 100px;
+            color: rgba(15, 23, 42, 0.05);
+            -webkit-text-stroke: 1px rgba(15, 23, 42, 0.1);
             text-transform: uppercase;
-            margin-bottom: 24px;
-            display: block;
         }
 
-        .block-title { font-size: 40px; margin-bottom: 20px; }
+        /* Features Layout */
+        .feature-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+            margin-bottom: 150px;
+        }
+        .feature-grid:nth-child(even) { direction: rtl; }
+        .feature-grid:nth-child(even) > * { direction: ltr; }
 
-        /* Dark Integrity Layer */
-        .dark-layer {
-            background: var(--primary);
-            color: var(--bg-base);
-            padding: 180px 80px;
-            margin: 0 40px;
-            border-radius: 2px;
+        .feature-text h3 {
+            font-size: clamp(30px, 4vw, 56px); margin-bottom: 24px; line-height: 1.1; color: var(--text-primary);
+        }
+        .feature-text p {
+            font-size: 18px; color: var(--text-muted); margin-bottom: 40px; line-height: 1.7; max-width: 500px;
         }
 
-        .integrity-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 40px;
-            margin-top: 100px;
+        .glass-card {
+            background: var(--card-bg); 
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 60px; position: relative; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            transform-style: preserve-3d; perspective: 1000px;
         }
-
-        .integrity-card {
-            border-left: 1px solid rgba(255,255,255,0.1);
-            padding-left: 32px;
-            transition: var(--transition);
+        .glass-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+            transform: skewX(-20deg); transition: 0.5s; z-index: 1;
         }
+        .glass-card:hover::before { left: 150%; }
 
-        .integrity-card:hover { border-left: 4px solid var(--accent-emerald); padding-left: 40px; }
-        .integrity-card h4 { font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; opacity: 0.5; }
-        .integrity-card p { color: var(--bg-base); font-size: 18px; opacity: 1; }
+        .card-icon {
+            font-size: 40px; margin-bottom: 30px; display: inline-block;
+            padding: 20px; border-radius: 16px; background: rgba(79, 70, 229, 0.05);
+            position: relative; z-index: 2;
+        }
+        .glass-card h4, .glass-card p { position: relative; z-index: 2; }
+        .glass-card h4 { color: var(--text-primary); font-size: 24px; margin-bottom: 16px; }
 
-        /* Footer Engineering */
+        /* Footer */
         footer {
-            padding: 140px 80px 80px;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 80px;
+            padding: 100px 5vw; background: var(--bg-alt); border-top: 1px solid var(--glass-border);
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px;
         }
+        .footer-logo { font-size: 32px; font-weight: 900; font-family: 'Outfit'; margin-bottom: 20px; color: var(--text-primary);}
+        .footer-links h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 24px;}
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 16px; }
+        .footer-links a { color: var(--text-primary); text-decoration: none; font-size: 16px; transition: color 0.3s; font-weight: 500;}
+        .footer-links a:hover { color: var(--accent-glow); }
 
-        .footer-logo { font-size: 32px; font-weight: 800; margin-bottom: 40px; display: block; text-decoration: none; color: inherit; }
-        .footer-col h5 { margin-bottom: 32px; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4; }
-        .footer-col ul { list-style: none; }
-        .footer-col li { margin-bottom: 20px; }
-        .footer-col a { text-decoration: none; color: inherit; opacity: 0.7; transition: var(--transition); font-size: 15px; }
-        .footer-col a:hover { opacity: 1; color: var(--accent-indigo); padding-left: 10px; }
-
-        /* Mobile Flow */
         @media (max-width: 1024px) {
-            .hero { padding: 0 40px; }
-            .tier-grid { grid-template-columns: 1fr; gap: 80px; }
-            .hero-backdrop { display: none; }
-            .display-xl { font-size: 72px; }
-            .integrity-grid { grid-template-columns: 1fr 1fr; }
-            footer { grid-template-columns: 1fr 1fr; }
-        }
-
-        @media (max-width: 768px) {
+            .feature-grid { grid-template-columns: 1fr; gap: 40px; }
+            .feature-grid:nth-child(even) { direction: ltr; }
+            footer { grid-template-columns: 1fr; }
             .nav-links { display: none; }
-            .section { padding: 120px 24px; }
-            .hero { padding: 0 24px; }
-            .dark-layer { margin: 0 0; padding: 120px 24px; }
-            .integrity-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; gap: 60px; }
+            .impact-section { margin: 0 0 100px; border-radius: 0; }
         }
     </style>
 </head>
 <body>
 
-    <nav id="navbar" class="nav-fixed">
-        <a href="/" class="logo">CAMPUSCORE.</a>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <div class="bg-mesh"></div>
+
+    <nav id="navbar">
+        <div class="logo">CAMPUSCORE</div>
         <div class="nav-links">
-            <a href="#intelligence">Intelligence</a>
-            <a href="#connectivity">Connectivity</a>
-            <a href="#integrity">Integrity</a>
-            <a href="/marketplace">Exchange</a>
+            <a href="#impact" class="hover-target">Impact</a>
+            <a href="#ecosystem" class="hover-target">Ecosystem</a>
+            <a href="#academic" class="hover-target">Academic</a>
+            <a href="#exchange" class="hover-target">Exchange</a>
         </div>
-        <div class="nav-cta">
-            <a href="/register" class="btn btn-primary">Join the Era</a>
+        <div>
+            <a href="/login" class="btn btn-primary hover-target">System Login</a>
         </div>
     </nav>
 
     <main>
         <section class="hero">
-            <div class="hero-backdrop"></div>
             <div class="hero-content">
-                <span class="hero-tag">Academic Precision System</span>
-                <h1 class="hero-title display-xl">Architectural<br>Intelligence.</h1>
-                <p class="hero-subtitle">The first professional-grade ecosystem for advanced document synthesis, blockchain verification, and elite mentorship.</p>
-                <div class="hero-actions">
-                    <a href="/register" class="btn btn-primary">Enter Now</a>
-                    <a href="#intelligence" class="btn btn-glass" style="margin-left: 24px;">View Technicals</a>
+                <div class="huge-text gs-reveal">Academic</div>
+                <div class="huge-text gs-reveal" style="color: transparent; -webkit-text-stroke: 2px var(--text-primary);">Evolution.</div>
+                <p class="hero-sub gs-reveal">A high-performance ecosystem integrating elite mentorship, precision management, and peer-to-peer exchange into one unified architectural platform.</p>
+                <div class="gs-reveal" style="margin-top: 40px;">
+                    <a href="/register" class="btn btn-primary hover-target" style="margin-right: 20px;">Initialize Profile</a>
+                    <a href="#impact" class="btn btn-glow hover-target">Discover the Impact</a>
                 </div>
             </div>
         </section>
 
-        <section id="intelligence" class="section">
-            <div class="container">
-                <div class="tier-grid">
-                    <div class="tier-content">
-                        <span class="hero-tag">01. Cognitive layer</span>
-                        <h2>AI Document Synthesis.</h2>
-                        <p>Harnessing NVIDIA-powered RAG technology to transform static academic archives into interactive knowledge graphs.</p>
-                        <a href="/register" class="btn btn-glass">Explore AI Engine</a>
-                    </div>
-                    <div class="glass-block">
-                        <span class="block-tag">Smart Retrieval</span>
-                        <h3 class="block-title">Deep Indexing</h3>
-                        <p>Our AI doesn't just search; it understands relationships. Instant contextual retrieval from thousands of academic papers.</p>
-                    </div>
+        <!-- New Impact & Hard Work Section -->
+        <section id="impact" class="impact-section gs-fade">
+            <h2 class="impact-title">A Monumental Shift.</h2>
+            <p class="impact-text">Building CampusCore wasn't just about writing code; it was an ambitious engineering undertaking to solve genuine campus friction. Hundreds of hours were invested into architecting 5 completely disparate systems—from real-time chat and automated attendance generation to a peer-to-peer marketplace—and synthesizing them into a single, cohesive, premium experience that benefits students, alumni, and administration equally.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item gs-reveal">
+                    <h4>5+</h4>
+                    <p>Integrated Modules</p>
                 </div>
-
-                <div class="tier-grid" style="direction: rtl; margin-bottom: 0;">
-                    <div class="tier-content" style="direction: ltr;">
-                        <span class="hero-tag">02. Value exchange</span>
-                        <h2>Professional Connectivity.</h2>
-                        <p>A unified hub for career opportunities and the revolutionary 'Book Loop'—our circular economy for academic resources.</p>
-                        <a href="/marketplace" class="btn btn-glass">Access Exchange</a>
-                    </div>
-                    <div class="glass-block" style="direction: ltr;">
-                        <span class="block-tag">Expert Tunnel</span>
-                        <h3 class="block-title">Elite Mentorship</h3>
-                        <p>Direct secure tunnels to industry alumni. Get verified guidance from those who have already engineered the path.</p>
-                    </div>
+                <div class="stat-item gs-reveal">
+                    <h4>Zero</h4>
+                    <p>Administrative Friction</p>
+                </div>
+                <div class="stat-item gs-reveal">
+                    <h4>100%</h4>
+                    <p>Ecosystem Synergy</p>
                 </div>
             </div>
         </section>
 
-        <section id="integrity" class="dark-layer">
-            <div class="container">
-                <span class="hero-tag" style="color: var(--accent-emerald);">03. Integrity layer</span>
-                <h2 class="display-xl" style="color: var(--bg-base); font-size: clamp(48px, 10vw, 96px);">Immutable<br>Verification.</h2>
-                
-                <div class="integrity-grid">
-                    <div class="integrity-card">
-                        <h4>Blockchain</h4>
-                        <p>CertChain Verified Credentials</p>
-                    </div>
-                    <div class="integrity-card">
-                        <h4>Encryption</h4>
-                        <p>End-to-End Secure Protocols</p>
-                    </div>
-                    <div class="integrity-card">
-                        <h4>governance</h4>
-                        <p>Smart Academic Contracts</p>
-                    </div>
-                    <div class="integrity-card">
-                        <h4>Assets</h4>
-                        <p>Intellectual Tokenization</p>
-                    </div>
+        <section id="ecosystem" class="section">
+            <h2 class="section-title gs-slide">The Ecosystem</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-text gs-fade">
+                    <h3>Elite Alumni Mentorship</h3>
+                    <p>Bypass the noise. Establish secure, direct tunnels with verified alumni who have already engineered the path you are on. Request guidance and join dedicated 1-on-1 session chats.</p>
+                    <a href="/register" class="btn btn-primary hover-target">Find a Mentor</a>
+                </div>
+                <div class="glass-card gs-fade hover-target">
+                    <span class="card-icon">🧠</span>
+                    <h4>Knowledge Transfer Protocol</h4>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Browse alumni by industry branch, submit targeted mentorship requests, and unlock private session channels for high-value advice.</p>
+                </div>
+            </div>
+
+            <div class="feature-grid" id="academic">
+                <div class="feature-text gs-fade">
+                    <h3>Precision Academic Management</h3>
+                    <p>A zero-friction administrative layer. Real-time dynamic timetables, hierarchical notice boards directly from the Principal, and instant bulk attendance processing.</p>
+                </div>
+                <div class="glass-card gs-fade hover-target">
+                    <span class="card-icon">⚡</span>
+                    <h4>Workflow Automation</h4>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Faculty can instantly mark bulk attendance, generate Excel reports, and broadcast critical updates to segmented student bodies instantly.</p>
+                </div>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-text gs-fade">
+                    <h3>AI-Powered Assessment</h3>
+                    <p>Elevating the testing paradigm. Faculty deploy complex quizzes while students track their performance metrics in real-time through an advanced analytical dashboard.</p>
+                </div>
+                <div class="glass-card gs-fade hover-target">
+                    <span class="card-icon">🎯</span>
+                    <h4>Cognitive Evaluation</h4>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Dynamic question rendering, instant scoring, and comprehensive post-assessment breakdowns for continuous academic improvement.</p>
                 </div>
             </div>
         </section>
 
-        <section class="section" style="text-align: center;">
-            <div class="container">
-                <span class="hero-tag">Finalization</span>
-                <h2 class="display-xl" style="margin-bottom: 80px; color: var(--primary);">Secure Your<br>Legacy.</h2>
-                <a href="/register" class="btn btn-primary" style="padding: 24px 80px; font-size: 16px;">Initialize Registration</a>
+        <section id="exchange" class="section" style="background: var(--bg-alt);">
+            <h2 class="section-title gs-slide">Value Exchange</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-text gs-fade">
+                    <h3>The Student Marketplace</h3>
+                    <p>A closed-loop economy for the campus. CS and Electronics branches get exclusive access to internship drops and collaborative project listings. </p>
+                    <a href="/marketplace" class="btn btn-primary hover-target">Access Market</a>
+                </div>
+                <div class="glass-card gs-fade hover-target">
+                    <span class="card-icon">🔄</span>
+                    <h4>BookLoop Protocol</h4>
+                    <p style="color: var(--text-muted); line-height: 1.6;">A peer-to-peer exchange for academic resources. List materials, initiate direct buyer-seller negotiations via integrated chat, and recycle knowledge.</p>
+                </div>
             </div>
+
+            <div class="feature-grid">
+                <div class="feature-text gs-fade">
+                    <h3>Secure Resource Hub</h3>
+                    <p>Centralized, high-speed document distribution. Faculty can upload and organize study materials, ensuring students have unhindered access to mission-critical files.</p>
+                </div>
+                <div class="glass-card gs-fade hover-target">
+                    <span class="card-icon">📁</span>
+                    <h4>Cloud Repository</h4>
+                    <p style="color: var(--text-muted); line-height: 1.6;">Direct downloads of lecture notes, PDF guides, and reference architectures instantly synced across all student dashboards.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" style="text-align: center; padding: 200px 5vw;">
+            <h2 class="huge-text gs-fade" style="font-size: clamp(40px, 8vw, 120px); margin-bottom: 40px;">Initialize Your Future.</h2>
+            <p class="gs-fade" style="color: var(--text-muted); font-size: 20px; margin-bottom: 60px;">Join the most advanced academic network.</p>
+            <a href="/register" class="btn btn-primary hover-target gs-fade" style="padding: 24px 60px; font-size: 18px;">Create Account</a>
         </section>
     </main>
 
     <footer>
-        <div class="footer-col">
-            <a href="/" class="footer-logo">CAMPUSCORE.</a>
-            <p style="opacity: 0.6; max-width: 300px;">Setting the global standard for architectural academic intelligence and document management.</p>
+        <div>
+            <div class="footer-logo">CAMPUSCORE.</div>
+            <p style="color: var(--text-muted); max-width: 300px; line-height: 1.6;">Engineering the future of academic management and student networking.</p>
         </div>
-        <div class="footer-col">
-            <h5>Systems</h5>
+        <div class="footer-links">
+            <h4>Ecosystem</h4>
             <ul>
-                <li><a href="/marketplace">Exchange Hub</a></li>
-                <li><a href="/student/mentorship">Alumni Network</a></li>
-                <li><a href="/quiz">AI Evaluation</a></li>
-                <li><a href="/certchain">CertChain</a></li>
+                <li><a href="/student/mentorship" class="hover-target">Alumni Mentorship</a></li>
+                <li><a href="/marketplace" class="hover-target">Marketplace</a></li>
+                <li><a href="/books" class="hover-target">BookLoop</a></li>
             </ul>
         </div>
-        <div class="footer-col">
-            <h5>Technical</h5>
+        <div class="footer-links">
+            <h4>Access</h4>
             <ul>
-                <li><a href="#">Security Protocols</a></li>
-                <li><a href="#">API Documentation</a></li>
-                <li><a href="#">Whitepaper</a></li>
-                <li><a href="#">Network Status</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h5>Social</h5>
-            <ul>
-                <li><a href="#">LinkedIn</a></li>
-                <li><a href="#">Twitter</a></li>
-                <li><a href="#">GitHub</a></li>
+                <li><a href="/login" class="hover-target">Student Login</a></li>
+                <li><a href="/login" class="hover-target">Faculty Portal</a></li>
+                <li><a href="/admin/login" class="hover-target">Admin Console</a></li>
             </ul>
         </div>
     </footer>
 
     <script>
+        // Nav Shrink on Scroll
         window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 100) {
-                nav.classList.add('scrolled');
+            if(window.scrollY > 50) {
+                document.getElementById('navbar').classList.add('nav-scrolled');
             } else {
-                nav.classList.remove('scrolled');
+                document.getElementById('navbar').classList.remove('nav-scrolled');
             }
+        });
+
+        // Custom Mouse Cursor
+        const dot = document.querySelector('.cursor-dot');
+        const outline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            dot.style.left = `${posX}px`;
+            dot.style.top = `${posY}px`;
+            
+            // Subtle delay for outline
+            outline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover effect for cursor
+        document.querySelectorAll('.hover-target').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                outline.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                outline.style.backgroundColor = 'rgba(79, 70, 229, 0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                outline.style.transform = 'translate(-50%, -50%) scale(1)';
+                outline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Reveal
+        gsap.from(".gs-reveal", {
+            y: 100,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power4.out",
+            delay: 0.2
+        });
+
+        // Mouse Parallax Effect on Hero
+        document.addEventListener("mousemove", (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 40;
+            const y = (e.clientY / window.innerHeight - 0.5) * 40;
+            
+            gsap.to(".hero-content", {
+                x: x,
+                y: y,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+
+        // Scroll Animations for Sections
+        gsap.utils.toArray('.gs-slide').forEach(title => {
+            gsap.from(title, {
+                scrollTrigger: {
+                    trigger: title,
+                    start: "top 80%",
+                },
+                x: -100,
+                opacity: 0,
+                duration: 1.5,
+                ease: "power3.out"
+            });
+        });
+
+        gsap.utils.toArray('.gs-fade').forEach(item => {
+            gsap.from(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 85%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+        });
+
+        // Glass card slight rotation on scroll
+        gsap.utils.toArray('.glass-card').forEach(card => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                    scrub: 1
+                },
+                rotationY: 15,
+                rotationX: 10,
+                z: -100,
+                transformOrigin: "center center"
+            });
         });
     </script>
 </body>

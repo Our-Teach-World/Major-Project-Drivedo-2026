@@ -2,16 +2,38 @@
 
 namespace App\Http\Controllers\Certchain;
 
-use App\Models\CertchainCertificate as Certificate;
-use App\Models\CertchainTemplate as CertificateTemplate;
-use App\Models\CertchainEvent as Event;
+use App\Http\Controllers\Controller;
+
+use App\Models\Certificate;
+use App\Models\CertificateTemplate;
+use App\Models\Event;
 use App\Services\BlockchainService;
 use App\Services\CertificateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class CertificateController extends \App\Http\Controllers\Controller
+class CertificateController extends Controller
 {
+    private function getStudentsData()
+    {
+        return \App\Models\Student::with('user')->get()->map(function($s) {
+            $year = match((int) $s->semester) {
+                1, 2 => '1st Year',
+                3, 4 => '2nd Year',
+                5, 6 => '3rd Year',
+                7, 8 => '4th Year',
+                default => '',
+            };
+            return [
+                'name' => $s->user?->name ?? '',
+                'email' => $s->user?->email ?? '',
+                'enrollment_no' => $s->enrollment_no ?? '',
+                'branch' => $s->branch ?? '',
+                'year' => $year,
+            ];
+        })->filter(fn($s) => !empty($s['enrollment_no']))->values()->toJson();
+    }
+
     public function __construct(
         protected CertificateService $certService,
         protected BlockchainService $blockchain,
@@ -24,7 +46,7 @@ class CertificateController extends \App\Http\Controllers\Controller
         $query = Certificate::with(['event', 'issuer', 'blockchainBlock']);
 
         // Non-admins only see their own issued certs
-        if (auth()->user()->role !== 'admin') {
+        if (!auth()->user()->hasRole('admin')) {
             $query->where('issued_by', auth()->id());
         }
 
@@ -42,32 +64,25 @@ class CertificateController extends \App\Http\Controllers\Controller
         }
 
         $certificates = $query->latest()->paginate(15)->withQueryString();
-        $eventsQuery = Event::orderBy('name');
-        if (auth()->user()->role !== 'admin') {
-            $eventsQuery->where('created_by', auth()->id());
-        }
-        $events = $eventsQuery->get();
+        $events = Event::orderBy('name')->get();
 
-        return view('certchain.certificates.index', compact('certificates', 'events'));
+        return view('certificates.index', compact('certificates', 'events'));
     }
 
     // ── Issue Single ──────────────────────────────────────
     public function create()
     {
-        $eventsQuery = Event::where('status', 'active')->orderBy('name');
-        if (auth()->user()->role !== 'admin') {
-            $eventsQuery->where('created_by', auth()->id());
-        }
-        $events = $eventsQuery->get();
+        $events = Event::where('status', 'active')->orderBy('name')->get();
         $templates = CertificateTemplate::where('is_active', true)->get();
-        return view('certchain.certificates.create', compact('events', 'templates'));
+        $studentsJson = $this->getStudentsData();
+        return view('certificates.create', compact('events', 'templates', 'studentsJson'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'event_id' => 'required|exists:certchain_events,id',
-            'template_id' => 'required|exists:certchain_templates,id',
+            'event_id' => 'required|exists:events,id',
+            'template_id' => 'required|exists:certificate_templates,id',
             'student_name' => 'required|string|max:255',
             'student_email' => 'required|email',
             'enrollment_number' => 'required|string|max:50',
@@ -107,20 +122,17 @@ class CertificateController extends \App\Http\Controllers\Controller
     // ── Bulk Issue ────────────────────────────────────────
     public function bulkCreate()
     {
-        $eventsQuery = Event::where('status', 'active')->orderBy('name');
-        if (auth()->user()->role !== 'admin') {
-            $eventsQuery->where('created_by', auth()->id());
-        }
-        $events = $eventsQuery->get();
+        $events = Event::where('status', 'active')->orderBy('name')->get();
         $templates = CertificateTemplate::where('is_active', true)->get();
-        return view('certchain.certificates.bulk', compact('events', 'templates'));
+        $studentsJson = $this->getStudentsData();
+        return view('certificates.bulk', compact('events', 'templates', 'studentsJson'));
     }
 
     public function bulkStore(Request $request)
     {
         $request->validate([
-            'event_id' => 'required|exists:certchain_events,id',
-            'template_id' => 'required|exists:certchain_templates,id',
+            'event_id' => 'required|exists:events,id',
+            'template_id' => 'required|exists:certificate_templates,id',
             'students' => 'required|array|min:1',
         ]);
 
@@ -147,20 +159,18 @@ class CertificateController extends \App\Http\Controllers\Controller
     {
         $certificate->load(['event', 'issuer', 'template', 'blockchainBlock']);
         $verification = $this->blockchain->verifyCertificate($certificate);
-        return view('certchain.certificates.show', compact('certificate', 'verification'));
+        return view('certificates.show', compact('certificate', 'verification'));
     }
 
     public function download(Certificate $certificate)
     {
-        if (!$certificate->pdf_path || !\Illuminate\Support\Facades\File::exists(public_path($certificate->pdf_path))) {
-            // Regenerate
-            $certificate->load(['event', 'issuer', 'template', 'blockchainBlock']);
-            $this->certService->generatePDF($certificate);
-            $certificate->refresh();
-        }
+        // Always regenerate fresh PDF from latest template
+        $certificate->load(['event', 'issuer', 'template', 'blockchainBlock']);
+        $this->certService->generatePDF($certificate);
+        $certificate->refresh();
 
-        return response()->download(
-            public_path($certificate->pdf_path),
+        return Storage::disk('public')->download(
+            $certificate->pdf_path,
             "Certificate-{$certificate->certificate_id}.pdf"
         );
     }

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\CertchainBlock;
-use App\Models\CertchainCertificate;
+use App\Models\BlockchainBlock;
+use App\Models\Certificate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -17,11 +17,11 @@ class BlockchainService
     /**
      * Mine a new block for a certificate and add it to the chain.
      */
-    public function mineBlock(CertchainCertificate $certificate): CertchainBlock
+    public function mineBlock(Certificate $certificate): BlockchainBlock
     {
         return DB::transaction(function () use ($certificate) {
             // Get last block in chain
-            $lastBlock = CertchainBlock::orderBy('block_index', 'desc')->first();
+            $lastBlock = BlockchainBlock::orderBy('block_index', 'desc')->first();
 
             $blockIndex = $lastBlock ? $lastBlock->block_index + 1 : 1;
             $previousHash = $lastBlock ? $lastBlock->block_hash : self::GENESIS_HASH;
@@ -48,7 +48,7 @@ class BlockchainService
                 $blockIndex . $previousHash . $dataHash . $minedAt->timestamp
             );
 
-            $block = CertchainBlock::create([
+            $block = BlockchainBlock::create([
                 'block_index'     => $blockIndex,
                 'certificate_id'  => $certificate->id,
                 'certificate_uid' => $certificate->certificate_id,
@@ -69,7 +69,7 @@ class BlockchainService
      * Verify a single certificate's blockchain integrity.
      * Returns array with status and details.
      */
-    public function verifyCertificate(CertchainCertificate $certificate): array
+    public function verifyCertificate(Certificate $certificate): array
     {
         $block = $certificate->blockchainBlock;
 
@@ -102,7 +102,7 @@ class BlockchainService
 
         // Step 2: Verify previous block's hash still matches
         if ($block->block_index > 1) {
-            $prevBlock = CertchainBlock::where('block_index', $block->block_index - 1)->first();
+            $prevBlock = BlockchainBlock::where('block_index', $block->block_index - 1)->first();
             if (!$prevBlock || $prevBlock->block_hash !== $block->previous_hash) {
                 return [
                     'valid'   => false,
@@ -151,7 +151,7 @@ class BlockchainService
      */
     public function validateChain(): array
     {
-        $blocks = CertchainBlock::orderBy('block_index')->get();
+        $blocks = BlockchainBlock::orderBy('block_index')->get();
         $errors = [];
         $previousHash = self::GENESIS_HASH;
 
