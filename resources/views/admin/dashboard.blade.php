@@ -1,4 +1,4 @@
-@extends('layouts.certchain_app')
+@extends('admin.layouts.app')
 @section('title','Admin Dashboard')
 @section('page-title','Admin Dashboard')
 @section('page-subtitle','System overview and blockchain status')
