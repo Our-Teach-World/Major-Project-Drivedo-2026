@@ -58,8 +58,36 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-3">
                     <label class="text-[11px] font-black uppercase tracking-widest opacity-50">Academic Subject</label>
-                    <input type="text" name="subject" placeholder="e.g. Computer Science" 
-                        class="input-field w-full font-bold">
+                    <select name="subject" id="subject_select" onchange="toggleCustomSubjectInput(this.value)" class="input-field w-full font-bold text-navy bg-[#F8F9F9] focus:bg-white">
+                        <option value="">Select a Subject</option>
+                        
+                        @if($subjects->count() > 0)
+                            <optgroup label="My Assigned Subjects">
+                                @foreach($subjects as $sub)
+                                    <option value="{{ $sub->name }}">{{ $sub->name }} ({{ $sub->code }})</option>
+                                @endforeach
+                            </optgroup>
+                        @endif
+
+                        @if($allSubjects->count() > 0)
+                            <optgroup label="All System Subjects">
+                                @foreach($allSubjects as $sub)
+                                    @if(!$subjects->contains('id', $sub->id))
+                                        <option value="{{ $sub->name }}">{{ $sub->name }} ({{ $sub->code }})</option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
+                        @endif
+                        
+                        <option value="custom" class="text-indigo-600 font-bold">Type Custom Subject...</option>
+                    </select>
+
+                    <!-- Hidden Custom Subject Text Input -->
+                    <div id="custom_subject_container" class="hidden mt-3 animate-in fade-in duration-200">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-indigo-600">Enter Custom Subject Name</label>
+                        <input type="text" name="custom_subject" id="custom_subject_input" placeholder="e.g. Artificial Intelligence" 
+                            class="input-field w-full font-bold mt-1 border-indigo-200 focus:border-indigo-500">
+                    </div>
                 </div>
 
                 <div class="space-y-3">
@@ -78,4 +106,19 @@
         </form>
     </div>
 </div>
+
+<script>
+    function toggleCustomSubjectInput(val) {
+        const container = document.getElementById('custom_subject_container');
+        const input = document.getElementById('custom_subject_input');
+        if (val === 'custom') {
+            container.classList.remove('hidden');
+            input.required = true;
+            input.focus();
+        } else {
+            container.classList.add('hidden');
+            input.required = false;
+        }
+    }
+</script>
 @endsection

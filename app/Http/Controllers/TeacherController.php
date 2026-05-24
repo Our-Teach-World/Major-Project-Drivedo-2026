@@ -80,7 +80,7 @@ class TeacherController extends Controller
         Teacher::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'semester' => json_encode($request->semesters),
+                'semester' => $request->semesters,
             ]
         );
 

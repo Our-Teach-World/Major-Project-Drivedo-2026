@@ -133,10 +133,17 @@
                 </span>
 
                 @php
-                    $profile = $teacherProfile ?? null; // Safe fallback for other pages
+                    $profile = \App\Models\Teacher::where('user_id', Auth::id())->first();
                     $slug    = preg_replace('/[^a-zA-Z0-9_]/', '', Auth::user()->username);
                     $initial = strtoupper(substr(optional($profile)->display_name ?? Auth::user()->username, 0, 1));
                     $profileComplete = optional($profile)->branch && optional($profile)->semester;
+
+                    // Fetch subjects for teacher's branch
+                    $teacherBranch = optional($profile)->branch;
+                    $branchSubjects = $teacherBranch 
+                        ? \App\Models\Subject::where('branch', $teacherBranch)->orderBy('semester')->orderBy('name')->get() 
+                        : collect();
+                    $assignedSubjectIds = Auth::user()->subjects->pluck('id')->toArray();
                 @endphp
 
                 <div id="navAvatar" onclick="openDrawer()" title="Edit Profile" class="relative w-10 h-10 rounded-full bg-background border border-outline-variant flex items-center justify-center cursor-pointer hover:shadow-md transition-all select-none">
@@ -261,8 +268,35 @@
                                     <span class="text-sm text-on-surface-variant">Sem {{ $i }}</span>
                                 </label>
                             @endfor
+                    </div>
+
+                    <!-- Dynamic Subjects Section -->
+                    <div id="profileSubjectsSection" class="border-t border-outline-variant/60 pt-3 space-y-2">
+                        <label class="block text-xs text-on-surface-variant font-semibold">📚 Subjects in Selected Semesters</label>
+                        <div id="noSemestersSelectedMessage" class="text-xs text-on-surface-variant/80 italic bg-background/50 rounded-xl p-3 border border-outline-variant">
+                            Please select active semesters above to view subjects.
+                        </div>
+                        <div id="subjectsListContainer" class="space-y-2 hidden max-h-[180px] overflow-y-auto pr-1">
+                            @foreach($branchSubjects as $subject)
+                                <div class="subject-item flex items-center justify-between bg-background border border-outline-variant/60 rounded-xl p-3 hover:border-primary/30 transition-all" data-semester="{{ $subject->semester }}">
+                                    <div class="min-w-0 flex-1 pr-2">
+                                        <p class="text-xs font-bold text-on-surface truncate">{{ $subject->name }}</p>
+                                        <p class="text-[10px] text-on-surface-variant">Code: {{ $subject->code }} | Sem {{ $subject->semester }}</p>
+                                    </div>
+                                    @if(in_array($subject->id, $assignedSubjectIds))
+                                        <span class="flex-shrink-0 inline-flex items-center gap-0.5 text-[9px] font-extrabold px-2 py-0.5 bg-emerald-500/15 text-emerald-400 rounded-full">
+                                            <span class="material-symbols-outlined text-[10px] fill-current" style="font-variation-settings: 'FILL' 1">check_circle</span> Assigned
+                                        </span>
+                                    @else
+                                        <span class="flex-shrink-0 inline-flex items-center gap-0.5 text-[9px] font-medium px-2 py-0.5 bg-primary/10 text-on-surface-variant rounded-full">
+                                            Sem {{ $subject->semester }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
                     </div>
+
                     <button type="submit" class="w-full bg-primary py-3 rounded-xl font-bold text-sm text-on-primary hover:scale-[1.02] transition-all">Save Changes</button>
                 </form>
             </div>
@@ -278,6 +312,9 @@
             document.getElementById('profileDrawer').classList.add('open');
             document.getElementById('drawerOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
+            if (typeof updateProfileSubjects === 'function') {
+                updateProfileSubjects();
+            }
         }
         function closeDrawer() {
             document.getElementById('profileDrawer').classList.remove('open');
@@ -291,16 +328,63 @@
         @endif
 
         function checkProfileImageSize(input) {
-                    if (input.files && input.files[0]) {
-                        const fileSizeMB = input.files[0].size / (1024 * 1024); // Size in MB
-                        const maxSizeMB = 5; // Limit set to 5MB
+            if (input.files && input.files[0]) {
+                const fileSizeMB = input.files[0].size / (1024 * 1024); // Size in MB
+                const maxSizeMB = 5; // Limit set to 5MB
 
-                        if (fileSizeMB > maxSizeMB) {
-                            alert(`File too large! Your image is ${fileSizeMB.toFixed(2)} MB.\nPlease select an image smaller than ${maxSizeMB} MB.`);
+                if (fileSizeMB > maxSizeMB) {
+                    alert(`File too large! Your image is ${fileSizeMB.toFixed(2)} MB.\nPlease select an image smaller than ${maxSizeMB} MB.`);
                     input.value = ''; // Input clear kar do taaki upload na ho
                 }
             }
         }
+
+        function updateProfileSubjects() {
+            const checkboxes = document.querySelectorAll('input[name="semesters[]"]');
+            const checkedSems = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            const messageEl = document.getElementById('noSemestersSelectedMessage');
+            const containerEl = document.getElementById('subjectsListContainer');
+            const subjectItems = document.querySelectorAll('.subject-item');
+
+            if (!messageEl || !containerEl) return;
+
+            if (checkedSems.length === 0) {
+                messageEl.classList.remove('hidden');
+                containerEl.classList.add('hidden');
+                messageEl.textContent = 'Please select active semesters above to view subjects.';
+            } else {
+                let visibleCount = 0;
+                subjectItems.forEach(item => {
+                    const sem = item.getAttribute('data-semester');
+                    if (checkedSems.includes(sem)) {
+                        item.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                if (visibleCount === 0) {
+                    messageEl.classList.remove('hidden');
+                    containerEl.classList.add('hidden');
+                    messageEl.textContent = 'No subjects found in the selected semesters for your branch.';
+                } else {
+                    messageEl.classList.add('hidden');
+                    containerEl.classList.remove('hidden');
+                }
+            }
+        }
+
+        // Attach event listeners to all semester checkboxes
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('input[name="semesters[]"]').forEach(cb => {
+                cb.addEventListener('change', updateProfileSubjects);
+            });
+            updateProfileSubjects();
+        });
     </script>
     
     @stack('scripts')

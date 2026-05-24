@@ -24,7 +24,9 @@ class QuizController extends Controller
 
     public function create()
     {
-        return view('quiz.create');
+        $subjects = Auth::user()->subjects;
+        $allSubjects = \App\Models\Subject::orderBy('name')->get();
+        return view('quiz.create', compact('subjects', 'allSubjects'));
     }
 
     public function store(Request $request)
@@ -32,12 +34,18 @@ class QuizController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'nullable|string|max:255',
+            'custom_subject' => 'nullable|string|max:255',
             'duration_minutes' => 'required|integer|min:1|max:120',
         ]);
 
+        $subjectName = $data['subject'];
+        if ($subjectName === 'custom' && !empty($data['custom_subject'])) {
+            $subjectName = $data['custom_subject'];
+        }
+
         $quiz = Quiz::create([
             'title' => $data['title'],
-            'subject' => $data['subject'],
+            'subject' => $subjectName,
             'duration_minutes' => $data['duration_minutes'],
             'created_by' => Auth::id(),
             'status' => 'active',
