@@ -194,6 +194,7 @@ Route::prefix('admin')->group(function () {
 
         // CertChain Routes for HOD (Admin)
         Route::prefix('certchain')->group(function () {
+            Route::get('/hub', [\App\Http\Controllers\AdminController::class, 'certchainHub'])->name('admin.certchain.hub');
             Route::get('/blockchain', [\App\Http\Controllers\Certchain\Admin\AdminController::class, 'blockchain'])->name('admin.certchain.blockchain');
             
             // Events

@@ -149,6 +149,15 @@ class AdminController extends Controller
         return back()->with('success', 'Profile updated successfully!');
     }
 
+    public function certchainHub()
+    {
+        $admin = Admin::find(session('admin_id'));
+        if (!$admin) {
+            return redirect()->route('admin.login')->withErrors(['login' => 'Please login first.']);
+        }
+        return view('admin.certchain.hub', compact('admin'));
+    }
+
     public function users(Request $request)
     {
         $admin = Admin::find(session('admin_id'));

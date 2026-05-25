@@ -54,6 +54,7 @@
             left: 0;
             z-index: 100;
             transition: transform 0.3s ease;
+            overflow-y: auto;
         }
 
         .sidebar-header {
@@ -415,17 +416,9 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.timetable.setup') }}" class="nav-link {{ request()->routeIs('admin.timetable.setup') ? 'active' : '' }}">🗓️ Schedule Timetable</a>
                 </li>
+                {{-- Single CertChain Hub Sidebar Link --}}
                 <li class="nav-item">
-                    <a href="{{ route('admin.certchain.templates.index') }}" class="nav-link {{ request()->routeIs('admin.certchain.templates.*') ? 'active' : '' }}">📜 CertChain Templates</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('teacher.certchain.events.index') }}" class="nav-link {{ request()->routeIs('teacher.certchain.events.*') ? 'active' : '' }}">📅 CertChain Events</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('teacher.certchain.certificates.index') }}" class="nav-link {{ request()->routeIs('teacher.certchain.certificates.*') ? 'active' : '' }}">🏅 Issued Certificates</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.certchain.blockchain') }}" class="nav-link {{ request()->routeIs('admin.certchain.blockchain') ? 'active' : '' }}">⛓️ CertChain Blockchain</a>
+                    <a href="{{ route('admin.certchain.hub') }}" class="nav-link {{ request()->routeIs('admin.certchain.*') || request()->routeIs('teacher.certchain.*') ? 'active' : '' }}">⛓️ CertChain Hub</a>
                 </li>
             @endif
         </ul>
@@ -517,6 +510,8 @@
                 );
             }
         });
+
+
     </script>
     @stack('scripts')
 </body>
