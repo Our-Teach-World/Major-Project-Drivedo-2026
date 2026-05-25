@@ -101,10 +101,6 @@
                 <span class="material-symbols-outlined">campaign</span> Publish Notice
             </a>
 
-            <!-- CertChain Link -->
-            <a href="{{ route('teacher.certchain.events.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('teacher.certchain.*') ? 'bg-primary text-on-primary font-semibold shadow-md' : 'text-on-surface-variant hover:bg-primary/5 hover:text-primary' }} transition-all">
-                <span class="material-symbols-outlined">workspace_premium</span> CertChain Certificates
-            </a>
 
             <!-- Smart Quiz System -->
             <a href="{{ route('teacher.quizzes.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('teacher.quizzes.*') ? 'bg-primary text-on-primary font-semibold shadow-md' : 'text-on-surface-variant hover:bg-primary/5 hover:text-primary' }} transition-all">

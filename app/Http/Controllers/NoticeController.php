@@ -23,7 +23,7 @@ class NoticeController extends Controller
             if (!$isTeacher) return redirect()->route('login')->with('error', 'Unauthorized.');
             
             $teacherProfile = \App\Models\Teacher::where('user_id', $user->id)->first();
-            $semesters = json_decode($teacherProfile->semester ?? '[]', true) ?? [];
+            $semesters = is_array($teacherProfile->semester) ? $teacherProfile->semester : (json_decode($teacherProfile->semester ?? '[]', true) ?? []);
             return view('teacher.create_notice', compact('user', 'teacherProfile', 'semesters'));
         }
 

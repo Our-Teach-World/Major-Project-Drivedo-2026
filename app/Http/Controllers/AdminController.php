@@ -10,10 +10,6 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Subject;
 use App\Services\UploadService;
-use App\Models\Certificate;
-use App\Models\Event;
-use App\Models\BlockchainBlock;
-use App\Services\BlockchainService;
 
 class AdminController extends Controller
 {
@@ -43,8 +39,20 @@ class AdminController extends Controller
         return back()->withErrors(['login' => 'Invalid credentials.']);
     }
 
-    public function dashboard(BlockchainService $blockchain)
+    public function dashboard()
     {
+        // Dynamically ensure admin columns exist
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('admin', 'name')) {
+                \Illuminate\Support\Facades\DB::statement("ALTER TABLE `admin` ADD COLUMN `name` VARCHAR(255) NULL AFTER `username`;");
+            }
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('admin', 'image_path')) {
+                \Illuminate\Support\Facades\DB::statement("ALTER TABLE `admin` ADD COLUMN `image_path` VARCHAR(255) NULL AFTER `name`;");
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed dynamically adding admin columns in dashboard: " . $e->getMessage());
+        }
+
         $admin = Admin::find(session('admin_id'));
         $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
 
@@ -75,26 +83,70 @@ class AdminController extends Controller
         $students = (clone $baseQuery)->where('role', 'student')->count();
         $alumni = (clone $baseQuery)->where('role', 'alumni')->count();
 
-        // Certchain Stats
-        $stats = [
-            'total_users'        => User::count(),
-            'total_events'       => Event::count(),
-            'total_certificates' => Certificate::count(),
-            'total_blocks'       => BlockchainBlock::count(),
-            'emails_sent'        => Certificate::where('email_sent', true)->count(),
-            'revoked'            => Certificate::where('status', 'revoked')->count(),
-        ];
+        return view('admin.dashboard', compact('totalUsers', 'pendingUsers', 'approvedUsers', 'teachers', 'students', 'alumni'));
+    }
 
-        $recentCertificates = Certificate::with(['event', 'issuer'])->latest()->limit(8)->get();
-        $chainStatus = $blockchain->validateChain();
+    public function profile()
+    {
+        // Dynamically ensure admin columns exist
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('admin', 'name')) {
+                \Illuminate\Support\Facades\DB::statement("ALTER TABLE `admin` ADD COLUMN `name` VARCHAR(255) NULL AFTER `username`;");
+            }
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('admin', 'image_path')) {
+                \Illuminate\Support\Facades\DB::statement("ALTER TABLE `admin` ADD COLUMN `image_path` VARCHAR(255) NULL AFTER `name`;");
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed dynamically adding admin columns in profile: " . $e->getMessage());
+        }
 
-        $monthlyStats = Certificate::selectRaw("MONTH(created_at) as month, COUNT(*) as count")
-            ->whereRaw("YEAR(created_at) = ?", [date('Y')])
-            ->groupBy('month')
-            ->pluck('count', 'month')
-            ->toArray();
+        $admin = Admin::find(session('admin_id'));
+        if (!$admin) {
+            return redirect()->route('admin.login')->withErrors(['login' => 'Please login first.']);
+        }
+        return view('admin.profile', compact('admin'));
+    }
 
-        return view('admin.dashboard', compact('totalUsers', 'pendingUsers', 'approvedUsers', 'teachers', 'students', 'alumni', 'stats', 'recentCertificates', 'chainStatus', 'monthlyStats'));
+    public function updateProfile(Request $request)
+    {
+        // Dynamically ensure admin columns exist
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('admin', 'name')) {
+                \Illuminate\Support\Facades\DB::statement("ALTER TABLE `admin` ADD COLUMN `name` VARCHAR(255) NULL AFTER `username`;");
+            }
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('admin', 'image_path')) {
+                \Illuminate\Support\Facades\DB::statement("ALTER TABLE `admin` ADD COLUMN `image_path` VARCHAR(255) NULL AFTER `name`;");
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed dynamically adding admin columns in updateProfile: " . $e->getMessage());
+        }
+
+        $admin = Admin::find(session('admin_id'));
+        if (!$admin) {
+            return redirect()->route('admin.login')->withErrors(['login' => 'Please login first.']);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $admin->name = $request->name;
+
+        if ($request->hasFile('image')) {
+            if ($admin->image_path && file_exists(public_path($admin->image_path))) {
+                @unlink(public_path($admin->image_path));
+            }
+
+            $file = $request->file('image');
+            $filename = 'admin_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/admin_profiles'), $filename);
+            $admin->image_path = 'uploads/admin_profiles/' . $filename;
+        }
+
+        $admin->save();
+
+        return back()->with('success', 'Profile updated successfully!');
     }
 
     public function users(Request $request)

@@ -347,11 +347,18 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             @if($adminUser)
-                <div class="profile-container">
-                    <div class="profile-circle">
-                        {{ strtoupper(substr($adminUser->username, 0, 1)) }}
+                <div class="profile-container text-left flex items-center gap-3">
+                    @if($adminUser->image_path)
+                        <img src="{{ asset($adminUser->image_path) }}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #253745;" alt="Profile">
+                    @else
+                        <div class="profile-circle">
+                            {{ strtoupper(substr($adminUser->name ?? $adminUser->username, 0, 1)) }}
+                        </div>
+                    @endif
+                    <div>
+                        <div class="admin-name" style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $adminUser->name ?? $adminUser->username }}</div>
+                        <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">{{ $adminUser->role }}</span>
                     </div>
-                    <div class="admin-name">{{ $adminUser->username }}</div>
                 </div>
                 @if(session('admin_role') === 'principal')
                     <div>
@@ -388,6 +395,9 @@
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">📊 Dashboard Overview</a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.profile') }}" class="nav-link {{ request()->routeIs('admin.profile') ? 'active' : '' }}">👤 My Profile</a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'active' : '' }}">👥 Manage Users</a>
                 </li>
                 <li class="nav-item">
@@ -407,6 +417,15 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.certchain.templates.index') }}" class="nav-link {{ request()->routeIs('admin.certchain.templates.*') ? 'active' : '' }}">📜 CertChain Templates</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('teacher.certchain.events.index') }}" class="nav-link {{ request()->routeIs('teacher.certchain.events.*') ? 'active' : '' }}">📅 CertChain Events</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('teacher.certchain.certificates.index') }}" class="nav-link {{ request()->routeIs('teacher.certchain.certificates.*') ? 'active' : '' }}">🏅 Issued Certificates</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.certchain.blockchain') }}" class="nav-link {{ request()->routeIs('admin.certchain.blockchain') ? 'active' : '' }}">⛓️ CertChain Blockchain</a>
                 </li>
             @endif
         </ul>
@@ -430,7 +449,7 @@
                 @endif
                 @if($adminUser && request()->routeIs('admin.dashboard'))
                     <span style="font-weight: 800; border: 1px solid rgba(6, 20, 27, 0.1); padding: 6px 15px; border-radius: 20px; background: #F2F4F3; font-size: 0.85rem; color: #253745;">
-                       👋 Hi, {{ $adminUser->username }}
+                       👋 Hi, {{ $adminUser->name ?? $adminUser->username }}
                     </span>
                 @endif
             </div>

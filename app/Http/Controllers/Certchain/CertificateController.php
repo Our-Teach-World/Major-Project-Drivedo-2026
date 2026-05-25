@@ -45,8 +45,8 @@ class CertificateController extends Controller
     {
         $query = Certificate::with(['event', 'issuer', 'blockchainBlock']);
 
-        // Non-admins only see their own issued certs
-        if (!auth()->user()->hasRole('admin')) {
+        // HOD (Admin) sees all, non-admins only see their own
+        if (!session('admin_id')) {
             $query->where('issued_by', auth()->id());
         }
 
@@ -109,7 +109,12 @@ class CertificateController extends Controller
         $event = Event::find($data['event_id']);
         $data['event_name'] = $event->name;
 
-        $certificate = $this->certService->issue($data, auth()->user());
+        $adminUsername = session('admin_username');
+        $issuer = \App\Models\User::where('username', $adminUsername)->first() 
+            ?? \App\Models\User::where('email', 'like', 'hod%')->first()
+            ?? \App\Models\User::first();
+
+        $certificate = $this->certService->issue($data, $issuer);
 
         if ($request->boolean('send_email')) {
             $this->certService->sendEmail($certificate);
@@ -136,11 +141,16 @@ class CertificateController extends Controller
             'students' => 'required|array|min:1',
         ]);
 
+        $adminUsername = session('admin_username');
+        $issuer = \App\Models\User::where('username', $adminUsername)->first() 
+            ?? \App\Models\User::where('email', 'like', 'hod%')->first()
+            ?? \App\Models\User::first();
+
         $results = $this->certService->bulkIssue(
             $request->students,
             $request->event_id,
             $request->template_id,
-            auth()->user()
+            $issuer
         );
 
         if ($request->boolean('send_emails')) {

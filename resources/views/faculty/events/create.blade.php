@@ -1,4 +1,4 @@
-@extends('teacher.layout')
+@extends('admin.layouts.app')
 @section('page_title','Create Event')
 @section('page-title','Create Event')
 @section('page-subtitle','Add a new college event for certificate issuance')
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-on-surface mb-1.5">Department</label>
-                <input type="text" name="department" value="{{ old('department', auth()->user()->department) }}" placeholder="e.g. Computer Science"
+                <input type="text" name="department" value="{{ old('department', auth()->user() ? auth()->user()->department : '') }}" placeholder="e.g. Computer Science"
                     class="w-full border border-outline-variant/20 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
             </div>
             <div>

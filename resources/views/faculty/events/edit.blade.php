@@ -1,4 +1,4 @@
-@extends('teacher.layout')
+@extends('admin.layouts.app')
 @section('page_title','Edit Event')
 @section('page-title','Edit Event')
 

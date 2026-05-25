@@ -21,7 +21,7 @@ class BulkAttendanceController extends Controller
         }
 
         $branch = $teacherProfile->branch;
-        $activeSems = json_decode($teacherProfile->semester ?? '[]', true) ?? [];
+        $activeSems = is_array($teacherProfile->semester) ? $teacherProfile->semester : (json_decode($teacherProfile->semester ?? '[]', true) ?? []);
 
         // Specific Semester passed from Dashboard
         $selectedSem = $request->get('semester', !empty($activeSems) ? $activeSems[0] : null);
@@ -107,7 +107,7 @@ class BulkAttendanceController extends Controller
     {
         $teacherProfile = auth()->user()->teacherProfile;
         $branch = $teacherProfile->branch;
-        $activeSems = json_decode($teacherProfile->semester ?? '[]', true) ?? [];
+        $activeSems = is_array($teacherProfile->semester) ? $teacherProfile->semester : (json_decode($teacherProfile->semester ?? '[]', true) ?? []);
         
         // Fetch subjects for each active semester to use in JS filtering
         $subjectsBySem = Subject::where('branch', $branch)

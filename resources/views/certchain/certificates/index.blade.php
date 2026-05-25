@@ -1,4 +1,4 @@
-@extends('teacher.layout')
+@extends('admin.layouts.app')
 @section('title','Certificates')
 @section('page-title','Certificates')
 @section('page-subtitle','All issued blockchain-recorded certificates')

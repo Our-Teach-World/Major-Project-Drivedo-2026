@@ -28,6 +28,8 @@ Route::get('/verify', [\App\Http\Controllers\Certchain\VerifyController::class, 
 Route::post('/verify', [\App\Http\Controllers\Certchain\VerifyController::class, 'search'])->name('verify.search');
 Route::get('/verify/{id}', [\App\Http\Controllers\Certchain\VerifyController::class, 'certificate'])->name('verify.certificate');
 
+
+
 // Auth Routes
 Route::get('/login', function () {
     return view('auth.login');
@@ -81,25 +83,6 @@ Route::middleware(['auth.teacher'])->prefix('teacher')->group(function () {
     Route::get('/notices', [NoticeController::class, 'teacherBoard'])->name('teacher.notices.board');
     Route::get('/timetable', [TeacherController::class, 'timetableViewer'])->name('teacher.timetable');
     
-    // CertChain Teacher Routes
-    Route::prefix('certchain')->group(function () {
-        Route::get('/events', [\App\Http\Controllers\Certchain\EventController::class, 'index'])->name('teacher.certchain.events.index');
-        Route::get('/events/create', [\App\Http\Controllers\Certchain\EventController::class, 'create'])->name('teacher.certchain.events.create');
-        Route::post('/events', [\App\Http\Controllers\Certchain\EventController::class, 'store'])->name('teacher.certchain.events.store');
-        Route::get('/events/{event}/edit', [\App\Http\Controllers\Certchain\EventController::class, 'edit'])->name('teacher.certchain.events.edit');
-        Route::put('/events/{event}', [\App\Http\Controllers\Certchain\EventController::class, 'update'])->name('teacher.certchain.events.update');
-        Route::delete('/events/{event}', [\App\Http\Controllers\Certchain\EventController::class, 'destroy'])->name('teacher.certchain.events.destroy');
-
-        Route::get('/certificates/issue', [\App\Http\Controllers\Certchain\CertificateController::class, 'create'])->name('teacher.certchain.certificates.create');
-        Route::post('/certificates/issue', [\App\Http\Controllers\Certchain\CertificateController::class, 'store'])->name('teacher.certchain.certificates.store');
-        Route::get('/certificates/bulk', [\App\Http\Controllers\Certchain\CertificateController::class, 'bulkCreate'])->name('teacher.certchain.certificates.bulk');
-        Route::post('/certificates/bulk', [\App\Http\Controllers\Certchain\CertificateController::class, 'bulkStore'])->name('teacher.certchain.certificates.bulkStore');
-        Route::get('/certificates', [\App\Http\Controllers\Certchain\CertificateController::class, 'index'])->name('teacher.certchain.certificates.index');
-        Route::get('/certificates/{certificate}', [\App\Http\Controllers\Certchain\CertificateController::class, 'show'])->name('teacher.certchain.certificates.show');
-        Route::get('/certificates/{certificate}/download', [\App\Http\Controllers\Certchain\CertificateController::class, 'download'])->name('teacher.certchain.certificates.download');
-        Route::post('/certificates/{certificate}/email', [\App\Http\Controllers\Certchain\CertificateController::class, 'sendEmail'])->name('teacher.certchain.certificates.email');
-        Route::post('/certificates/{certificate}/revoke', [\App\Http\Controllers\Certchain\CertificateController::class, 'revoke'])->name('teacher.certchain.certificates.revoke');
-    });
     // Quiz Routes for Teachers
     Route::prefix('quizzes')->group(function () {
         Route::get('/', [\App\Http\Controllers\Quiz\QuizController::class, 'index'])->name('teacher.quizzes.index');
@@ -186,6 +169,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/notices', [NoticeController::class, 'adminBoard'])->name('admin.notices.board');
 
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+        Route::post('/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
         Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
         Route::post('/users/search', [AdminController::class, 'users'])->name('admin.users.search');
         Route::get('/add-user', [AdminController::class, 'addUser'])->name('admin.add-user');
@@ -207,9 +192,28 @@ Route::prefix('admin')->group(function () {
         Route::get('/timetable/print/{semester}', [\App\Http\Controllers\TimetableController::class, 'print'])->name('admin.timetable.print');
         Route::get('/timetable/get-subjects', [\App\Http\Controllers\TimetableController::class, 'getSubjects'])->name('admin.timetable.getSubjects');
 
-        // CertChain Template Routes for Admin
+        // CertChain Routes for HOD (Admin)
         Route::prefix('certchain')->group(function () {
             Route::get('/blockchain', [\App\Http\Controllers\Certchain\Admin\AdminController::class, 'blockchain'])->name('admin.certchain.blockchain');
+            
+            // Events
+            Route::get('/events', [\App\Http\Controllers\Certchain\EventController::class, 'index'])->name('teacher.certchain.events.index');
+            Route::get('/events/create', [\App\Http\Controllers\Certchain\EventController::class, 'create'])->name('teacher.certchain.events.create');
+            Route::post('/events', [\App\Http\Controllers\Certchain\EventController::class, 'store'])->name('teacher.certchain.events.store');
+            Route::get('/events/{event}/edit', [\App\Http\Controllers\Certchain\EventController::class, 'edit'])->name('teacher.certchain.events.edit');
+            Route::put('/events/{event}', [\App\Http\Controllers\Certchain\EventController::class, 'update'])->name('teacher.certchain.events.update');
+            Route::delete('/events/{event}', [\App\Http\Controllers\Certchain\EventController::class, 'destroy'])->name('teacher.certchain.events.destroy');
+
+            // Certificates
+            Route::get('/certificates', [\App\Http\Controllers\Certchain\CertificateController::class, 'index'])->name('teacher.certchain.certificates.index');
+            Route::get('/certificates/issue', [\App\Http\Controllers\Certchain\CertificateController::class, 'create'])->name('teacher.certchain.certificates.create');
+            Route::post('/certificates/issue', [\App\Http\Controllers\Certchain\CertificateController::class, 'store'])->name('teacher.certchain.certificates.store');
+            Route::get('/certificates/bulk', [\App\Http\Controllers\Certchain\CertificateController::class, 'bulkCreate'])->name('teacher.certchain.certificates.bulk');
+            Route::post('/certificates/bulk', [\App\Http\Controllers\Certchain\CertificateController::class, 'bulkStore'])->name('teacher.certchain.certificates.bulkStore');
+            Route::get('/certificates/{certificate}', [\App\Http\Controllers\Certchain\CertificateController::class, 'show'])->name('teacher.certchain.certificates.show');
+            Route::get('/certificates/{certificate}/download', [\App\Http\Controllers\Certchain\CertificateController::class, 'download'])->name('teacher.certchain.certificates.download');
+            Route::post('/certificates/{certificate}/email', [\App\Http\Controllers\Certchain\CertificateController::class, 'sendEmail'])->name('teacher.certchain.certificates.email');
+            Route::post('/certificates/{certificate}/revoke', [\App\Http\Controllers\Certchain\CertificateController::class, 'revoke'])->name('teacher.certchain.certificates.revoke');
         });
 
         Route::prefix('certchain/templates')->group(function () {
@@ -221,6 +225,8 @@ Route::prefix('admin')->group(function () {
             Route::get('/{template}/preview', [\App\Http\Controllers\Certchain\Admin\TemplateController::class, 'preview'])->name('admin.certchain.templates.preview');
             Route::delete('/{template}', [\App\Http\Controllers\Certchain\Admin\TemplateController::class, 'destroy'])->name('admin.certchain.templates.destroy');
         });
+
+
     });
 });
 // Principal Routes

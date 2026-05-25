@@ -1,4 +1,4 @@
-@extends('teacher.layout')
+@extends('admin.layouts.app')
 @section('page_title','Bulk Issue Certificates')
 @section('page-title','Bulk Issue Certificates')
 @section('page-subtitle','Issue certificates to multiple students at once')

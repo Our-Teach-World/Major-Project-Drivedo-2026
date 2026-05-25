@@ -1,4 +1,4 @@
-@extends('teacher.layout')
+@extends('admin.layouts.app')
 @section('title','Certificate Details')
 @section('page-title','Certificate Details')
 @section('page-subtitle', $certificate->certificate_id)

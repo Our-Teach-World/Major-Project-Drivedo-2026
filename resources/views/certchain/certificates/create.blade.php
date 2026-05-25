@@ -1,4 +1,4 @@
-@extends('teacher.layout')
+@extends('admin.layouts.app')
 @section('title', 'Issue Certificate')
 @section('page-title', 'Issue Certificate')
 @section('page-subtitle', 'Fill in student details — certificate will be auto-generated & blockchain-recorded')

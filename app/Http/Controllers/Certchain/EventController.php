@@ -33,7 +33,12 @@ class EventController extends Controller
             'department' => 'nullable|string|max:255',
         ]);
 
-        Event::create([...$data, 'created_by' => auth()->id()]);
+        $adminUsername = session('admin_username');
+        $issuer = \App\Models\User::where('username', $adminUsername)->first() 
+            ?? \App\Models\User::where('email', 'like', 'hod%')->first()
+            ?? \App\Models\User::first();
+
+        Event::create([...$data, 'created_by' => $issuer->id]);
 
         return redirect()->route('teacher.certchain.events.index')->with('success', 'Event created successfully!');
     }

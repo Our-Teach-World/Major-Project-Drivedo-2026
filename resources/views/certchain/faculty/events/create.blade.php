@@ -1,4 +1,4 @@
-@extends('teacher.layout')
+@extends('admin.layouts.app')
 @section('title', 'Create Event')
 @section('page-title', 'Create Event')
 @section('page-subtitle', 'Add a new college event for certificate issuance')
