@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Alumni Dashboard - CampusCore')</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#253745',
+                    'on-primary': '#ffffff',
+                    surface: '#ffffff',
+                    'surface-container': '#ffffff',
+                    'surface-container-low': '#f8f9fa',
+                    'on-surface': '#06141b',
+                    'on-surface-variant': '#4a5568',
+                    'outline-variant': 'rgba(6, 20, 27, 0.1)',
+                }
+            }
+        }
+    }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 

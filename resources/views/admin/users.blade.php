@@ -39,7 +39,7 @@
             border-bottom: none;
         }
 
-        tr:hover {
+        tbody tr:hover {
             background-color: #f9f9f9;
         }
 

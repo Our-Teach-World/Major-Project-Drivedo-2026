@@ -138,7 +138,7 @@
         background: #f0fdf4 !important;
         box-shadow: 4px 4px 0px #000;
     }
-    tr:hover {
+    tbody tr:hover {
         background: #fafafa !important;
     }
 </style>

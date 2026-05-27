@@ -34,11 +34,13 @@
             colors: {
               "background": "#CCD0CF",
               "surface": "#FFFFFF",
+              "surface-container": "#FFFFFF",
+              "surface-container-low": "#F8F9FA",
               "on-background": "#06141B",
               "on-surface": "#06141B",
               "on-surface-variant": "#4A5568",
               "primary": "#253745",
-              "on-primary": "#CCD0CF",
+              "on-primary": "#FFFFFF",
               "outline-variant": "rgba(6, 20, 27, 0.1)"
             },
             fontFamily: { headline: ["Manrope"], body: ["Inter"] }
@@ -183,11 +185,11 @@
                 <div class="text-lg font-bold text-on-surface">{{ optional($profile)->display_name ?? Auth::user()->username }}</div>
                 <div class="text-sm text-on-surface-variant">{{ Auth::user()->username }}</div>
                 @if($profileComplete)
-                    <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 bg-emerald-500/15 text-emerald-400 rounded-full">
+                    <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 bg-emerald-500/15 text-emerald-700 rounded-full">
                         <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1">check_circle</span> Profile Complete
                     </span>
                 @else
-                    <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 bg-amber-500/15 text-amber-400 rounded-full">
+                    <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 bg-amber-500/15 text-amber-700 rounded-full">
                         <span class="material-symbols-outlined text-sm">warning</span> Complete your profile
                     </span>
                 @endif

@@ -195,9 +195,9 @@
         .section-title {
             font-size: clamp(40px, 8vw, 120px); font-weight: 900;
             line-height: 0.9; margin-bottom: 100px;
-            color: rgba(15, 23, 42, 0.05);
-            -webkit-text-stroke: 1px rgba(15, 23, 42, 0.1);
+            color: var(--text-primary);
             text-transform: uppercase;
+            letter-spacing: -0.03em;
         }
 
         /* Features Layout */
