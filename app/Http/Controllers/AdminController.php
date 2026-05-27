@@ -273,18 +273,28 @@ class AdminController extends Controller
                 'username' => 'required|unique:users,username|min:6',
                 'password' => 'required|min:4',
                 'role' => 'required|in:teacher,student,alumni',
+                'branch' => 'required',
                 'enrollment_no' => 'required_if:role,student|nullable|string|unique:students,enrollment_no',
             ]);
 
-            $user = User::create([
+            $userData = [
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
                 'status' => 'pending',
-            ]);
+                'branch' => $request->branch,
+            ];
+
+            if ($request->role === 'alumni') {
+                $userData['alumni_details'] = $request->alumni_details;
+                $userData['company'] = $request->company;
+                $userData['bio'] = $request->bio;
+            }
+
+            $user = User::create($userData);
 
             $admin = Admin::find(session('admin_id'));
-            $branch = ($admin && !in_array($admin->role, ['principal', 'admin'])) ? $admin->branch : null;
+            $branch = $request->branch ?: (($admin && !in_array($admin->role, ['principal', 'admin'])) ? $admin->branch : null);
 
             if ($request->role === 'student') {
                 Student::create([
@@ -302,7 +312,13 @@ class AdminController extends Controller
             return redirect()->route('admin.users')->with('success', 'User created successfully.');
         }
 
-        return view('admin.add-user');
+        $branches = \App\Models\Admin::where('role', 'hod')
+            ->distinct()
+            ->pluck('branch')
+            ->merge(\App\Models\Student::distinct()->pluck('branch'))
+            ->unique()
+            ->values();
+        return view('admin.add-user', compact('branches'));
     }
 
     public function editUser($id, Request $request)
