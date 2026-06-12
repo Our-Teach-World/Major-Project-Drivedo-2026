@@ -71,32 +71,6 @@
             gap: 10px;
         }
 
-        .pagination {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .pagination a,
-        .pagination span {
-            padding: 8px 12px;
-            border: 2px solid #000;
-            border-radius: 5px;
-            text-decoration: none;
-            color: #000;
-            font-weight: 600;
-        }
-
-        .pagination a:hover {
-            background-color: #000;
-            color: #fff;
-        }
-
-        .pagination .active {
-            background-color: #000;
-            color: #fff;
-        }
 
         /* Toast Notification */
         #toast-container {
