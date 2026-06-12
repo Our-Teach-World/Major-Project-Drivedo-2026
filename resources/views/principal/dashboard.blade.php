@@ -37,7 +37,7 @@
 </div>
 
 
-    <div class="col-md-6">
+    <!-- <div class="col-md-6">
         <div style="background: #000; color: #fff; border: 4px solid #000; padding: 30px; box-shadow: 8px 8px 0px #333;">
             <h3 style="font-weight: 900; margin-bottom: 20px; text-transform: uppercase; color: #fff;">Principal's Message</h3>
             <p style="font-size: 1.1rem; font-weight: 600; line-height: 1.6; opacity: 0.9;">
@@ -47,7 +47,7 @@
                 - CampusCore System
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
 @push('styles')
