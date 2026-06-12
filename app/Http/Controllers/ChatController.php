@@ -72,12 +72,11 @@ class ChatController extends Controller
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Accept' => 'application/json',
             ])->post($apiUrl, [
-                'model' => 'moonshotai/kimi-k2.6',
+                'model' => 'meta/llama-3.1-8b-instruct',
                 'messages' => $messages,
-                'temperature' => 1.0,
-                'top_p' => 1.0,
+                'temperature' => 0.2,
+                'top_p' => 0.7,
                 'max_tokens' => 4096,
-                'chat_template_kwargs' => ['thinking' => false],
             ]);
 
             if ($response->successful()) {
@@ -143,14 +142,13 @@ class ChatController extends Controller
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Accept' => 'application/json',
             ])->post($apiUrl, [
-                'model' => 'moonshotai/kimi-k2.6',
+                'model' => 'meta/llama-3.1-8b-instruct',
                 'messages' => [
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => 'Analyze this resume.']
                 ],
-                'temperature' => 0.7,
+                'temperature' => 0.3,
                 'max_tokens' => 4096,
-                'chat_template_kwargs' => ['thinking' => false],
             ]);
 
             if ($response->successful()) {

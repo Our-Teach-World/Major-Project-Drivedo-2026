@@ -161,7 +161,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $admin = Admin::find(session('admin_id'));
-        $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
+        $query = User::whereIn('users.role', ['teacher', 'student', 'alumni']);
 
         if ($admin && $admin->branch && !in_array($admin->role, ['principal', 'admin'])) {
             // Only filter by branch when admin has a branch assigned.
@@ -169,18 +169,18 @@ class AdminController extends Controller
             // from admins who have no branch restriction.
             $query->where(function ($q) use ($admin) {
                 $q->where(function ($sq) use ($admin) {
-                    $sq->where('role', 'student')
+                    $sq->where('users.role', 'student')
                         ->whereHas('studentProfile', function ($sp) use ($admin) {
                             $sp->where('branch', $admin->branch);
                         });
                 })->orWhere(function ($tq) use ($admin) {
-                    $tq->where('role', 'teacher')
+                    $tq->where('users.role', 'teacher')
                         ->whereHas('teacherProfile', function ($tp) use ($admin) {
                             $tp->where('branch', $admin->branch);
                         });
                 })->orWhere(function ($aq) use ($admin) {
-                    $aq->where('role', 'alumni')
-                        ->where('branch', $admin->branch);
+                    $aq->where('users.role', 'alumni')
+                        ->where('users.branch', $admin->branch);
                 });
             });
         }
@@ -191,9 +191,9 @@ class AdminController extends Controller
             $ajaxQuery = clone $query;
             if ($search) {
                 $ajaxQuery->where(function ($q) use ($search) {
-                    $q->where('username', 'LIKE', "%$search%")
-                        ->orWhere('role', 'LIKE', "%$search%")
-                        ->orWhere('status', 'LIKE', "%$search%");
+                    $q->where('users.username', 'LIKE', "%$search%")
+                        ->orWhere('users.role', 'LIKE', "%$search%")
+                        ->orWhere('users.status', 'LIKE', "%$search%");
                 });
             }
 

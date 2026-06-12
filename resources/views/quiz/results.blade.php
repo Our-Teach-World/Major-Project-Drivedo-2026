@@ -38,9 +38,9 @@
             <p class="label-caps text-white/50 mb-2">PARTICIPANTS</p>
             <h3 class="text-4xl font-black">{{ $results->count() }}</h3>
         </div>
-        <div class="metric-card bg-[#FFFFFF] text-[#06141B]">
-            <p class="label-caps mb-2">AGGREGATE AVERAGE</p>
-            <h3 class="text-4xl font-black text-[#253745]">{{ number_format($results->avg('percentage'), 1) }}%</h3>
+        <div class="metric-card">
+            <p class="label-caps text-white/50 mb-2">AGGREGATE AVERAGE</p>
+            <h3 class="text-4xl font-black text-sky-400">{{ number_format($results->avg('percentage'), 1) }}%</h3>
         </div>
         <div class="metric-card">
             <p class="label-caps text-white/50 mb-2">PEAK SCORE</p>

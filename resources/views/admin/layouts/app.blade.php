@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard - CampusCore')</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#253745',
+                    'on-primary': '#ffffff',
+                    surface: '#ffffff',
+                    'surface-container': '#ffffff',
+                    'surface-container-low': '#f8f9fa',
+                    'on-surface': '#06141b',
+                    'on-surface-variant': '#4a5568',
+                    'outline-variant': 'rgba(6, 20, 27, 0.1)',
+                }
+            }
+        }
+    }
+    </script>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];

@@ -16,6 +16,13 @@
                 colors: {
                     primary:  { DEFAULT:'#1a3a5c', light:'#2a5298', dark:'#0f2139' },
                     gold:     { DEFAULT:'#c9a84c', light:'#e8c96b', dark:'#a07830' },
+                    'on-primary': '#ffffff',
+                    surface: '#ffffff',
+                    'surface-container': '#ffffff',
+                    'surface-container-low': '#f8f9fa',
+                    'on-surface': '#06141b',
+                    'on-surface-variant': '#4a5568',
+                    'outline-variant': 'rgba(6, 20, 27, 0.1)',
                 }
             }
         }
