@@ -106,7 +106,7 @@ class ChatController extends Controller
     public function resumeChat(Request $request)
     {
         $request->validate([
-            'resume' => 'required|file|mimes:pdf,txt,docx|max:5120',
+            'resume' => 'required|file|mimes:pdf|max:5120',
             'message' => 'nullable|string'
         ]);
 
