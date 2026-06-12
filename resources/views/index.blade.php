@@ -400,7 +400,7 @@
             <h4>Ecosystem</h4>
             <ul>
                 <li><a href="/student/mentorship" class="hover-target">Alumni Mentorship</a></li>
-                <li><a href="/marketplace" class="hover-target">Marketplace</a></li>
+                <li><a href="/marketplace." class="hover-target">Marketplace</a></li>
                 <li><a href="/books" class="hover-target">BookLoop</a></li>
             </ul>
         </div>
