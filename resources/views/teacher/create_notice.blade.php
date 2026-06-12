@@ -30,7 +30,7 @@
     @endif
 
     <div class="bg-surface-container rounded-3xl border border-outline-variant/10 shadow-2xl relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-primary-dim/10 to-transparent pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
         <div class="p-8 relative">
             <form action="{{ route('teacher.notices.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                 @csrf
@@ -62,7 +62,7 @@
                         <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
                             <span class="w-1 h-1 bg-primary rounded-full"></span> Target Department
                         </label>
-                        <div class="w-full bg-surface-container-lowest border border-outline-variant/10 rounded-xl px-4 py-4 text-on-surface-variant text-sm font-bold flex items-center gap-2">
+                        <div class="w-full bg-surface border border-outline-variant/10 rounded-xl px-4 py-4 text-on-surface-variant text-sm font-bold flex items-center gap-2">
                             <span class="material-symbols-outlined text-sm text-primary">location_on</span>
                             {{ $teacherProfile->branch ?? 'Your Assigned Department' }}
                         </div>
@@ -91,7 +91,7 @@
                     <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
                         <span class="w-1 h-1 bg-primary rounded-full"></span> Attachment (Optional)
                     </label>
-                    <label for="attachment" class="border-2 border-dashed border-outline-variant/20 rounded-2xl p-8 flex flex-col items-center justify-center bg-surface-container-lowest hover:bg-surface-bright/20 transition-all group cursor-pointer border-primary/10">
+                    <label for="attachment" class="border-2 border-dashed border-outline-variant/20 rounded-2xl p-8 flex flex-col items-center justify-center bg-surface hover:bg-primary/5 transition-all group cursor-pointer border-primary/10">
                         <span class="material-symbols-outlined text-4xl text-outline-variant/40 group-hover:text-primary transition-colors mb-3">attach_file</span>
                         <p id="fileName" class="text-on-surface font-medium text-sm mb-1">Click to attach a PDF or Image</p>
                         <p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">Max 5MB • PDF, JPG, PNG</p>
@@ -102,7 +102,7 @@
                 {{-- Submit Button --}}
                 <div class="pt-4">
                     <button type="submit" 
-                            class="w-full bg-gradient-to-r from-primary-dim to-primary py-5 rounded-2xl font-black text-lg text-on-primary-fixed shadow-2xl shadow-primary-dim/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group">
+                            class="w-full bg-gradient-to-r from-primary/80 to-primary py-5 rounded-2xl font-black text-lg text-on-primary shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group">
                         <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">send</span> 
                         PUBLISH & NOTIFY STUDENTS 🚀
                     </button>

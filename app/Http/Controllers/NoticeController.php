@@ -23,7 +23,7 @@ class NoticeController extends Controller
             if (!$isTeacher) return redirect()->route('login')->with('error', 'Unauthorized.');
             
             $teacherProfile = \App\Models\Teacher::where('user_id', $user->id)->first();
-            $semesters = is_array($teacherProfile->semester) ? $teacherProfile->semester : (json_decode($teacherProfile->semester ?? '[]', true) ?? []);
+            $semesters = $teacherProfile && is_array($teacherProfile->semester) ? $teacherProfile->semester : (json_decode(optional($teacherProfile)->semester ?? '[]', true) ?? []);
             return view('teacher.create_notice', compact('user', 'teacherProfile', 'semesters'));
         }
 
@@ -85,7 +85,7 @@ class NoticeController extends Controller
                 return redirect()->back()->with('error', 'Unauthorized: You must be logged in as a teacher.');
             }
             $teacherProfile = \App\Models\Teacher::where('user_id', $user->id)->first();
-            $targetBranch = $teacherProfile->branch ?? 'Unknown';
+            $targetBranch = optional($teacherProfile)->branch ?? 'Unknown';
             $creatorId = $user->id;
             $creatorType = \App\Models\User::class;
         } else {
@@ -104,7 +104,7 @@ class NoticeController extends Controller
 
         $notice = Notice::create([
             'title' => $request->title,
-            'content' => $request->content,
+            'content' => $request->input('content'),
             'attachment_path' => $attachmentPath,
             'target_branch' => $targetBranch, 
             'target_semester' => $request->target_semester,
@@ -137,7 +137,7 @@ class NoticeController extends Controller
             $notifData = [
                 'app_id' => config('services.onesignal.app_id'),
                 'headings' => ['en' => '📢 ' . $request->title],
-                'contents' => ['en' => substr($request->content, 0, 100) . '...'],
+                'contents' => ['en' => substr($request->input('content'), 0, 100) . '...'],
                 'url' => $notice->target_role === 'student' ? url('/student/dashboard?section=notices') : url('/dashboard'),
             ];
 
@@ -248,23 +248,37 @@ class NoticeController extends Controller
 
         if (!$role) return response()->json([]);
 
-        $notices = \App\Models\Notice::whereIn('target_role', [$role, 'all'])
-            ->where(function($query) use ($currBranch, $role) {
-                if ($role !== 'principal') {
-                    $query->where(function($q) use ($currBranch) {
-                        $q->whereNull('target_branch')
-                          ->orWhere('target_branch', $currBranch);
-                    });
-                }
-            })
-            ->with(['creator' => function($morphTo) {
-                $morphTo->morphWith([
-                    \App\Models\User::class => ['teacherProfile'],
-                    \App\Models\Admin::class => [],
-                ]);
-            }])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = \App\Models\Notice::with(['creator' => function($morphTo) {
+            $morphTo->morphWith([
+                \App\Models\User::class => ['teacherProfile'],
+                \App\Models\Admin::class => [],
+            ]);
+        }]);
+
+        if ($role === 'principal') {
+            // Principal sees all notices across the college
+            $notices = $query->orderBy('created_at', 'desc')->get();
+        } elseif ($role === 'hod') {
+            // HOD sees everything in their branch + notices targeted to 'all'
+            $notices = $query->where(function($q) use ($currBranch) {
+                $q->where('target_branch', $currBranch)
+                  ->orWhereNull('target_branch');
+            })->orderBy('created_at', 'desc')->get();
+        } else {
+            // Teacher sees notices targeted to them in their branch + notices they created
+            $notices = $query->where(function($q) use ($currBranch, $user) {
+                $q->where(function($q2) use ($currBranch) {
+                    $q2->whereIn('target_role', ['teacher', 'all'])
+                       ->where(function($q3) use ($currBranch) {
+                           $q3->whereNull('target_branch')
+                              ->orWhere('target_branch', $currBranch);
+                       });
+                })->orWhere(function($q2) use ($user) {
+                    $q2->where('creator_type', \App\Models\User::class)
+                       ->where('created_by', $user->id);
+                });
+            })->orderBy('created_at', 'desc')->get();
+        }
 
         return response()->json($notices);
     }

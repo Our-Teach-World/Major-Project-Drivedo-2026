@@ -69,7 +69,7 @@
 
     <div class="print-container">
         <header>
-            <h1>EDUSHARE SYSTEM</h1>
+            <h1>Gpck Time Table</h1>
             <div style="font-size: 1.2rem; font-weight: bold; margin-top: 10px;">
                 OFFICIAL WEEKLY TIMETABLE
             </div>
