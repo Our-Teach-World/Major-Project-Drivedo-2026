@@ -1,14 +1,14 @@
-# 🎓 EduShare (Drivedo) - Complete Project Documentation & Technical Overview
+# 🎓 Drivedo - Complete Project Documentation & Technical Overview
 
-Welcome to the comprehensive technical documentation for **EduShare** (internally codebase-named **Drivedo**), a state-of-the-art, feature-dense Academic Portal, Blockchain-secured Credential Hub, Peer Book Exchange, and Career Onboarding System.
+Welcome to the comprehensive technical documentation for  Drivedo, a state-of-the-art, feature-dense Academic Portal, Blockchain-secured Credential Hub, Peer Book Exchange, and Career Onboarding System.
 
-Built using the robust **Laravel 13** framework, **PHP 8.3**, and **MySQL/MariaDB**, EduShare represents a next-generation academic operating system. It merges standard school administration tasks with advanced modules like an NVIDIA-driven AI Retrieval-Augmented Generation (RAG) assistant, a custom proof-of-concept cryptographic blockchain for credentials (CertChain), a student-to-student text-book exchange marketplace (Bookloop), and an Alumni Mentorship network.
+Built using the robust **Laravel 13** framework, **PHP 8.3**, and **MySQL/MariaDB**, Drivedo represents a next-generation academic operating system. It merges standard school administration tasks with advanced modules like an NVIDIA-driven AI Retrieval-Augmented Generation (RAG) assistant, a custom proof-of-concept cryptographic blockchain for credentials (CertChain), a student-to-student text-book exchange marketplace (Bookloop), and an Alumni Mentorship network.
 
 ---
 
 ## 🛠️ The Technical Stack
 
-EduShare is built on a modern, highly optimized enterprise-grade software stack:
+Drivedo is built on a modern, highly optimized enterprise-grade software stack:
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
@@ -64,7 +64,7 @@ graph TD
 
 ## 📌 Problem & Integrated Solution Matrix
 
-EduShare was built to address critical, long-standing inefficiencies in academic institutions:
+Drivedo was built to address critical, long-standing inefficiencies in academic institutions:
 
 ### 1. The Fragmentation of Study Material
 * **The Problem:** Academic resources (lecture slides, research papers, syllabus documents) are scattered across third-party links, personal email threads, and group chats. Finding past resources is chaotic.
@@ -163,4 +163,4 @@ EduShare was built to address critical, long-standing inefficiencies in academic
 
 ---
 
-**EduShare (Drivedo)** stands as a stellar modern integration of standard educational management utilities with blockchain security and cognitive AI, providing a state-of-the-art administrative, study, and social hub.
+Drivedo stands as a stellar modern integration of standard educational management utilities with blockchain security and cognitive AI, providing a state-of-the-art administrative, study, and social hub.
