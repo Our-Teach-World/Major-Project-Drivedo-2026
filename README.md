@@ -1,58 +1,123 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎓 Drivedo - Comprehensive Educational Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-13.0-FF2D20?style=flat-square&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=flat-square&logo=php)
+![Blade](https://img.shields.io/badge/Blade-67%25-FFC529?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-## About Laravel
+**Drivedo** is a full-featured educational platform built with Laravel 13 that connects institutions, teachers, students, and alumni. It provides integrated features for course management, file sharing, assessment, mentorship, blockchain-based certificate management, and peer-to-peer resource exchange.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌟 Features Overview
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 👥 Multi-Role User System
+- **Students** – Browse courses, access materials, take quizzes, track attendance
+- **Teachers** – Upload resources, create assessments, manage student attendance, issue certificates
+- **Admin (HOD)** – Manage users, approve registrations, set up timetables, create subjects
+- **Principal** – Oversee HODs, issue institution-wide notices, manage policies
+- **Alumni** – Mentorship programs, career guidance, network with students
 
-## Learning Laravel
+### 📚 Core Academic Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### **File Management & Resource Library**
+- Teachers upload structured course materials (documents, videos, audio, images)
+- Automatic file categorization by type
+- PDF text extraction for searchable content
+- Student file access by teacher and material type
+- Download and preview capabilities
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### **Attendance & Academic Records**
+- Teacher-led attendance marking per student and subject
+- Bulk attendance import/export functionality
+- Monthly and semester-wise attendance reports
+- Automated attendance tracking linked to subjects and teachers
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+#### **Subject Management**
+- Create subjects with unique codes and branch mapping
+- Assign multiple teachers per subject
+- Semester-based subject organization
+- Branch and stream-based subject filtering
 
-## Agentic Development
+#### **Timetable System**
+- Admin-managed timetable creation and scheduling
+- Student/teacher views with printable formats
+- Subject and time slot management
+- Semester and branch-specific schedules
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+#### **Assessment System (Quizzes)**
+- Create quizzes with multiple question types
+- Multiple-choice questions with automatic grading
+- Teacher control over quiz availability (open/close)
+- Student quiz attempts with detailed results
+- View past attempts and performance analytics
+- Reset option for student retakes
 
-```bash
-composer require laravel/boost --dev
+#### **Mentorship & Alumni Network**
+- Students browse and request mentorship from alumni
+- Alumni accept/decline mentorship requests
+- Secure messaging for mentorship sessions
+- Session management and communication history
+- Alumni profile and availability management
 
-php artisan boost:install
-```
+#### **Book Exchange (BookLoop)**
+- Students list and browse books for exchange
+- Peer-to-peer book trading marketplace
+- In-app chat for book negotiations
+- Listing status management (active/pending/exchanged)
+- Search and filter by title and availability
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+#### **Notices & Announcements**
+- Institutional announcements from multiple roles
+- Role-specific targeting (students, teachers, admins, principals)
+- Rich notice creation with timestamps
+- Notification system for alert delivery
 
-## Contributing
+### 🔐 Blockchain & Certificate Management (CertChain)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### **Certificate Issuance**
+- Issue single or bulk certificates to students
+- Customizable certificate templates with design editor
+- Certificate template library for institution branding
+- Dynamic text field mapping (student name, date, course)
+- PDF certificate generation and download
 
-## Code of Conduct
+#### **Blockchain Ledger**
+- Immutable blockchain-based certificate records
+- Hash verification for certificate authenticity
+- Event-based certificate tracking
+- Tamper-proof certificate storage
+- Public certificate verification interface
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### **Template Management**
+- Create and store reusable certificate designs
+- Template preview and editing
+- Template-based bulk certificate generation
+- Admin-controlled template library
 
-## Security Vulnerabilities
+### 💬 AI-Powered Chat & RAG
+- NVIDIA API integration for intelligent responses
+- Retrieval-Augmented Generation (RAG) using extracted PDF content
+- Context-aware question answering from uploaded materials
+- Chat history with multiple conversations
+- Smart content search across all uploaded files
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 📊 Admin Dashboard
+- User statistics and analytics
+- Pending registration approvals
+- User management interface with bulk operations
+- CSV export for institutional records
+- Role-based user filtering
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🏗️ Project Architecture
+
+### Stack
+- **Backend Framework:** Laravel 13 (PHP 8.3+)
+- **Frontend:** Blade templating + Tailwind CSS + Vite
+- **Database:** MySQL (configured in migrations)
+- **Authentication:** Role-based with middleware guards
+- **External APIs:** NVIDIA (AI Chat), Optional: Email services
+
+### Directory Structure
