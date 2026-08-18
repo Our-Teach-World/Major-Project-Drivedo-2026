@@ -1,62 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New User - EduShare Admin</title>
+@extends('admin.layouts.app')
+
+@section('title', 'Add New User - CampusCore Admin')
+@section('header_title', '➕ Add New User')
+
+@push('styles')
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            color: #000000;
-        }
-
-        .navbar {
-            background-color: #ffffff;
-            border-bottom: 2px solid #000000;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-title {
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-
-        .navbar-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: 2px solid #000000;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #000000;
-            color: #ffffff;
-        }
-
         .container {
             max-width: 500px;
             margin: 50px auto;
-            padding: 30px 20px;
         }
 
         .form-card {
@@ -64,12 +15,7 @@
             border: 2px solid #000000;
             padding: 30px;
             border-radius: 8px;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            text-align: center;
+            box-shadow: 4px 4px 0px #000;
         }
 
         .form-group {
@@ -145,62 +91,29 @@
             color: #ffffff;
         }
 
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border: 2px solid;
-        }
-
         .alert-error {
             background-color: #ffebee;
             border-color: #c62828;
             color: #c62828;
         }
 
-        .error-list {
-            margin-top: 10px;
-        }
-
-        .error-list li {
-            margin-left: 20px;
-        }
-
         @media (max-width: 768px) {
-            .form-card {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
+            .form-card { padding: 20px; }
+            .button-group { flex-direction: column; }
         }
     </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-title">⚙️ Add New User</div>
-        <div class="navbar-actions">
-            <a href="{{ route('admin.users') }}" class="btn">Back to Users</a>
-            <form method="POST" action="{{ route('admin.logout') }}" style="display: inline;">
-                @csrf
-                <button type="submit" class="btn">Logout</button>
-            </form>
-        </div>
-    </nav>
+@endpush
+
+@section('content')
 
     <div class="container">
         <div class="form-card">
-            <h1>Create New User</h1>
+            <h1 style="text-align:center; margin-bottom: 25px;">Create New User</h1>
 
             @if ($errors->any())
                 <div class="alert alert-error">
                     <strong>Please fix the following errors:</strong>
-                    <ul class="error-list">
+                    <ul style="margin-left: 20px; margin-top: 10px;">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -219,12 +132,80 @@
 
                 <div class="form-group">
                     <label for="role">Role *</label>
-                    <select id="role" name="role" required>
+                    <select id="role" name="role" required onchange="toggleEnrollment(this.value)">
                         <option value="">-- Select Role --</option>
                         <option value="teacher" {{ old('role') == 'teacher' ? 'selected' : '' }}>Teacher</option>
                         <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student</option>
+                        <option value="alumni" {{ old('role') == 'alumni' ? 'selected' : '' }}>Alumni</option>
                     </select>
                 </div>
+
+                <div class="form-group" id="enrollment-group" style="display: {{ old('role') == 'student' ? 'block' : 'none' }};">
+                    <label for="enrollment_no">Enrollment Number *</label>
+                    <input type="text" id="enrollment_no" name="enrollment_no" value="{{ old('enrollment_no') }}" placeholder="e.g. 23010101001">
+                </div>
+
+                <div class="form-group" id="branch-group" style="display: {{ in_array(old('role'), ['student', 'teacher', 'alumni']) ? 'block' : 'none' }};">
+                    <label for="branch">Branch *</label>
+                    <select id="branch" name="branch">
+                        <option value="">-- Select Branch --</option>
+                        @foreach($branches as $branch)
+                            <option value="{{ $branch }}" {{ old('branch') == $branch ? 'selected' : '' }}>{{ $branch }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div id="alumni-group" style="display: {{ old('role') == 'alumni' ? 'block' : 'none' }};">
+                    <div class="form-group">
+                        <label for="alumni_details">Alumni Details</label>
+                        <textarea id="alumni_details" name="alumni_details" style="width:100%; padding:12px; border:2px solid #000; border-radius:5px;" rows="3">{{ old('alumni_details') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company / Organization</label>
+                        <input type="text" id="company" name="company" value="{{ old('company') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Professional Bio</label>
+                        <textarea id="bio" name="bio" style="width:100%; padding:12px; border:2px solid #000; border-radius:5px;" rows="3">{{ old('bio') }}</textarea>
+                    </div>
+                </div>
+
+                <script>
+                    function toggleEnrollment(role) {
+                        const enrollmentGroup = document.getElementById('enrollment-group');
+                        const enrollmentInput = document.getElementById('enrollment_no');
+                        const branchGroup = document.getElementById('branch-group');
+                        const branchInput = document.getElementById('branch');
+                        const alumniGroup = document.getElementById('alumni-group');
+                        
+                        if (role === 'student') {
+                            enrollmentGroup.style.display = 'block';
+                            enrollmentInput.required = true;
+                        } else {
+                            enrollmentGroup.style.display = 'none';
+                            enrollmentInput.required = false;
+                        }
+
+                        if (['student', 'teacher', 'alumni'].includes(role)) {
+                            branchGroup.style.display = 'block';
+                            branchInput.required = true;
+                        } else {
+                            branchGroup.style.display = 'none';
+                            branchInput.required = false;
+                        }
+
+                        if (role === 'alumni') {
+                            alumniGroup.style.display = 'block';
+                        } else {
+                            alumniGroup.style.display = 'none';
+                        }
+                    }
+                    
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const role = document.getElementById('role').value;
+                        toggleEnrollment(role);
+                    });
+                </script>
 
                 <div class="form-group">
                     <label for="password">Password *</label>
@@ -243,5 +224,5 @@
             </form>
         </div>
     </div>
-</body>
-</html>
+
+@endsection

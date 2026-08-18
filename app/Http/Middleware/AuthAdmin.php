@@ -19,6 +19,13 @@ class AuthAdmin
             return redirect()->route('admin.login');
         }
 
+        // Check if account is still active
+        $admin = \App\Models\Admin::find(session('admin_id'));
+        if (!$admin || $admin->status !== 'active') {
+            session()->flush();
+            return redirect()->route('admin.login')->with('error', 'Your account has been disabled. Please contact the Principal.');
+        }
+
         return $next($request);
     }
 }
