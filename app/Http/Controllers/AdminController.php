@@ -161,7 +161,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $admin = Admin::find(session('admin_id'));
-        $query = User::whereIn('role', ['teacher', 'student', 'alumni']);
+        $query = User::whereIn('users.role', ['teacher', 'student', 'alumni']);
 
         if ($admin && $admin->branch && !in_array($admin->role, ['principal', 'admin'])) {
             // Only filter by branch when admin has a branch assigned.
@@ -169,18 +169,18 @@ class AdminController extends Controller
             // from admins who have no branch restriction.
             $query->where(function ($q) use ($admin) {
                 $q->where(function ($sq) use ($admin) {
-                    $sq->where('role', 'student')
+                    $sq->where('users.role', 'student')
                         ->whereHas('studentProfile', function ($sp) use ($admin) {
                             $sp->where('branch', $admin->branch);
                         });
                 })->orWhere(function ($tq) use ($admin) {
-                    $tq->where('role', 'teacher')
+                    $tq->where('users.role', 'teacher')
                         ->whereHas('teacherProfile', function ($tp) use ($admin) {
                             $tp->where('branch', $admin->branch);
                         });
                 })->orWhere(function ($aq) use ($admin) {
-                    $aq->where('role', 'alumni')
-                        ->where('branch', $admin->branch);
+                    $aq->where('users.role', 'alumni')
+                        ->where('users.branch', $admin->branch);
                 });
             });
         }
@@ -191,9 +191,9 @@ class AdminController extends Controller
             $ajaxQuery = clone $query;
             if ($search) {
                 $ajaxQuery->where(function ($q) use ($search) {
-                    $q->where('username', 'LIKE', "%$search%")
-                        ->orWhere('role', 'LIKE', "%$search%")
-                        ->orWhere('status', 'LIKE', "%$search%");
+                    $q->where('users.username', 'LIKE', "%$search%")
+                        ->orWhere('users.role', 'LIKE', "%$search%")
+                        ->orWhere('users.status', 'LIKE', "%$search%");
                 });
             }
 
@@ -273,18 +273,28 @@ class AdminController extends Controller
                 'username' => 'required|unique:users,username|min:6',
                 'password' => 'required|min:4',
                 'role' => 'required|in:teacher,student,alumni',
+                'branch' => 'required',
                 'enrollment_no' => 'required_if:role,student|nullable|string|unique:students,enrollment_no',
             ]);
 
-            $user = User::create([
+            $userData = [
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
                 'status' => 'pending',
-            ]);
+                'branch' => $request->branch,
+            ];
+
+            if ($request->role === 'alumni') {
+                $userData['alumni_details'] = $request->alumni_details;
+                $userData['company'] = $request->company;
+                $userData['bio'] = $request->bio;
+            }
+
+            $user = User::create($userData);
 
             $admin = Admin::find(session('admin_id'));
-            $branch = ($admin && !in_array($admin->role, ['principal', 'admin'])) ? $admin->branch : null;
+            $branch = $request->branch ?: (($admin && !in_array($admin->role, ['principal', 'admin'])) ? $admin->branch : null);
 
             if ($request->role === 'student') {
                 Student::create([
@@ -302,7 +312,13 @@ class AdminController extends Controller
             return redirect()->route('admin.users')->with('success', 'User created successfully.');
         }
 
-        return view('admin.add-user');
+        $branches = \App\Models\Admin::where('role', 'hod')
+            ->distinct()
+            ->pluck('branch')
+            ->merge(\App\Models\Student::distinct()->pluck('branch'))
+            ->unique()
+            ->values();
+        return view('admin.add-user', compact('branches'));
     }
 
     public function editUser($id, Request $request)
