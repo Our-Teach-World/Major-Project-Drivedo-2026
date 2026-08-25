@@ -795,9 +795,9 @@
                             <div class="drop-zone" id="resumeDropZone" onclick="document.getElementById('resumeFileInput').click()">
                                 <div style="font-size: 3rem; margin-bottom: 10px;">📁</div>
                                 <div style="font-weight: 700;">Click to upload your resume</div>
-                                <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">PDF, DOCX, TXT · Max 5 MB</div>
+                                <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">PDF Only · Max 5 MB</div>
                             </div>
-                            <input type="file" id="resumeFileInput" accept=".pdf,.docx,.txt" style="display:none;" onchange="handleResumeFile(this.files[0])">
+                            <input type="file" id="resumeFileInput" accept=".pdf" style="display:none;" onchange="handleResumeFile(this.files[0])">
 
                             <!-- File Loaded State -->
                             <div id="resumeLoaded" style="display: none; align-items: center; gap: 15px; background: #f0f4f8; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #d1d9e0;">
@@ -1369,11 +1369,9 @@
 
         function handleResumeFile(file) {
 
-            const allowed = ['application/pdf', 'text/plain',
+            const allowed = ['application/pdf'];
 
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-
-            const allowedExt = ['.pdf', '.txt', '.docx'];
+            const allowedExt = ['.pdf'];
 
             const ext = '.' + file.name.split('.').pop().toLowerCase();
 
@@ -1381,7 +1379,7 @@
 
             if (!allowedExt.includes(ext)) {
 
-                alert('Unsupported file type. Please upload a PDF, DOCX or TXT file.');
+                alert('Unsupported file type. Please upload a PDF file.');
 
                 return;
 

@@ -145,18 +145,66 @@
                     <input type="text" id="enrollment_no" name="enrollment_no" value="{{ old('enrollment_no') }}" placeholder="e.g. 23010101001">
                 </div>
 
+                <div class="form-group" id="branch-group" style="display: {{ in_array(old('role'), ['student', 'teacher', 'alumni']) ? 'block' : 'none' }};">
+                    <label for="branch">Branch *</label>
+                    <select id="branch" name="branch">
+                        <option value="">-- Select Branch --</option>
+                        @foreach($branches as $branch)
+                            <option value="{{ $branch }}" {{ old('branch') == $branch ? 'selected' : '' }}>{{ $branch }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div id="alumni-group" style="display: {{ old('role') == 'alumni' ? 'block' : 'none' }};">
+                    <div class="form-group">
+                        <label for="alumni_details">Alumni Details</label>
+                        <textarea id="alumni_details" name="alumni_details" style="width:100%; padding:12px; border:2px solid #000; border-radius:5px;" rows="3">{{ old('alumni_details') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company / Organization</label>
+                        <input type="text" id="company" name="company" value="{{ old('company') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Professional Bio</label>
+                        <textarea id="bio" name="bio" style="width:100%; padding:12px; border:2px solid #000; border-radius:5px;" rows="3">{{ old('bio') }}</textarea>
+                    </div>
+                </div>
+
                 <script>
                     function toggleEnrollment(role) {
-                        const group = document.getElementById('enrollment-group');
-                        const input = document.getElementById('enrollment_no');
+                        const enrollmentGroup = document.getElementById('enrollment-group');
+                        const enrollmentInput = document.getElementById('enrollment_no');
+                        const branchGroup = document.getElementById('branch-group');
+                        const branchInput = document.getElementById('branch');
+                        const alumniGroup = document.getElementById('alumni-group');
+                        
                         if (role === 'student') {
-                            group.style.display = 'block';
-                            input.required = true;
+                            enrollmentGroup.style.display = 'block';
+                            enrollmentInput.required = true;
                         } else {
-                            group.style.display = 'none';
-                            input.required = false;
+                            enrollmentGroup.style.display = 'none';
+                            enrollmentInput.required = false;
+                        }
+
+                        if (['student', 'teacher', 'alumni'].includes(role)) {
+                            branchGroup.style.display = 'block';
+                            branchInput.required = true;
+                        } else {
+                            branchGroup.style.display = 'none';
+                            branchInput.required = false;
+                        }
+
+                        if (role === 'alumni') {
+                            alumniGroup.style.display = 'block';
+                        } else {
+                            alumniGroup.style.display = 'none';
                         }
                     }
+                    
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const role = document.getElementById('role').value;
+                        toggleEnrollment(role);
+                    });
                 </script>
 
                 <div class="form-group">

@@ -28,7 +28,7 @@
             <h1 class="text-4xl font-extrabold text-on-surface tracking-tight mb-2">Smart Attendance</h1>
             <p class="text-on-surface-variant">Manage and take attendance for your active semesters.</p>
         </div>
-        <a href="{{ route('attendance.export.view') }}" class="bg-primary text-on-primary-fixed px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:scale-105 transition-all shadow-[0_10px_20px_rgba(179,161,255,0.3)]">
+        <a href="{{ route('attendance.export.view') }}" class="bg-primary text-on-primary px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:scale-105 transition-all shadow-[0_10px_20px_rgba(179,161,255,0.3)]">
             <span class="material-symbols-outlined">download</span>
             Export Monthly Report
         </a>
