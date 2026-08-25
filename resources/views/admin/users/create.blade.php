@@ -38,13 +38,52 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Role <span class="text-red-500">*</span></label>
-                <select name="role" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select name="role" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" id="roleSelect">
                     <option value="">Select role…</option>
                     @foreach($roles as $role)
-                    <option value="{{ $role->name }}" {{ old('role') === $role->name ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
+                    <option value="{{ strtolower($role->name) }}" {{ old('role') === strtolower($role->name) ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
                     @endforeach
                 </select>
             </div>
+            <div class="mt-4 hidden" id="branchDiv">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Branch <span class="text-red-500">*</span></label>
+                <select name="branch" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" id="branchSelect">
+                    <option value="">Select branch…</option>
+                    @foreach($branches as $branch)
+                    <option value="{{ $branch }}" {{ old('branch') === $branch ? 'selected' : '' }}>{{ $branch }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mt-4 hidden" id="alumniDiv">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Alumni Details</label>
+                <textarea name="alumni_details" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('alumni_details') }}</textarea>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5 mt-2">Company / Organization</label>
+                <input type="text" name="company" value="{{ old('company') }}" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <label class="block text-sm font-medium text-gray-700 mb-1.5 mt-2">Professional Bio</label>
+                <textarea name="bio" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('bio') }}</textarea>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const roleSelect = document.getElementById('roleSelect');
+                    const branchDiv = document.getElementById('branchDiv');
+                    const alumniDiv = document.getElementById('alumniDiv');
+                    function toggleFields() {
+                        const role = roleSelect.value.toLowerCase();
+                        if (['student', 'teacher', 'alumni'].includes(role)) {
+                            branchDiv.classList.remove('hidden');
+                        } else {
+                            branchDiv.classList.add('hidden');
+                        }
+                        if (role === 'alumni') {
+                            alumniDiv.classList.remove('hidden');
+                        } else {
+                            alumniDiv.classList.add('hidden');
+                        }
+                    }
+                    roleSelect.addEventListener('change', toggleFields);
+                    toggleFields(); // initial call
+                });
+            </script>
         </div>
     </div>
 

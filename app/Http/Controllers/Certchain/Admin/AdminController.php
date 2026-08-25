@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Certificate;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Student;
 use App\Models\BlockchainBlock;
 use App\Services\BlockchainService;
 use Illuminate\Http\Request;
@@ -50,7 +51,8 @@ class AdminController extends Controller
     public function createUser()
     {
         $roles = Role::all();
-        return view('admin.users.create', compact('roles'));
+        $branches = Student::distinct()->pluck('branch');
+        return view('admin.users.create', compact('roles', 'branches'));
     }
 
     public function storeUser(Request $request)

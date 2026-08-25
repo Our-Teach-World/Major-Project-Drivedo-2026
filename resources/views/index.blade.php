@@ -300,7 +300,7 @@
             
             <div class="stats-grid">
                 <div class="stat-item gs-reveal">
-                    <h4>5+</h4>
+                    <h4>8+</h4>
                     <p>Integrated Modules</p>
                 </div>
                 <div class="stat-item gs-reveal">
@@ -400,7 +400,7 @@
             <h4>Ecosystem</h4>
             <ul>
                 <li><a href="/student/mentorship" class="hover-target">Alumni Mentorship</a></li>
-                <li><a href="/marketplace" class="hover-target">Marketplace</a></li>
+                <li><a href="/marketplace." class="hover-target">Marketplace</a></li>
                 <li><a href="/books" class="hover-target">BookLoop</a></li>
             </ul>
         </div>
@@ -409,7 +409,7 @@
             <ul>
                 <li><a href="/login" class="hover-target">Student Login</a></li>
                 <li><a href="/login" class="hover-target">Faculty Portal</a></li>
-                <li><a href="/admin/login" class="hover-target">Admin Console</a></li>
+                <!-- <li><a href="/admin/login" class="hover-target">Admin Console</a></li> -->
             </ul>
         </div>
     </footer>
