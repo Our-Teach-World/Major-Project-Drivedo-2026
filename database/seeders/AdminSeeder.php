@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
@@ -12,9 +13,11 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        \DB::table('admin')->insert([
-            'username' => 'admin',
-            'password' => '$2y$12$sYA2Sc1J.jU0gliUS1taUeS6ouRnwQpRLnuGjyWh59/VaRXL7MsX2', // admin123
-        ]);
+        Admin::updateOrCreate(
+            ['username' => 'admin'], // Search for this username
+            [
+                'password' => Hash::make('gpck1234'), // Update/Create with this password
+            ]
+        );
     }
 }

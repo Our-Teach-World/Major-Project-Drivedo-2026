@@ -9,7 +9,7 @@ class Teacher extends Model
     protected $table = 'teachers';
 
     protected $fillable = [
-        'student_id',
+        'user_id',
         'display_name',
         'profile_image',
         'bio',
@@ -18,10 +18,15 @@ class Teacher extends Model
     ];
 
     /**
-     * The teacher profile belongs to a student (auth) record.
+     * The teacher profile belongs to a user (auth) record.
      */
-    public function student()
+    public function user()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
+
+    protected $casts = [
+        'semester' => 'array',
+    ];
+
 }

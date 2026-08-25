@@ -7,9 +7,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
-        "smalot/pdfparser": "*"
+        "maatwebsite/excel": "^3.1",
+        "setasign/fpdf": "^1.8",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "smalot/pdfparser": "*",
+        "spatie/laravel-permission": "^7.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

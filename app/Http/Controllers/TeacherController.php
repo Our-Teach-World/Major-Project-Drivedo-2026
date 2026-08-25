@@ -8,6 +8,8 @@ use Smalot\PdfParser\Parser;
 use App\Models\Upload;
 use App\Models\Teacher;
 use App\Services\UploadService;
+use App\Notifications\SystemAlert;
+use Illuminate\Support\Facades\Notification;
 
 class TeacherController extends Controller
 {
@@ -15,7 +17,7 @@ class TeacherController extends Controller
     {
         $user = Auth::user();
         // Load teacher profile from DB (null if not yet created)
-        $teacherProfile = Teacher::where('student_id', $user->id)->first();
+        $teacherProfile = Teacher::where('user_id', $user->id)->first();
         return view('teacher.dashboard', ['user' => $user, 'teacherProfile' => $teacherProfile]);
     }
 
@@ -29,7 +31,7 @@ class TeacherController extends Controller
         $user = Auth::user();
 
         Teacher::updateOrCreate(
-            ['student_id' => $user->id],
+            ['user_id' => $user->id],
             ['display_name' => $request->name]
         );
 
@@ -55,7 +57,7 @@ class TeacherController extends Controller
 
             // Also store the path in the teachers table
             Teacher::updateOrCreate(
-                ['student_id' => $user->id],
+                ['user_id' => $user->id],
                 ['profile_image' => $relativePath]
             );
         }
@@ -68,28 +70,17 @@ class TeacherController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $branches = [
-            'Civil Engineering',
-            'Mechanical Engineering',
-            'Electrical Engineering',
-            'Electronics Engineering (EL)',
-            'Computer Engineering/Science & Engineering',
-            'Instrumentation & Control Plastic Technology',
-            'Chemical Engineering',
-        ];
-
         $request->validate([
-            'branch'   => 'required|in:' . implode(',', $branches),
-            'semester' => 'required|integer|min:1|max:6',
+            'semesters'    => 'required|array|min:1', // Ab ye ek array hona chahiye
+            'semesters.*'  => 'integer|min:1|max:6',  // Array ki har value integer ho
         ]);
 
         $user = Auth::user();
 
         Teacher::updateOrCreate(
-            ['student_id' => $user->id],
+            ['user_id' => $user->id],
             [
-                'branch'   => $request->branch,
-                'semester' => $request->semester,
+                'semester' => $request->semesters,
             ]
         );
 
@@ -160,6 +151,27 @@ class TeacherController extends Controller
             ]);
 
             $uploadedCount++;
+        }
+
+        // Send Notifications to Students
+        if ($uploadedCount > 0) {
+            try {
+                $teacherProfile = Teacher::where('user_id', $user->id)->first();
+                $branch = $teacherProfile->branch;
+                
+                $notificationTitle = "New Study Material";
+                $notificationMsg = "{$user->username} has uploaded new content for Semester {$semester}.";
+                $actionUrl = url('/student/dashboard?section=study&teacher=' . $user->username);
+
+                $students = \App\Models\User::where('role', 'student')
+                    ->whereHas('studentProfile', function($query) use ($branch, $semester) {
+                        $query->where('branch', $branch)->where('semester', $semester);
+                    })->get();
+
+                Notification::send($students, new SystemAlert($notificationTitle, $notificationMsg, '📚', $actionUrl));
+            } catch (\Exception $e) {
+                \Log::error('Upload Notification Error: ' . $e->getMessage());
+            }
         }
 
         if (!empty($errors)) {
@@ -259,5 +271,19 @@ class TeacherController extends Controller
         if (in_array($ext, $videoExt))    return 'video';
 
         return 'others';
+    }
+
+    public function timetableViewer()
+    {
+        $user = auth()->user();
+        $profile = \App\Models\Teacher::where('user_id', $user->id)->first();
+        
+        $teacherName = optional($profile)->display_name ?? $user->username;
+
+        $timetables = \App\Models\Timetable::where('teacher_name', $teacherName)
+            ->get()
+            ->groupBy('day');
+
+        return view('teacher.timetable', compact('timetables', 'teacherName'));
     }
 }
