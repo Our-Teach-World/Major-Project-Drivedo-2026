@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['username', 'password', 'role', 'status', 'name', 'email', 'branch', 'company', 'bio', 'application_status', 'employee_id', 'department', 'designation', 'signature_path', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * Get the attributes that should be cast.
@@ -27,6 +28,76 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
+
+    // Teacher ke liye: Uske subjects fetch karne ke liye
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_teacher', 'user_id', 'subject_id')
+            ->withPivot('academic_year')
+            ->withTimestamps();
+    }
+
+    // Student ke liye: Uski attendance fetch karne ke liye
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'student_id');
+    }
+
+    // Profile for student role
+    public function studentProfile()
+    {
+        return $this->hasOne(Student::class, 'user_id');
+    }
+
+    // Profile for teacher role
+    public function teacherProfile()
+    {
+        return $this->hasOne(Teacher::class, 'user_id');
+    }
+
+    public function uploads()
+    {
+        return $this->hasMany(Upload::class, 'user_id');
+    }
+
+    // Mentorship relations
+    public function mentorshipRequests()
+    {
+        return $this->hasMany(MentorshipRequest::class, 'student_id');
+    }
+
+    public function alumniRequests()
+    {
+        return $this->hasMany(MentorshipRequest::class, 'alumni_id');
+    }
+
+    public function studentSessions()
+    {
+        return $this->hasMany(MentorshipSession::class, 'student_id');
+    }
+
+    public function alumniSessions()
+    {
+        return $this->hasMany(MentorshipSession::class, 'alumni_id');
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'created_by');
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class, 'issued_by');
+    }
+
+    public function getRoleNameAttribute(): string
+    {
+        return $this->roles->first()?->name ?? 'N/A';
+    }
 }
+
+

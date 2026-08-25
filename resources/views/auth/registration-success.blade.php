@@ -3,86 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Successful - EduShare</title>
+    <title>Registration Successful - CampusCore</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: #e8f5e9;
+            background-color: #CCD0CF;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            color: #06141B;
         }
 
         .success-container {
             background-color: #ffffff;
-            border: 2px solid #2e7d32;
-            box-shadow: 5px 5px 0px rgba(46, 125, 50, 0.2);
-            border-radius: 10px;
-            max-width: 500px;
+            border: 1px solid rgba(6, 20, 27, 0.05);
+            box-shadow: 0 10px 50px rgba(6, 20, 27, 0.1);
+            border-radius: 24px;
+            max-width: 520px;
             width: 100%;
-            padding: 40px;
+            padding: 50px 40px;
             text-align: center;
         }
 
         .success-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            color: #253745;
         }
 
         h2 {
-            color: #2e7d32;
-            font-size: 1.8rem;
+            color: #06141B;
+            font-size: 2.2rem;
             margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         p {
-            color: #333333;
-            line-height: 1.6;
+            color: #4A5568;
+            line-height: 1.7;
             margin-bottom: 15px;
-            font-size: 1rem;
+            font-size: 1.05rem;
         }
 
         .info-box {
-            background-color: #f5f5f5;
-            border: 2px solid #2e7d32;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
+            background-color: #F8F9F9;
+            border: 1px solid rgba(37, 55, 69, 0.1);
+            padding: 25px;
+            border-radius: 16px;
+            margin: 30px 0;
             text-align: left;
         }
 
         .info-box strong {
-            color: #2e7d32;
+            color: #253745;
+            font-weight: 800;
         }
 
         .links {
-            margin-top: 30px;
+            margin-top: 35px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 24px;
-            background-color: #2e7d32;
-            color: #ffffff;
-            border: 2px solid #2e7d32;
+            padding: 14px 28px;
+            background-color: #253745;
+            color: #CCD0CF;
+            border: none;
             text-decoration: none;
-            border-radius: 5px;
-            font-weight: 600;
-            transition: 0.3s;
-            margin: 5px;
+            border-radius: 12px;
+            font-weight: 800;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(37, 55, 69, 0.15);
+            font-size: 1rem;
         }
 
         .btn:hover {
-            background-color: #ffffff;
-            color: #2e7d32;
+            background-color: #1a2833;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 55, 69, 0.25);
+        }
+
+        .btn-outline {
+            background-color: #F8F9F9;
+            color: #253745;
+            border: 1px solid rgba(37, 55, 69, 0.1);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background-color: #E2E8F0;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -97,11 +122,11 @@
             <p><strong>Students</strong> can log in immediately.</p>
         </div>
 
-        <p>Thank you for joining EduShare!</p>
+        <p>Thank you for joining CampusCore!</p>
 
         <div class="links">
             <a href="{{ route('login') }}" class="btn">Go to Login</a>
-            <a href="/" class="btn" style="background-color: #ffffff; color: #2e7d32; border: 2px solid #2e7d32;">Back to Home</a>
+            <a href="/" class="btn btn-outline">Back to Home</a>
         </div>
     </div>
 </body>

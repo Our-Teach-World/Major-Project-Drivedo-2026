@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - EduShare</title>
+    <title>Contact - CampusCore</title>
     <style>
         * {
             margin: 0;
@@ -102,7 +102,7 @@
 <body>
     <header class="navbar">
         <div class="navbar-container">
-            <img src="https://via.placeholder.com/40x40/000/fff?text=Logo" alt="EduShare Logo" style="height: 40px;">
+            <img src="https://via.placeholder.com/40x40/000/fff?text=Logo" alt="CampusCore Logo" style="height: 40px;">
             <nav class="navbar-menu">
                 <ul>
                     <li><a href="/">Home</a></li>
@@ -121,7 +121,7 @@
         <div class="container">
             <h1>Contact Us</h1>
             <div class="contact-content">
-                <p><strong>Email:</strong> support@edushare.com</p>
+                <p><strong>Email:</strong> support@campuscore.com</p>
                 <p><strong>Phone:</strong> +1 (555) 123-4567</p>
                 <p><strong>Address:</strong> 123 Education Street, Learning City, LC 12345</p>
                 <p>For support or inquiries, please contact us using the information above. We look forward to hearing from you!</p>
@@ -130,7 +130,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 EduShare. All rights reserved.</p>
+        <p>&copy; 2025 CampusCore. All rights reserved.</p>
     </footer>
 </body>
 </html>

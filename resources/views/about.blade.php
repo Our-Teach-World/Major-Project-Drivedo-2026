@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - EduShare</title>
+    <title>About - CampusCore</title>
     <style>
         * {
             margin: 0;
@@ -95,7 +95,7 @@
 <body>
     <header class="navbar">
         <div class="navbar-container">
-            <img src="https://via.placeholder.com/40x40/000/fff?text=Logo" alt="EduShare Logo" style="height: 40px;">
+            <img src="https://via.placeholder.com/40x40/000/fff?text=Logo" alt="CampusCore Logo" style="height: 40px;">
             <nav class="navbar-menu">
                 <ul>
                     <li><a href="/">Home</a></li>
@@ -112,25 +112,25 @@
 
     <main>
         <div class="container">
-            <h1>About EduShare</h1>
+            <h1>About CampusCore</h1>
             <p>
-                EduShare is a modern educational platform designed to bridge the gap between teachers and students. 
+                CampusCore is a modern educational platform designed to bridge the gap between teachers and students. 
                 Our mission is to make sharing educational resources simple, secure, and efficient.
             </p>
             <p>
-                With EduShare, teachers can easily upload and organize their educational materials, while students 
+                With CampusCore, teachers can easily upload and organize their educational materials, while students 
                 can access these resources whenever they need them. Our AI-powered chatbot provides additional learning 
                 support, helping students find answers to their questions.
             </p>
             <p>
-                Built with security and ease of use in mind, EduShare provides a reliable solution for educational 
+                Built with security and ease of use in mind, CampusCore provides a reliable solution for educational 
                 institutions and independent educators alike.
             </p>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2025 EduShare. All rights reserved.</p>
+        <p>&copy; 2025 CampusCore. All rights reserved.</p>
     </footer>
 </body>
 </html>

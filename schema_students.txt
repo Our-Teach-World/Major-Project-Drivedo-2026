@@ -1,0 +1,17 @@
+Array
+(
+    [0] => stdClass Object
+        (
+            [Table] => students
+            [Create Table] => CREATE TABLE `students` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `branch` enum('Civil Engineering','Mechanical Engineering','Electrical Engineering','Electronics Engineering (EL)','Computer Engineering/Science & Engineering','Instrumentation & Control Plastic Technology','Chemical Engineering') DEFAULT NULL,
+  `semester` tinyint(3) unsigned DEFAULT NULL COMMENT '1 to 6 (3 years, 2 semesters each)',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        )
+
+)
